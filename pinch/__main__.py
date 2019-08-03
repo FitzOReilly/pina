@@ -1,6 +1,9 @@
+from pinch import run
+
+
 def main():
-    # TODO: Do something here
-    pass
+    run.run()
+
 
 if __name__ == "__main__":
     main()

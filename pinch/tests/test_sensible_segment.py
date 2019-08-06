@@ -36,8 +36,8 @@ class TestSensibleSegment(unittest.TestCase):
         self.assertEqual(self.hot_segment.heat_flow, -180)
 
     def test_default_temperature_difference_contribution(self):
-        self.assertEqual(self.cold_segment.temperature_difference_contribution, 0)
-        self.assertEqual(self.hot_segment.temperature_difference_contribution, 0)
+        self.assertEqual(self.cold_segment.temperature_difference_contribution, None)
+        self.assertEqual(self.hot_segment.temperature_difference_contribution, None)
 
     def test_temperature_difference_contribution(self):
         segment = SensibleSegment(1, 20, 200, 5)

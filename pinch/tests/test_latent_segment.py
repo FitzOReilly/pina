@@ -9,8 +9,8 @@ class TestLatentSegment(unittest.TestCase):
     Test class for LatentSegment
     """
     def setUp(self):
-        self.cold_segment = LatentSegment(100, 200)
-        self.hot_segment = LatentSegment(150, -300)
+        self.cold_segment = LatentSegment(200, 100)
+        self.hot_segment = LatentSegment(-300, 150)
 
     def tearDown(self):
         pass
@@ -32,8 +32,8 @@ class TestLatentSegment(unittest.TestCase):
         self.assertEqual(self.hot_segment.heat_flow, -300)
 
     def test_default_temperature_difference_contribution(self):
-        self.assertEqual(self.cold_segment.temperature_difference_contribution, 0)
-        self.assertEqual(self.hot_segment.temperature_difference_contribution, 0)
+        self.assertEqual(self.cold_segment.temperature_difference_contribution, None)
+        self.assertEqual(self.hot_segment.temperature_difference_contribution, None)
 
     def test_temperature_difference_contribution(self):
         segment = LatentSegment(100, 200, 10)

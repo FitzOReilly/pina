@@ -11,7 +11,7 @@ class SensibleSegment(AbstractSegment):
             heat_capacity_flow_rate,
             supply_temperature,
             target_temperature,
-            temperature_difference_contribution=0
+            temperature_difference_contribution=None
     ):
         super().__init__(
             heat_type=HeatType.SENSIBLE,

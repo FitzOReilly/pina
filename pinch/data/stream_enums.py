@@ -13,6 +13,6 @@ class StreamType(Enum):
     """
     The possible stream types.
     """
-    # TODO: Should there be a NEUTRAL type?
-    HOT = auto()
+    NEUTRAL = auto()
     COLD = auto()
+    HOT = auto()

@@ -8,9 +8,9 @@ class LatentSegment(AbstractSegment):
     """
     def __init__(
             self,
-            supply_temperature,
             heat_flow,
-            temperature_difference_contribution=0
+            supply_temperature,
+            temperature_difference_contribution=None
     ):
         super().__init__(
             heat_type=HeatType.LATENT,

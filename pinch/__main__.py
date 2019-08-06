@@ -1,8 +1,8 @@
-from pinch import run
+from pinch import app
 
 
 def main():
-    run.run()
+    app.run()
 
 
 if __name__ == "__main__":

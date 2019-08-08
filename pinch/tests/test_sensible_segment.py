@@ -15,6 +15,10 @@ class TestSensibleSegment(unittest.TestCase):
     def tearDown(self):
         pass
 
+    def test_zero_temperature_difference(self):
+        with self.assertRaises(ValueError):
+            SensibleSegment(2, 50, 50)
+
     def test_heat_type(self):
         self.assertEqual(self.cold_segment.heat_type, HeatType.SENSIBLE)
         self.assertEqual(self.hot_segment.heat_type, HeatType.SENSIBLE)

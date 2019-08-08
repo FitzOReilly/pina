@@ -20,6 +20,7 @@ class SensibleSegment(AbstractSegment):
         )
         self._target_temperature = target_temperature
         self._heat_capacity_flow_rate = heat_capacity_flow_rate
+        self._check_temperatures()
 
     @property
     def target_temperature(self):
@@ -34,3 +35,7 @@ class SensibleSegment(AbstractSegment):
         return \
             self._heat_capacity_flow_rate \
             * (self._target_temperature - self._supply_temperature)
+
+    def _check_temperatures(self):
+        if self._supply_temperature == self._target_temperature:
+            raise ValueError("Supply and target temperatures must differ")

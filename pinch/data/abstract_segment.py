@@ -27,7 +27,6 @@ class AbstractSegment(abc.ABC):
     def supply_temperature(self):
         return self._supply_temperature
 
-    # TODO: Rename this to return_temperature?
     @property
     @abc.abstractmethod
     def target_temperature(self):

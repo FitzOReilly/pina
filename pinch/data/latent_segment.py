@@ -21,6 +21,7 @@ class LatentSegment(AbstractSegment):
 
     @property
     def target_temperature(self):
+        # Supply and target temperatures are equal in a latent segment
         return self._supply_temperature
 
     @property

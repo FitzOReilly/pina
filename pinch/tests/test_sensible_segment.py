@@ -1,6 +1,7 @@
 import unittest
 
 from pinch.data.stream_enums import HeatType
+from pinch.data.latent_segment import LatentSegment
 from pinch.data.sensible_segment import SensibleSegment
 
 
@@ -186,6 +187,23 @@ class TestSensibleSegment(unittest.TestCase):
                 SensibleSegment(heat_capacity_flow_rate, 80, min_temp)
             ]
         )
+
+    def test_equality_comparison(self):
+        self.assertEqual(self.cold_segment, SensibleSegment(1, 20, 200))
+        self.assertNotEqual(self.cold_segment, SensibleSegment(1, 20, 200, 8))
+        self.assertNotEqual(self.cold_segment, SensibleSegment(2, 20, 200))
+        self.assertNotEqual(self.cold_segment, SensibleSegment(1, 40, 200))
+        self.assertNotEqual(self.cold_segment, SensibleSegment(1, 20, 150))
+        self.assertNotEqual(self.cold_segment, LatentSegment(20, 180))
+        self.assertNotEqual(self.cold_segment, LatentSegment(200, 180))
+
+        self.assertEqual(self.hot_segment, SensibleSegment(1.8, 150, 50))
+        self.assertNotEqual(self.hot_segment, SensibleSegment(1.8, 150, 50, 15))
+        self.assertNotEqual(self.hot_segment, SensibleSegment(4, 150, 50))
+        self.assertNotEqual(self.hot_segment, SensibleSegment(1.8, 240, 50))
+        self.assertNotEqual(self.hot_segment, SensibleSegment(1.8, 150, 80))
+        self.assertNotEqual(self.hot_segment, LatentSegment(-180, 150))
+        self.assertNotEqual(self.hot_segment, LatentSegment(-180, 50))
 
 
 if __name__ == "__main__":

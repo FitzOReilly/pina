@@ -61,7 +61,6 @@ class AbstractSegment(abc.ABC):
         """
         pass
 
-    # TODO: Test
     def __eq__(self, other):
         equal = True
 

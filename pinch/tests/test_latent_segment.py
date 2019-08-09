@@ -2,6 +2,7 @@ import unittest
 
 from pinch.data.stream_enums import HeatType
 from pinch.data.latent_segment import LatentSegment
+from pinch.data.sensible_segment import SensibleSegment
 
 
 class TestLatentSegment(unittest.TestCase):
@@ -55,6 +56,19 @@ class TestLatentSegment(unittest.TestCase):
         self.assertEqual(self.hot_segment.split([]), [self.hot_segment])
         self.assertEqual(self.hot_segment.split(segment_temp_included), [self.hot_segment])
         self.assertEqual(self.hot_segment.split(segment_temp_not_included), [self.hot_segment])
+
+    def test_equality_comparison(self):
+        self.assertEqual(self.cold_segment, LatentSegment(200, 100))
+        self.assertNotEqual(self.cold_segment, LatentSegment(200, 100, 10))
+        self.assertNotEqual(self.cold_segment, LatentSegment(300, 100))
+        self.assertNotEqual(self.cold_segment, LatentSegment(200, 150))
+        self.assertNotEqual(self.cold_segment, SensibleSegment(4, 100, 150))
+
+        self.assertEqual(self.hot_segment, LatentSegment(-300, 150))
+        self.assertNotEqual(self.hot_segment, LatentSegment(-300, 150, 5))
+        self.assertNotEqual(self.hot_segment, LatentSegment(-200, 150))
+        self.assertNotEqual(self.hot_segment, LatentSegment(-300, 240))
+        self.assertNotEqual(self.cold_segment, SensibleSegment(6, 150, 100))
 
 
 if __name__ == "__main__":

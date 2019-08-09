@@ -39,6 +39,23 @@ class TestLatentSegment(unittest.TestCase):
         segment = LatentSegment(100, 200, 10)
         self.assertEqual(segment.temperature_difference_contribution, 10)
 
+    def test_min_and_max_temperatures(self):
+        self.assertEqual(self.cold_segment.min_temperature, 100)
+        self.assertEqual(self.cold_segment.max_temperature, 100)
+        self.assertEqual(self.hot_segment.min_temperature, 150)
+        self.assertEqual(self.hot_segment.max_temperature, 150)
+
+    def test_split(self):
+        segment_temp_included = [100, 150]
+        segment_temp_not_included = [90, 140]
+        self.assertEqual(self.cold_segment.split([]), [self.cold_segment])
+        self.assertEqual(self.cold_segment.split(segment_temp_included), [self.cold_segment])
+        self.assertEqual(self.cold_segment.split(segment_temp_not_included), [self.cold_segment])
+
+        self.assertEqual(self.hot_segment.split([]), [self.hot_segment])
+        self.assertEqual(self.hot_segment.split(segment_temp_included), [self.hot_segment])
+        self.assertEqual(self.hot_segment.split(segment_temp_not_included), [self.hot_segment])
+
 
 if __name__ == "__main__":
     unittest.main()

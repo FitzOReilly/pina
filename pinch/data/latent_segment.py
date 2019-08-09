@@ -27,3 +27,9 @@ class LatentSegment(AbstractSegment):
     @property
     def heat_flow(self):
         return self._heat_flow
+
+    def split(self, temperatures):
+        # There is nothing to split in a latent segment because it has a
+        # temperature range of 0, so the returned list always contains the
+        # entire segment
+        return [self]

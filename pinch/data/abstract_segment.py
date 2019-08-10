@@ -5,6 +5,7 @@ class AbstractSegment(abc.ABC):
     """
     Abstract stream segment
     """
+
     def __init__(
             self,
             heat_type,
@@ -50,6 +51,11 @@ class AbstractSegment(abc.ABC):
             return self.supply_temperature
         else:
             return self.target_temperature
+
+    # TODO: Document and test
+    @abc.abstractmethod
+    def add(self, other):
+        pass
 
     @abc.abstractmethod
     def split(self, temperatures):

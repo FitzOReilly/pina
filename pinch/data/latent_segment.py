@@ -6,6 +6,7 @@ class LatentSegment(AbstractSegment):
     """
     Latent segment of a stream in which its temperature does not change.
     """
+
     def __init__(
             self,
             heat_flow,
@@ -27,6 +28,15 @@ class LatentSegment(AbstractSegment):
     @property
     def heat_flow(self):
         return self._heat_flow
+
+    # TODO: Refactor + Test
+    # TODO: Assert that heat types and temparatures are equal
+    def add(self, other, temperature_difference_contribution=None):
+        return LatentSegment(
+            self._heat_flow + other.heat_flow,
+            self._supply_temperature,
+            temperature_difference_contribution
+        )
 
     def split(self, temperatures):
         # There is nothing to split in a latent segment because it has a

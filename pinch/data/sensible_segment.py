@@ -6,6 +6,7 @@ class SensibleSegment(AbstractSegment):
     """
     Sensible segment of a stream in which its temperature changes.
     """
+
     def __init__(
             self,
             heat_capacity_flow_rate,
@@ -36,12 +37,24 @@ class SensibleSegment(AbstractSegment):
             self._heat_capacity_flow_rate \
             * (self._target_temperature - self._supply_temperature)
 
+    # TODO: Refactor + Test
+    # TODO: Assert that heat types and temparatures are equal
+    def add(self, other, temperature_difference_contribution=None):
+        return SensibleSegment(
+            self._heat_capacity_flow_rate + other.heat_capacity_flow_rate,
+            self._supply_temperature,
+            self._target_temperature,
+            temperature_difference_contribution
+        )
+
     def split(self, temperatures):
         if self.heat_flow > 0:
             return self._split_ascending(temperatures)
         else:
             return self._split_descending(temperatures)
 
+    # TODO: Allow zero heat flow?
+    # If not, then such a check should be included in latent segment, too
     def _check_temperatures(self):
         if self._supply_temperature == self._target_temperature:
             raise ValueError("Supply and target temperatures must differ")

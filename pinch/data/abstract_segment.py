@@ -53,6 +53,7 @@ class AbstractSegment(abc.ABC):
             return self.target_temperature
 
     # TODO: Document and test
+    # TODO: Rename add_if_possible? Return None if not possible
     @abc.abstractmethod
     def add(self, other):
         pass
@@ -66,6 +67,12 @@ class AbstractSegment(abc.ABC):
         list contains the entire segment as the only element.
         """
         pass
+
+    # TODO: Clean up, document
+    # TODO: Returns None, if not possible
+    def merge_if_possible(self, other, temperature_difference_contribution=None):
+        pass
+
 
     def __eq__(self, other):
         equal = True

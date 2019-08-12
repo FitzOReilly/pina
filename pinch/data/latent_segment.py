@@ -43,3 +43,8 @@ class LatentSegment(AbstractSegment):
         # temperature range of 0, so the returned list always contains the
         # entire segment
         return [self]
+
+    # TODO: Clean up, document
+    # TODO: Returns None, if not possible
+    def merge_if_possible(self, other, temperature_difference_contribution=None):
+        return None

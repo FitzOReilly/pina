@@ -29,14 +29,8 @@ class LatentSegment(AbstractSegment):
     def heat_flow(self):
         return self._heat_flow
 
-    # TODO: Refactor + Test
-    # TODO: Assert that heat types and temparatures are equal
-    def add(self, other, temperature_difference_contribution=None):
-        return LatentSegment(
-            self._heat_flow + other.heat_flow,
-            self._supply_temperature,
-            temperature_difference_contribution
-        )
+    def with_low_supply_temperature(self):
+        return self
 
     def split(self, temperatures):
         # There is nothing to split in a latent segment because it has a
@@ -44,7 +38,14 @@ class LatentSegment(AbstractSegment):
         # entire segment
         return [self]
 
-    # TODO: Clean up, document
-    # TODO: Returns None, if not possible
+    def add_if_possible(self, other, temperature_difference_contribution=None):
+        if self._heat_type == other.heat_type \
+        and self._supply_temperature == other.supply_temperature:
+            return LatentSegment(
+                self._heat_flow + other.heat_flow,
+                self._supply_temperature,
+                temperature_difference_contribution
+            )
+
     def merge_if_possible(self, other, temperature_difference_contribution=None):
-        return None
+        return self.add_if_possible(other, temperature_difference_contribution)

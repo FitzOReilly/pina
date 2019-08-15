@@ -10,33 +10,41 @@ class TestSensibleSegment(unittest.TestCase):
     Test class for SensibleSegment
     """
     def setUp(self):
+        self.neutral_segment = SensibleSegment(2, 50, 50)
+        self.zero_capacity_segment = SensibleSegment(0, 80, 120)
         self.cold_segment = SensibleSegment(1, 20, 200)
         self.hot_segment = SensibleSegment(1.8, 150, 50)
 
     def tearDown(self):
         pass
 
-    def test_zero_temperature_difference(self):
-        with self.assertRaises(ValueError):
-            SensibleSegment(2, 50, 50)
-
     def test_heat_type(self):
+        self.assertEqual(self.neutral_segment.heat_type, HeatType.SENSIBLE)
+        self.assertEqual(self.zero_capacity_segment.heat_type, HeatType.SENSIBLE)
         self.assertEqual(self.cold_segment.heat_type, HeatType.SENSIBLE)
         self.assertEqual(self.hot_segment.heat_type, HeatType.SENSIBLE)
 
     def test_heat_capacity_flow_rate(self):
+        self.assertEqual(self.neutral_segment.heat_capacity_flow_rate, 2)
+        self.assertEqual(self.zero_capacity_segment.heat_capacity_flow_rate, 0)
         self.assertEqual(self.cold_segment.heat_capacity_flow_rate, 1)
         self.assertEqual(self.hot_segment.heat_capacity_flow_rate, 1.8)
 
     def test_supply_temperature(self):
+        self.assertEqual(self.neutral_segment.supply_temperature, 50)
+        self.assertEqual(self.zero_capacity_segment.supply_temperature, 80)
         self.assertEqual(self.cold_segment.supply_temperature, 20)
         self.assertEqual(self.hot_segment.supply_temperature, 150)
 
     def test_target_temperature(self):
+        self.assertEqual(self.neutral_segment.target_temperature, 50)
+        self.assertEqual(self.zero_capacity_segment.target_temperature, 120)
         self.assertEqual(self.cold_segment.target_temperature, 200)
         self.assertEqual(self.hot_segment.target_temperature, 50)
 
     def test_heat_flow(self):
+        self.assertEqual(self.neutral_segment.heat_flow, 0)
+        self.assertEqual(self.zero_capacity_segment.heat_flow, 0)
         self.assertEqual(self.cold_segment.heat_flow, 180)
         self.assertEqual(self.hot_segment.heat_flow, -180)
 
@@ -49,15 +57,33 @@ class TestSensibleSegment(unittest.TestCase):
         self.assertEqual(segment.temperature_difference_contribution, 5)
 
     def test_min_temperature(self):
+        self.assertEqual(self.neutral_segment.min_temperature, 50)
+        self.assertEqual(self.zero_capacity_segment.min_temperature, 80)
         self.assertEqual(self.cold_segment.min_temperature, 20)
         self.assertEqual(self.hot_segment.min_temperature, 50)
 
     def test_max_temperature(self):
+        self.assertEqual(self.neutral_segment.max_temperature, 50)
+        self.assertEqual(self.zero_capacity_segment.max_temperature, 120)
         self.assertEqual(self.cold_segment.max_temperature, 200)
         self.assertEqual(self.hot_segment.max_temperature, 150)
 
     def test_split(self):
-        # Cold stream
+        # Neutral segment
+        self.assertEqual(self.neutral_segment.split([]), [self.neutral_segment])
+        self.assertEqual(self.neutral_segment.split([10, 50, 100]), [self.neutral_segment])
+
+        # Neutral segment with zero heat capacity flow rate
+        self.assertEqual(self.zero_capacity_segment.split([]), [self.zero_capacity_segment])
+        self.assertEqual(
+            self.zero_capacity_segment.split([10, 50, 100]),
+            [
+                SensibleSegment(0, 80, 100),
+                SensibleSegment(0, 100, 120)
+            ]
+        )
+
+        # Cold segment
         heat_capacity_flow_rate = self.cold_segment.heat_capacity_flow_rate
         min_temp = self.cold_segment.min_temperature
         max_temp = self.cold_segment.max_temperature
@@ -123,7 +149,7 @@ class TestSensibleSegment(unittest.TestCase):
             ]
         )
 
-        # Hot stream
+        # Hot segment
         heat_capacity_flow_rate = self.hot_segment.heat_capacity_flow_rate
         min_temp = self.hot_segment.min_temperature
         max_temp = self.hot_segment.max_temperature
@@ -188,7 +214,85 @@ class TestSensibleSegment(unittest.TestCase):
             ]
         )
 
+    def test_with_low_supply_temperature(self):
+        self.assertEqual(self.neutral_segment.with_low_supply_temperature(), self.neutral_segment)
+        self.assertEqual(self.cold_segment.with_low_supply_temperature(), self.cold_segment)
+        self.assertEqual(self.hot_segment.with_low_supply_temperature(), SensibleSegment(-1.8, 50, 150))
+
+    def test_add_if_possible(self):
+        self.assertIsNone(self.cold_segment.add_if_possible(self.neutral_segment))
+        self.assertIsNone(self.neutral_segment.add_if_possible(self.hot_segment))
+        self.assertIsNone(self.cold_segment.add_if_possible(self.hot_segment))
+        self.assertIsNone(self.hot_segment.add_if_possible(self.cold_segment, 10))
+
+        self.assertEqual(
+            self.neutral_segment.add_if_possible(self.neutral_segment),
+            SensibleSegment(4, 50, 50)
+        )
+        self.assertEqual(
+            SensibleSegment(2, 100, 180).add_if_possible(SensibleSegment(0, 100, 180)),
+            SensibleSegment(2, 100, 180)
+        )
+        self.assertEqual(
+            SensibleSegment(0, 100, 180).add_if_possible(SensibleSegment(2, 100, 180)),
+            SensibleSegment(2, 100, 180)
+        )
+        self.assertEqual(
+            SensibleSegment(2, 100, 180).add_if_possible(SensibleSegment(5, 100, 180)),
+            SensibleSegment(7, 100, 180)
+        )
+        self.assertEqual(
+            SensibleSegment(4, 100, 180, 2).add_if_possible(SensibleSegment(2.5, 180, 100, 5), 10),
+            SensibleSegment(1.5, 100, 180, 10)
+        )
+
+    def test_merge_if_possible(self):
+        self.assertIsNone(self.cold_segment.merge_if_possible(self.neutral_segment))
+        self.assertIsNone(self.cold_segment.merge_if_possible(self.hot_segment))
+        self.assertIsNone(self.hot_segment.merge_if_possible(self.cold_segment, 10))
+        self.assertIsNone(SensibleSegment(2, 100, 180).merge_if_possible(SensibleSegment(5, 100, 180)))
+        self.assertIsNone(SensibleSegment(2, 100, 180).merge_if_possible(SensibleSegment(5, 150, 220, 5)))
+        self.assertIsNone(SensibleSegment(2, 100, 180).merge_if_possible(SensibleSegment(5, 180, 240)))
+        self.assertIsNone(SensibleSegment(2, 100, 180).merge_if_possible(SensibleSegment(-2, 180, 220)))
+
+        self.assertEqual(
+            self.neutral_segment.merge_if_possible(self.neutral_segment),
+            SensibleSegment(2, 50, 50)
+        )
+        self.assertEqual(
+            SensibleSegment(0, 80, 180).merge_if_possible(SensibleSegment(0, 180, 120)),
+            SensibleSegment(0, 80, 120)
+        )
+        self.assertEqual(
+            SensibleSegment(2, 100, 180).merge_if_possible(SensibleSegment(2, 180, 220)),
+            SensibleSegment(2, 100, 220)
+        )
+        self.assertEqual(
+            SensibleSegment(2, 100, 180).merge_if_possible(SensibleSegment(2, 180, 140), 5),
+            SensibleSegment(2, 100, 140, 5)
+        )
+        self.assertEqual(
+            SensibleSegment(2, 100, 180).merge_if_possible(SensibleSegment(2, 180, 100)),
+            SensibleSegment(2, 100, 100)
+        )
+
     def test_equality_comparison(self):
+        self.assertEqual(self.neutral_segment, SensibleSegment(2, 50, 50))
+        self.assertNotEqual(self.neutral_segment, SensibleSegment(2, 50, 50, 5))
+        self.assertNotEqual(self.neutral_segment, SensibleSegment(3.5, 50, 50))
+        self.assertNotEqual(self.neutral_segment, SensibleSegment(2, 40, 50))
+        self.assertNotEqual(self.neutral_segment, SensibleSegment(2, 50, 40))
+        self.assertNotEqual(self.neutral_segment, SensibleSegment(2, 40, 40))
+        self.assertNotEqual(self.neutral_segment, LatentSegment(0, 50))
+
+        self.assertEqual(self.zero_capacity_segment, SensibleSegment(0, 80, 120))
+        self.assertNotEqual(self.zero_capacity_segment, SensibleSegment(0, 80, 120, 5))
+        self.assertNotEqual(self.zero_capacity_segment, SensibleSegment(3.5, 80, 120))
+        self.assertNotEqual(self.zero_capacity_segment, SensibleSegment(0, 40, 120))
+        self.assertNotEqual(self.zero_capacity_segment, SensibleSegment(0, 80, 40))
+        self.assertNotEqual(self.zero_capacity_segment, LatentSegment(0, 80))
+        self.assertNotEqual(self.zero_capacity_segment, LatentSegment(0, 120))
+
         self.assertEqual(self.cold_segment, SensibleSegment(1, 20, 200))
         self.assertNotEqual(self.cold_segment, SensibleSegment(1, 20, 200, 8))
         self.assertNotEqual(self.cold_segment, SensibleSegment(2, 20, 200))

@@ -52,10 +52,14 @@ class AbstractSegment(abc.ABC):
         else:
             return self.target_temperature
 
-    # TODO: Document and test
-    # TODO: Rename add_if_possible? Return None if not possible
     @abc.abstractmethod
-    def add(self, other):
+    def with_low_supply_temperature(self):
+        """
+        Returns a segment like self, but with equal supply and minimum
+        temperature and equal target and maximum temperature. The supply and
+        target temperatures may be swapped compared to self. The heat flow
+        remains the same (its sign does not change).
+        """
         pass
 
     @abc.abstractmethod
@@ -68,11 +72,24 @@ class AbstractSegment(abc.ABC):
         """
         pass
 
-    # TODO: Clean up, document
-    # TODO: Returns None, if not possible
-    def merge_if_possible(self, other, temperature_difference_contribution=None):
+    @abc.abstractmethod
+    def add_if_possible(self, other, temperature_difference_contribution):
+        """
+        Returns a segment with the added heat flows of self and other if both
+        have equal minimum temperature and equal maximum temperature, otherwise
+        returns None.
+        """
         pass
 
+    @abc.abstractmethod
+    def merge_if_possible(self, other, temperature_difference_contribution):
+        """
+        If self and other have equal heat capacity flow rate and one's supply
+        temperature equals the other's target temperature then this method
+        returns a segment with the same heat capacity flow rate and the distinct
+        supply and target temperatures. Otherwise returns None.
+        """
+        pass
 
     def __eq__(self, other):
         equal = True

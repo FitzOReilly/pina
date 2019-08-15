@@ -21,7 +21,6 @@ class SensibleSegment(AbstractSegment):
         )
         self._target_temperature = target_temperature
         self._heat_capacity_flow_rate = heat_capacity_flow_rate
-        self._check_temperatures()
 
     @property
     def target_temperature(self):
@@ -37,25 +36,43 @@ class SensibleSegment(AbstractSegment):
             self._heat_capacity_flow_rate \
             * (self._target_temperature - self._supply_temperature)
 
-    # TODO: Refactor + Test
-    # TODO: Rename add_if_possible? Return None if not possible
-    # TODO: Assert that heat types and temparatures are equal
-    def add(self, other, temperature_difference_contribution=None):
-        return SensibleSegment(
-            self._heat_capacity_flow_rate + other.heat_capacity_flow_rate,
-            self._supply_temperature,
-            self._target_temperature,
-            temperature_difference_contribution
-        )
+    def with_low_supply_temperature(self):
+        if self.supply_temperature > self.target_temperature:
+            return SensibleSegment(
+                - self.heat_capacity_flow_rate,
+                self.target_temperature,
+                self.supply_temperature,
+                self.temperature_difference_contribution
+            )
+        else:
+            return self
 
     def split(self, temperatures):
-        if self.heat_flow > 0:
+        if self.supply_temperature < self.target_temperature:
             return self._split_ascending(temperatures)
-        else:
+        elif self.supply_temperature > self.target_temperature:
             return self._split_descending(temperatures)
+        else:
+            return [self]
 
-    # TODO: Clean up, document
-    # TODO: Returns None, if not possible
+    def add_if_possible(self, other, temperature_difference_contribution=None):
+        if self.heat_type == other.heat_type \
+        and self.min_temperature == other.min_temperature \
+        and self.max_temperature == other.max_temperature:
+            if self.supply_temperature == other.supply_temperature:
+                heat_capacity_flow_rate = \
+                    self.heat_capacity_flow_rate + other.heat_capacity_flow_rate
+            else:
+                heat_capacity_flow_rate = \
+                    self.heat_capacity_flow_rate - other.heat_capacity_flow_rate
+
+            return SensibleSegment(
+                heat_capacity_flow_rate,
+                self._supply_temperature,
+                self._target_temperature,
+                temperature_difference_contribution
+            )
+
     def merge_if_possible(self, other, temperature_difference_contribution=None):
         if self.heat_type == other.heat_type \
         and self.heat_capacity_flow_rate == other.heat_capacity_flow_rate:
@@ -73,12 +90,6 @@ class SensibleSegment(AbstractSegment):
                     self._target_temperature,
                     temperature_difference_contribution
                 )
-
-    # TODO: Allow zero heat flow?
-    # If not, then such a check should be included in latent segment, too
-    def _check_temperatures(self):
-        if self._supply_temperature == self._target_temperature:
-            raise ValueError("Supply and target temperatures must differ")
 
     def _split_ascending(self, temperatures):
         if not temperatures:
@@ -149,3 +160,8 @@ class SensibleSegment(AbstractSegment):
             ))
 
         return subsegments
+
+    def __eq__(self, other):
+        return \
+            super().__eq__(other) \
+            and self.heat_capacity_flow_rate == other.heat_capacity_flow_rate

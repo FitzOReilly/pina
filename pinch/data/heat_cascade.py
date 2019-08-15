@@ -1,21 +1,14 @@
 class HeatCascade(object):
     """
-    TODO: Add documentation here
+    Heat cascade consisting of temperature intervals. The heat capacity flow
+    rate is constant in each interval.
     """
 
     def __init__(self, segments):
-        # TODO: Maybe think of a better name
-        # # List of temperature-enthalpy tuples
-        # self._points = []
-
-        # Set of all temperatures, at which intervals start or end
-        self._temps = set()
-
         # List of intervals (which are simply segments) in the cascade
         self._intervals = []
 
-        for s in segments:
-            self.add(s)
+        self.add(segments)
 
     @property
     def intervals(self):
@@ -23,22 +16,38 @@ class HeatCascade(object):
 
     # TODO: Add method that returns all the temperatures with cumulative heat flows
 
-    # TODO: Refactor this monster
-    def add(self, segment):
-        # self._temps.update([segment.min_temperature, segment.max_temperature])
+    # TODO: Test
+    def add(self, segments):
+        """
+        Adds segments to the heat cascade, i.e. each segment's heat flow is
+        added at the respective temperature range.
+        """
 
+        for s in segments:
+            self._add_one(s)
+
+    def _add_one(self, segment):
+        # Split new segment and existing intervals to get rid of overlaps
+        subsegments = segment.with_low_supply_temperature().split(
+            temperature
+            for interval in self._intervals
+            for temperature in [interval.min_temperature, interval.max_temperature]
+        )
         self._intervals = [
             new_interval
             for old_interval in self._intervals
-            # for new_interval in old_interval.split(self._temps)
             for new_interval in old_interval.split([segment.min_temperature, segment.max_temperature])
         ]
 
-        subsegments = segment.split(self._temps)
+        self._add_tailored(subsegments)
 
-        # TODO: Extract function?
-        # Add each subsegments to an existing interval if a matching one is
-        # found, otherwise insert new interval
+        self._merge_intervals()
+
+    def _add_tailored(self, subsegments):
+        # Add the subsegments to the heat cascade.
+        #
+        # The temperature range of each subsegment and each existing interval
+        # must not overlap. They must either match exactly or be separated.
         index = 0
         for s in subsegments:
             while index < len(self._intervals):
@@ -49,7 +58,7 @@ class HeatCascade(object):
                 elif s.min_temperature == self._intervals[index].min_temperature \
                 and s.max_temperature == self._intervals[index].max_temperature:
                     # Matching interval found, add segment to it
-                    self._intervals[index] = self._intervals[index].add(s)
+                    self._intervals[index] = self._intervals[index].add_if_possible(s)
                     break
 
                 index += 1
@@ -57,8 +66,8 @@ class HeatCascade(object):
                 # No matching interval found, append new one
                 self._intervals.append(s)
 
-        # TODO: HACK: Refactor this (extract function?)
-        self._temps.clear()
+    def _merge_intervals(self):
+        # Merges adjacent intervals, if possible.
         index = 0
         while index < len(self._intervals) - 1:
             merged_interval = self._intervals[index].merge_if_possible(self._intervals[index + 1])
@@ -66,20 +75,11 @@ class HeatCascade(object):
                 self._intervals[index] = merged_interval
                 self._intervals.pop(index + 1)
 
-            # TODO: Drop intervals with zero heat flow
             if self._intervals[index].heat_flow == 0:
                 self._intervals.pop(index)
                 continue
 
-            self._temps.update([
-                self._intervals[index].supply_temperature,
-                self._intervals[index].target_temperature
-            ])
-
             index += 1
 
-        if self._intervals is not None:
-            self._temps.update([
-                self._intervals[-1].supply_temperature,
-                self._intervals[-1].target_temperature
-            ])
+        if self._intervals and self._intervals[-1].heat_flow == 0:
+            self._intervals.pop(-1)

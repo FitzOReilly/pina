@@ -15,11 +15,23 @@ class TestHeatCascade(unittest.TestCase):
     def tearDown(self):
         pass
 
+    def test_omit_segments(self):
+        cascade = HeatCascade()
+        self.assertEqual(cascade.intervals, [])
+
     def test_empty(self):
         cascade = HeatCascade([])
         self.assertEqual(cascade.intervals, [])
 
     def test_single_segment(self):
+        neutral_segment = SensibleSegment(2, 80, 80)
+        cascade = HeatCascade([neutral_segment])
+        self.assertEqual(cascade.intervals, [])
+
+        zero_capacity_segment = SensibleSegment(0, 80, 120)
+        cascade = HeatCascade([zero_capacity_segment])
+        self.assertEqual(cascade.intervals, [])
+
         cold_segment = SensibleSegment(1, 20, 200)
         cascade = HeatCascade([cold_segment])
         self.assertEqual(cascade.intervals, [cold_segment])
@@ -151,6 +163,47 @@ class TestHeatCascade(unittest.TestCase):
         ]
         cascade = HeatCascade(segments)
         self.assertEqual(cascade.intervals, [])
+
+    def test_add(self):
+        cold_cascade = HeatCascade()
+        cold_cascade.add([SensibleSegment(2, 25, 140)])
+        self.assertEqual(cold_cascade.intervals, [SensibleSegment(2, 25, 140)])
+        cold_cascade.add([SensibleSegment(4, 85, 145)])
+        self.assertEqual(
+            cold_cascade.intervals,
+            [
+                SensibleSegment(2, 25, 85),
+                SensibleSegment(6, 85, 140),
+                SensibleSegment(4, 140, 145)
+            ]
+        )
+
+        hot_cascade = HeatCascade()
+        hot_cascade.add([SensibleSegment(3, 165, 55)])
+        self.assertEqual(hot_cascade.intervals, [SensibleSegment(-3, 55, 165)])
+        hot_cascade.add([SensibleSegment(1.5, 145, 25)])
+        self.assertEqual(
+            hot_cascade.intervals,
+            [
+                SensibleSegment(-1.5, 25, 55),
+                SensibleSegment(-4.5, 55, 145),
+                SensibleSegment(-3, 145, 165)
+            ]
+        )
+
+        mixed_cascade = HeatCascade(cold_cascade.intervals)
+        self.assertEqual(mixed_cascade.intervals, cold_cascade.intervals)
+        mixed_cascade.add(hot_cascade.intervals)
+        self.assertEqual(
+            mixed_cascade.intervals,
+            [
+                SensibleSegment(0.5, 25, 55),
+                SensibleSegment(-2.5, 55, 85),
+                SensibleSegment(1.5, 85, 140),
+                SensibleSegment(-0.5, 140, 145),
+                SensibleSegment(-3, 145, 165)
+            ]
+        )
 
 
 if __name__ == "__main__":

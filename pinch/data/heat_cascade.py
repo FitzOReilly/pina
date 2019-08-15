@@ -4,7 +4,7 @@ class HeatCascade(object):
     rate is constant in each interval.
     """
 
-    def __init__(self, segments):
+    def __init__(self, segments=[]):
         # List of intervals (which are simply segments) in the cascade
         self._intervals = []
 
@@ -14,9 +14,6 @@ class HeatCascade(object):
     def intervals(self):
         return self._intervals
 
-    # TODO: Add method that returns all the temperatures with cumulative heat flows
-
-    # TODO: Test
     def add(self, segments):
         """
         Adds segments to the heat cascade, i.e. each segment's heat flow is

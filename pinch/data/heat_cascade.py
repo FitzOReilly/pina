@@ -52,10 +52,11 @@ class HeatCascade(object):
                     # No matching interval found, insert new one
                     self._intervals.insert(index, s)
                     break
-                elif s.min_temperature == self._intervals[index].min_temperature \
-                and s.max_temperature == self._intervals[index].max_temperature:
+
+                added_interval = self._intervals[index].add_if_possible(s)
+                if added_interval is not None:
                     # Matching interval found, add segment to it
-                    self._intervals[index] = self._intervals[index].add_if_possible(s)
+                    self._intervals[index] = added_interval
                     break
 
                 index += 1

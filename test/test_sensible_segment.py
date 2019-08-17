@@ -245,6 +245,24 @@ class TestSensibleSegment(unittest.TestCase):
         self.assertEqual(self.cold_segment.with_low_supply_temperature(), self.cold_segment)
         self.assertEqual(self.hot_segment.with_low_supply_temperature(), SensibleSegment(-1.8, 50, 150))
 
+    def test_with_absolute_heat_flow(self):
+        self.assertEqual(SensibleSegment(2, 50, 50).with_absolute_heat_flow(), SensibleSegment(2, 50, 50))
+        self.assertEqual(SensibleSegment(0, 80, 120).with_absolute_heat_flow(), SensibleSegment(0, 80, 120))
+        self.assertEqual(SensibleSegment(1, 20, 200).with_absolute_heat_flow(), SensibleSegment(1, 20, 200))
+        self.assertEqual(SensibleSegment(-1, 20, 200, 5).with_absolute_heat_flow(), SensibleSegment(1, 20, 200, 5))
+        self.assertEqual(SensibleSegment(1.8, 150, 50).with_absolute_heat_flow(), SensibleSegment(-1.8, 150, 50))
+        self.assertEqual(SensibleSegment(-1.8, 150, 50).with_absolute_heat_flow(), SensibleSegment(-1.8, 150, 50))
+        self.assertEqual(SensibleSegment(1.8, 150, 50, 10).with_absolute_heat_flow(), SensibleSegment(-1.8, 150, 50, 10))
+
+    def test_with_inverted_heat_flow(self):
+        self.assertEqual(SensibleSegment(2, 50, 50).with_inverted_heat_flow(), SensibleSegment(-2, 50, 50))
+        self.assertEqual(SensibleSegment(0, 80, 120).with_inverted_heat_flow(), SensibleSegment(0, 80, 120))
+        self.assertEqual(SensibleSegment(1, 20, 200).with_inverted_heat_flow(), SensibleSegment(-1, 20, 200))
+        self.assertEqual(SensibleSegment(-1, 20, 200, 5).with_inverted_heat_flow(), SensibleSegment(1, 20, 200, 5))
+        self.assertEqual(SensibleSegment(1.8, 150, 50).with_inverted_heat_flow(), SensibleSegment(-1.8, 150, 50))
+        self.assertEqual(SensibleSegment(-1.8, 150, 50).with_inverted_heat_flow(), SensibleSegment(1.8, 150, 50))
+        self.assertEqual(SensibleSegment(1.8, 150, 50, 10).with_inverted_heat_flow(), SensibleSegment(-1.8, 150, 50, 10))
+
     def test_add_if_possible(self):
         self.assertIsNone(self.cold_segment.add_if_possible(self.neutral_segment))
         self.assertIsNone(self.neutral_segment.add_if_possible(self.hot_segment))

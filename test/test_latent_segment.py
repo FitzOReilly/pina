@@ -95,6 +95,20 @@ class TestLatentSegment(unittest.TestCase):
         self.assertEqual(self.cold_segment.with_low_supply_temperature(), self.cold_segment)
         self.assertEqual(self.hot_segment.with_low_supply_temperature(), self.hot_segment)
 
+    def test_with_absolute_heat_flow(self):
+        self.assertEqual(LatentSegment(0, 80).with_absolute_heat_flow(), LatentSegment(0, 80))
+        self.assertEqual(LatentSegment(200, 100).with_absolute_heat_flow(), LatentSegment(200, 100))
+        self.assertEqual(LatentSegment(200, 100, 5).with_absolute_heat_flow(), LatentSegment(200, 100, 5))
+        self.assertEqual(LatentSegment(-300, 150).with_absolute_heat_flow(), LatentSegment(300, 150))
+        self.assertEqual(LatentSegment(-300, 150, 10).with_absolute_heat_flow(), LatentSegment(300, 150, 10))
+
+    def test_with_inverted_heat_flow(self):
+        self.assertEqual(LatentSegment(0, 80).with_inverted_heat_flow(), LatentSegment(0, 80))
+        self.assertEqual(LatentSegment(200, 100).with_inverted_heat_flow(), LatentSegment(-200, 100))
+        self.assertEqual(LatentSegment(200, 100, 5).with_inverted_heat_flow(), LatentSegment(-200, 100, 5))
+        self.assertEqual(LatentSegment(-300, 150).with_inverted_heat_flow(), LatentSegment(300, 150))
+        self.assertEqual(LatentSegment(-300, 150, 10).with_inverted_heat_flow(), LatentSegment(300, 150, 10))
+
     def test_add_if_possible(self):
         self.assertIsNone(self.cold_segment.add_if_possible(self.neutral_segment))
         self.assertIsNone(self.neutral_segment.add_if_possible(self.hot_segment))

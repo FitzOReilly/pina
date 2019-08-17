@@ -75,6 +75,24 @@ class AbstractSegment(abc.ABC):
         """
         pass
 
+    def with_absolute_heat_flow(self):
+        """
+        Returns the segment with absolute heat flow. The supply and target
+        temperatures remain the same (they are not swapped).
+        """
+        if self.heat_flow < 0:
+            return self.with_inverted_heat_flow()
+        else:
+            return self
+
+    @abc.abstractmethod
+    def with_inverted_heat_flow(self):
+        """
+        Returns the segment with inverted heat flow. The supply and target
+        temperatures remain the same (they are not swapped).
+        """
+        pass
+
     @abc.abstractmethod
     def split(self, temperatures):
         """

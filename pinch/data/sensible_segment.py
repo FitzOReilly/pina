@@ -71,6 +71,15 @@ class SensibleSegment(AbstractSegment):
         else:
             return self
 
+    def with_inverted_heat_flow(self):
+        return \
+            SensibleSegment(
+                - self._heat_capacity_flow_rate,
+                self._supply_temperature,
+                self._target_temperature,
+                self._temperature_difference_contribution
+            )
+
     def split(self, temperatures):
         if self.supply_temperature < self.target_temperature:
             return self._split_ascending(temperatures)

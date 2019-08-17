@@ -51,6 +51,14 @@ class LatentSegment(AbstractSegment):
     def with_low_supply_temperature(self):
         return self
 
+    def with_inverted_heat_flow(self):
+        return \
+            LatentSegment(
+                - self._heat_flow,
+                self._supply_temperature,
+                self._temperature_difference_contribution
+            )
+
     def split(self, temperatures):
         # There is nothing to split in a latent segment because it has a
         # temperature range of 0, so the returned list always contains the

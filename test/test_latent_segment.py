@@ -54,6 +54,28 @@ class TestLatentSegment(unittest.TestCase):
         self.assertEqual(self.hot_segment.min_temperature, 150)
         self.assertEqual(self.hot_segment.max_temperature, 150)
 
+    def test_shift_no_temperature_difference_contribution_given(self):
+        self.assertEqual(LatentSegment(0, 80).shift(), LatentSegment(0, 80, 0))
+        with self.assertRaises(ValueError):
+            LatentSegment(200, 100).shift()
+        with self.assertRaises(ValueError):
+            LatentSegment(-300, 150).shift()
+
+    def test_shift_self_temperature_difference_contribution(self):
+        self.assertEqual(LatentSegment(0, 80, 10).shift(), LatentSegment(0, 80, 0))
+        self.assertEqual(LatentSegment(200, 100, 10).shift(), LatentSegment(200, 110, 0))
+        self.assertEqual(LatentSegment(-300, 150, 10).shift(), LatentSegment(-300, 140, 0))
+
+    def test_shift_default_temperature_difference_contribution(self):
+        self.assertEqual(LatentSegment(0, 80).shift(5), LatentSegment(0, 80, 0))
+        self.assertEqual(LatentSegment(200, 100).shift(5), LatentSegment(200, 105, 0))
+        self.assertEqual(LatentSegment(-300, 150).shift(5), LatentSegment(-300, 145, 0))
+
+    def test_shift_self_and_default_temperature_difference_contribution_(self):
+        self.assertEqual(LatentSegment(0, 80, 10).shift(5), LatentSegment(0, 80, 0))
+        self.assertEqual(LatentSegment(200, 100, 10).shift(5), LatentSegment(200, 110, 0))
+        self.assertEqual(LatentSegment(-300, 150, 10).shift(5), LatentSegment(-300, 140, 0))
+
     def test_split(self):
         self.assertEqual(self.neutral_segment.split([]), [self.neutral_segment])
         self.assertEqual(self.neutral_segment.split([50, 80, 90]), [self.neutral_segment])

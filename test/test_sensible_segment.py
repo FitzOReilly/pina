@@ -68,6 +68,32 @@ class TestSensibleSegment(unittest.TestCase):
         self.assertEqual(self.cold_segment.max_temperature, 200)
         self.assertEqual(self.hot_segment.max_temperature, 150)
 
+    def test_shift_no_temperature_difference_contribution_given(self):
+        self.assertEqual(SensibleSegment(2, 50, 50).shift(), SensibleSegment(2, 50, 50, 0))
+        self.assertEqual(SensibleSegment(0, 80, 120).shift(), SensibleSegment(0, 80, 120, 0))
+        with self.assertRaises(ValueError):
+            SensibleSegment(1, 20, 200).shift()
+        with self.assertRaises(ValueError):
+            SensibleSegment(1.8, 150, 50).shift()
+
+    def test_shift_self_temperature_difference_contribution(self):
+        self.assertEqual(SensibleSegment(2, 50, 50, 10).shift(), SensibleSegment(2, 50, 50, 0))
+        self.assertEqual(SensibleSegment(0, 80, 120, 10).shift(), SensibleSegment(0, 80, 120, 0))
+        self.assertEqual(SensibleSegment(1, 20, 200, 10).shift(), SensibleSegment(1, 30, 210, 0))
+        self.assertEqual(SensibleSegment(1.8, 150, 50, 10).shift(), SensibleSegment(1.8, 140, 40, 0))
+
+    def test_shift_default_temperature_difference_contribution(self):
+        self.assertEqual(SensibleSegment(2, 50, 50).shift(5), SensibleSegment(2, 50, 50, 0))
+        self.assertEqual(SensibleSegment(0, 80, 120).shift(5), SensibleSegment(0, 80, 120, 0))
+        self.assertEqual(SensibleSegment(1, 20, 200).shift(5), SensibleSegment(1, 25, 205, 0))
+        self.assertEqual(SensibleSegment(1.8, 150, 50).shift(5), SensibleSegment(1.8, 145, 45, 0))
+
+    def test_shift_self_and_default_temperature_difference_contribution_(self):
+        self.assertEqual(SensibleSegment(2, 50, 50, 10).shift(5), SensibleSegment(2, 50, 50, 0))
+        self.assertEqual(SensibleSegment(0, 80, 120, 10).shift(5), SensibleSegment(0, 80, 120, 0))
+        self.assertEqual(SensibleSegment(1, 20, 200, 10).shift(5), SensibleSegment(1, 30, 210, 0))
+        self.assertEqual(SensibleSegment(1.8, 150, 50, 10).shift(5), SensibleSegment(1.8, 140, 40, 0))
+
     def test_split(self):
         # Neutral segment
         self.assertEqual(self.neutral_segment.split([]), [self.neutral_segment])

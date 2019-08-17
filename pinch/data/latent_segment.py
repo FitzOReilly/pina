@@ -29,6 +29,25 @@ class LatentSegment(AbstractSegment):
     def heat_flow(self):
         return self._heat_flow
 
+    def shift(self, default_temperature_difference_contribution=None):
+        shift_by = None
+
+        if self.heat_flow == 0:
+            shift_by = 0
+
+        if shift_by is None:
+            shift_by = self.temperature_difference_contribution
+            if shift_by is None:
+                shift_by = default_temperature_difference_contribution
+                if shift_by is None:
+                    raise ValueError("No temperature difference contribution given.")
+
+        if self.heat_flow < 0:
+            shift_by *= -1
+
+        return LatentSegment(
+            self._heat_flow, self._supply_temperature + shift_by, 0)
+
     def with_low_supply_temperature(self):
         return self
 

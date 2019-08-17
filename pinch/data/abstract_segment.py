@@ -53,6 +53,19 @@ class AbstractSegment(abc.ABC):
             return self.target_temperature
 
     @abc.abstractmethod
+    def shift(self, default_temperature_difference_contribution=None):
+        """
+        Returns the segment with supply and target temperatures shifted by
+        (+ temperature_difference_contribution) for cold segments and
+        (- temperature_difference_contribution) for hot segments. If the
+        segment's temperature_difference_contribution is None, the
+        default_temperature_difference_contribution parameter is used instead.
+        If it is also None, an Exception is raised. The
+        temperature_difference_contribution of the returned segment is set to 0.
+        """
+        pass
+
+    @abc.abstractmethod
     def with_low_supply_temperature(self):
         """
         Returns a segment like self, but with equal supply and minimum

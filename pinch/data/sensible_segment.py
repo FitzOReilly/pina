@@ -36,6 +36,30 @@ class SensibleSegment(AbstractSegment):
             self._heat_capacity_flow_rate \
             * (self._target_temperature - self._supply_temperature)
 
+    def shift(self, default_temperature_difference_contribution=None):
+        shift_by = None
+
+        if self.heat_flow == 0:
+            shift_by = 0
+
+        if shift_by is None:
+            shift_by = self.temperature_difference_contribution
+            if shift_by is None:
+                shift_by = default_temperature_difference_contribution
+                if shift_by is None:
+                    raise ValueError("No temperature difference contribution given.")
+
+        if self.heat_flow < 0:
+            shift_by *= -1
+
+        return \
+            SensibleSegment(
+                self._heat_capacity_flow_rate,
+                self._supply_temperature + shift_by,
+                self._target_temperature + shift_by,
+                0
+            )
+
     def with_low_supply_temperature(self):
         if self.supply_temperature > self.target_temperature:
             return SensibleSegment(

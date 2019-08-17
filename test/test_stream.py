@@ -98,15 +98,52 @@ class TestStream(unittest.TestCase):
     def test_segments(self):
         self.assertEqual(
             self.single_sensible_segment.segments,
-            tuple(self.cold_segments[:1])
+            self.cold_segments[:1]
         )
         self.assertEqual(
             self.single_latent_segment.segments,
-            tuple(self.hot_segments[1:2])
+            self.hot_segments[1:2]
         )
-        self.assertEqual(self.cold_stream.segments, tuple(self.cold_segments))
-        self.assertEqual(self.hot_stream.segments, tuple(self.hot_segments))
-        self.assertEqual(self.neutral_stream.segments, tuple(self.mixed_segments))
+        self.assertEqual(self.cold_stream.segments, self.cold_segments)
+        self.assertEqual(self.hot_stream.segments, self.hot_segments)
+        self.assertEqual(self.neutral_stream.segments, self.mixed_segments)
+
+    def test_segments_by_type(self):
+        segments = [
+            SensibleSegment(4, 20, 100),
+            LatentSegment(400, 100),
+            LatentSegment(0, 100),
+            SensibleSegment(4, 100, 0),
+            LatentSegment(-300, 0),
+            SensibleSegment(1.5, 0, 0),
+            SensibleSegment(0, 0, -20)
+        ]
+
+        stream = Stream("A complex stream", segments)
+
+        self.assertEqual(stream.segments, segments)
+        self.assertEqual(
+            stream.neutral_segments,
+            [
+                LatentSegment(0, 100),
+                SensibleSegment(1.5, 0, 0),
+                SensibleSegment(0, 0, -20)
+            ]
+        )
+        self.assertEqual(
+            stream.cold_segments,
+            [
+                SensibleSegment(4, 20, 100),
+                LatentSegment(400, 100)
+            ]
+        )
+        self.assertEqual(
+            stream.hot_segments,
+            [
+                SensibleSegment(4, 100, 0),
+                LatentSegment(-300, 0)
+            ]
+        )
 
 
 if __name__ == "__main__":

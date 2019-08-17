@@ -35,7 +35,31 @@ class Stream(object):
 
     @property
     def segments(self):
-        return self._segments
+        """
+        Returns a list of the stream's segments.
+        """
+        return list(self._segments)
+
+    @property
+    def neutral_segments(self):
+        """
+        Returns a list of the stream's neutral segments.
+        """
+        return [s for s in self._segments if s.heat_flow == 0]
+
+    @property
+    def cold_segments(self):
+        """
+        Returns a list of the stream's cold segments.
+        """
+        return [s for s in self._segments if s.heat_flow > 0]
+
+    @property
+    def hot_segments(self):
+        """
+        Returns a list of the stream's hot segments.
+        """
+        return [s for s in self._segments if s.heat_flow < 0]
 
     @staticmethod
     def _check_segments(segments):

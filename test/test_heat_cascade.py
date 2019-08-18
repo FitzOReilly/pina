@@ -129,18 +129,29 @@ class TestHeatCascade(unittest.TestCase):
         cascade = HeatCascade(segments)
         self.assertEqual(cascade.intervals, segments)
 
-    def test_sensible_and_latent_segments(self):
-        segments = [
-            LatentSegment(200, 100),
-            SensibleSegment(2, 80, 120)
-        ]
+    def test_add_sensible_then_latent_segment(self):
+        sensible_then_latent = HeatCascade([
+            SensibleSegment(2, 80, 120),
+            LatentSegment(200, 100)
+        ])
         expected_intervals = [
             SensibleSegment(2, 80, 100),
             LatentSegment(200, 100),
             SensibleSegment(2, 100, 120)
         ]
-        cascade = HeatCascade(segments)
-        self.assertEqual(cascade.intervals, expected_intervals)
+        self.assertEqual(sensible_then_latent.intervals, expected_intervals)
+
+    def test_add_latent_then_sensible_segment(self):
+        latent_then_sensible = HeatCascade([
+            LatentSegment(200, 100),
+            SensibleSegment(2, 80, 120)
+        ])
+        expected_intervals = [
+            SensibleSegment(2, 80, 100),
+            LatentSegment(200, 100),
+            SensibleSegment(2, 100, 120)
+        ]
+        self.assertEqual(latent_then_sensible.intervals, expected_intervals)
 
     def test_mixed_sensible_segments(self):
         segments = [

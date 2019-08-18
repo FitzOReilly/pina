@@ -70,26 +70,28 @@ class HeatCascade(object):
 
         self._merge_intervals()
 
-    def _add_tailored(self, subsegments):
-        # Add the subsegments to the heat cascade.
+    def _add_tailored(self, segments):
+        # Add the segments to the heat cascade.
         #
-        # The temperature range of each subsegment and each existing interval
-        # must not overlap. They must either match exactly or be separated.
+        # The temperature range of each segment and each existing interval must
+        # not overlap. They must either match exactly or be separated.
         index = 0
-        for s in subsegments:
+        for s in segments:
             while index < len(self._intervals):
-                if s.min_temperature < self._intervals[index].min_temperature:
-                    # No matching interval found, insert new one
-                    self._intervals.insert(index, s)
-                    break
+                if s.min_temperature >= self._intervals[index].max_temperature:
+                    # The segment will be added at higher temperatures
+                    index += 1
+                    continue
 
                 added_interval = self._intervals[index].add_if_possible(s)
-                if added_interval is not None:
+                if added_interval is None:
+                    # No matching interval found, insert new one
+                    self._intervals.insert(index, s)
+                else:
                     # Matching interval found, add segment to it
                     self._intervals[index] = added_interval
-                    break
 
-                index += 1
+                break
             else:
                 # No matching interval found, append new one
                 self._intervals.append(s)

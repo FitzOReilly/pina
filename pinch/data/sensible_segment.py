@@ -198,3 +198,13 @@ class SensibleSegment(AbstractSegment):
         return \
             super().__eq__(other) \
             and self.heat_capacity_flow_rate == other.heat_capacity_flow_rate
+
+    def __repr__(self):
+        return \
+            "{}({}, {}, {}, {})".format(
+                type(self).__qualname__,
+                self._heat_capacity_flow_rate,
+                self._supply_temperature,
+                self._target_temperature,
+                self._temperature_difference_contribution
+            )

@@ -76,3 +76,12 @@ class LatentSegment(AbstractSegment):
 
     def merge_if_possible(self, other, temperature_difference_contribution=None):
         return self.add_if_possible(other, temperature_difference_contribution)
+
+    def __repr__(self):
+        return \
+            "{}({}, {}, {})".format(
+                type(self).__qualname__,
+                self._heat_flow,
+                self._supply_temperature,
+                self._temperature_difference_contribution
+            )

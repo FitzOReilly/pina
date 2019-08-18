@@ -205,6 +205,57 @@ class TestHeatCascade(unittest.TestCase):
             ]
         )
 
+    def test_compute_cumulative_heat_flow(self):
+        cold_cascade = HeatCascade()
+        self.assertEqual(cold_cascade.compute_cumulative_heat_flow(), ([], []))
+        self.assertEqual(cold_cascade.compute_cumulative_heat_flow(100), ([], []))
+
+        cold_cascade.add([SensibleSegment(2, 25, 140)])
+        self.assertEqual(cold_cascade.compute_cumulative_heat_flow(), ([25, 140], [0, 230]))
+        self.assertEqual(cold_cascade.compute_cumulative_heat_flow(100), ([25, 140], [100, 330]))
+
+        cold_cascade.add([SensibleSegment(4, 85, 145)])
+        self.assertEqual(
+            cold_cascade.compute_cumulative_heat_flow(),
+            ([25, 85, 140, 145], [0, 120, 450, 470])
+        )
+        self.assertEqual(
+            cold_cascade.compute_cumulative_heat_flow(100),
+            ([25, 85, 140, 145], [100, 220, 550, 570])
+        )
+
+        hot_cascade = HeatCascade()
+        hot_cascade.add([SensibleSegment(3, 165, 55)])
+        hot_cascade.add([SensibleSegment(1.5, 145, 25)])
+        self.assertEqual(
+            hot_cascade.compute_cumulative_heat_flow(),
+            ([25, 55, 145, 165], [0, -45, -450, -510])
+        )
+        self.assertEqual(
+            hot_cascade.compute_cumulative_heat_flow(510),
+            ([25, 55, 145, 165], [510, 465, 60, 0])
+        )
+
+        mixed_cascade = HeatCascade()
+        mixed_cascade.add(cold_cascade.intervals)
+        mixed_cascade.add(hot_cascade.intervals)
+        self.assertEqual(
+            mixed_cascade.compute_cumulative_heat_flow(),
+            ([25, 55, 85, 140, 145, 165], [0, 15, -60, 22.5, 20, -40])
+        )
+        self.assertEqual(
+            mixed_cascade.compute_cumulative_heat_flow(60),
+            ([25, 55, 85, 140, 145, 165], [60, 75, 0, 82.5, 80, 20])
+        )
+
+    def test_compute_cumulative_heat_flow_detached_segments(self):
+        cascade = HeatCascade()
+        cascade.add([SensibleSegment(1, 20, 50), SensibleSegment(2, 80, 120)])
+        self.assertEqual(
+            cascade.compute_cumulative_heat_flow(),
+            ([20, 50, 80, 120], [0, 30, 30, 110])
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

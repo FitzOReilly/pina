@@ -8,11 +8,22 @@ class HeatCascade(object):
         # List of intervals (which are simply segments) in the cascade
         self._intervals = []
 
+        # The cumulative heat flow at the lowest temperature in the cascade
+        self._heat_offset = 0
+
         self.add(segments)
 
     @property
     def intervals(self):
         return self._intervals
+
+    @property
+    def heat_offset(self):
+        return self._heat_offset
+
+    @heat_offset.setter
+    def heat_offset(self, heat_offset):
+        self._heat_offset = heat_offset
 
     def add(self, segments):
         """
@@ -23,15 +34,13 @@ class HeatCascade(object):
         for s in segments:
             self._add_one(s)
 
-    def compute_cumulative_heat_flow(self, heat_offset=0):
+    def compute_cumulative_heat_flow(self):
         """
         Returns a tuple of two lists:
         * The first list contains all the temperatures at which an interval
           starts or ends
         * The second list contains the cumulative heat flow at each of these
           temperatures
-        A heat_offset can be given that defines the cumulative heat flow at the
-        lowest temperature.
 
         The two lists form the coordinates of the composite curves.
         """
@@ -39,15 +48,12 @@ class HeatCascade(object):
         heat_flows = []
         if self._intervals:
             temperatures.append(self._intervals[0].min_temperature)
-            heat_flows.append(heat_offset)
-            temperatures.append(self._intervals[0].max_temperature)
-            heat_flows.append(heat_offset + self._intervals[0].heat_flow)
-            for i in self._intervals[1:]:
+            heat_flows.append(self._heat_offset)
+            for i in self._intervals:
                 if i.min_temperature != temperatures[-1]:
                     # There is a temperature gap between 2 intervals
                     temperatures.append(i.min_temperature)
                     heat_flows.append(heat_flows[-1])
-
                 temperatures.append(i.max_temperature)
                 heat_flows.append(heat_flows[-1] + i.heat_flow)
 

@@ -219,19 +219,24 @@ class TestHeatCascade(unittest.TestCase):
     def test_compute_cumulative_heat_flow(self):
         cold_cascade = HeatCascade()
         self.assertEqual(cold_cascade.compute_cumulative_heat_flow(), ([], []))
-        self.assertEqual(cold_cascade.compute_cumulative_heat_flow(100), ([], []))
+        cold_cascade.heat_offset = 100
+        self.assertEqual(cold_cascade.compute_cumulative_heat_flow(), ([], []))
 
         cold_cascade.add([SensibleSegment(2, 25, 140)])
+        cold_cascade.heat_offset = 0
         self.assertEqual(cold_cascade.compute_cumulative_heat_flow(), ([25, 140], [0, 230]))
-        self.assertEqual(cold_cascade.compute_cumulative_heat_flow(100), ([25, 140], [100, 330]))
+        cold_cascade.heat_offset = 100
+        self.assertEqual(cold_cascade.compute_cumulative_heat_flow(), ([25, 140], [100, 330]))
 
         cold_cascade.add([SensibleSegment(4, 85, 145)])
+        cold_cascade.heat_offset = 0
         self.assertEqual(
             cold_cascade.compute_cumulative_heat_flow(),
             ([25, 85, 140, 145], [0, 120, 450, 470])
         )
+        cold_cascade.heat_offset = 100
         self.assertEqual(
-            cold_cascade.compute_cumulative_heat_flow(100),
+            cold_cascade.compute_cumulative_heat_flow(),
             ([25, 85, 140, 145], [100, 220, 550, 570])
         )
 
@@ -242,8 +247,9 @@ class TestHeatCascade(unittest.TestCase):
             hot_cascade.compute_cumulative_heat_flow(),
             ([25, 55, 145, 165], [0, -45, -450, -510])
         )
+        hot_cascade.heat_offset = 510
         self.assertEqual(
-            hot_cascade.compute_cumulative_heat_flow(510),
+            hot_cascade.compute_cumulative_heat_flow(),
             ([25, 55, 145, 165], [510, 465, 60, 0])
         )
 
@@ -254,8 +260,9 @@ class TestHeatCascade(unittest.TestCase):
             mixed_cascade.compute_cumulative_heat_flow(),
             ([25, 55, 85, 140, 145, 165], [0, 15, -60, 22.5, 20, -40])
         )
+        mixed_cascade.heat_offset = 60
         self.assertEqual(
-            mixed_cascade.compute_cumulative_heat_flow(60),
+            mixed_cascade.compute_cumulative_heat_flow(),
             ([25, 55, 85, 140, 145, 165], [60, 75, 0, 82.5, 80, 20])
         )
 

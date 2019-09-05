@@ -34,7 +34,15 @@ class HeatCascade(object):
         for s in segments:
             self._add_one(s)
 
-    def compute_cumulative_heat_flow(self):
+    @property
+    def net_heat_flow(self):
+        """
+        Returns the net heat flow summed over all intervals.
+        """
+        return sum(i.heat_flow for i in self._intervals)
+
+    @property
+    def cumulative_heat_flow(self):
         """
         Returns a tuple of two lists:
         * The first list contains all the temperatures at which an interval
@@ -47,14 +55,14 @@ class HeatCascade(object):
         temperatures = []
         heat_flows = []
         if self._intervals:
-            temperatures.append(self._intervals[0].min_temperature)
+            temperatures.append(self._intervals[0].supply_temperature)
             heat_flows.append(self._heat_offset)
             for i in self._intervals:
-                if i.min_temperature != temperatures[-1]:
+                if i.supply_temperature != temperatures[-1]:
                     # There is a temperature gap between 2 intervals
-                    temperatures.append(i.min_temperature)
+                    temperatures.append(i.supply_temperature)
                     heat_flows.append(heat_flows[-1])
-                temperatures.append(i.max_temperature)
+                temperatures.append(i.target_temperature)
                 heat_flows.append(heat_flows[-1] + i.heat_flow)
 
         return temperatures, heat_flows
@@ -64,12 +72,14 @@ class HeatCascade(object):
         subsegments = segment.with_low_supply_temperature().split(
             temperature
             for interval in self._intervals
-            for temperature in [interval.min_temperature, interval.max_temperature]
+            for temperature in [
+                interval.min_temperature, interval.max_temperature]
         )
         self._intervals = [
             new_interval
             for old_interval in self._intervals
-            for new_interval in old_interval.split([segment.min_temperature, segment.max_temperature])
+            for new_interval in old_interval.split([
+                segment.min_temperature, segment.max_temperature])
         ]
 
         self._add_tailored(subsegments)
@@ -106,7 +116,9 @@ class HeatCascade(object):
         # Merges adjacent intervals, if possible.
         index = 0
         while index < len(self._intervals) - 1:
-            merged_interval = self._intervals[index].merge_if_possible(self._intervals[index + 1])
+            merged_interval = \
+                self._intervals[index] \
+                    .merge_if_possible(self._intervals[index + 1])
             if merged_interval is not None:
                 self._intervals[index] = merged_interval
                 self._intervals.pop(index + 1)
@@ -119,3 +131,11 @@ class HeatCascade(object):
 
         if self._intervals and self._intervals[-1].heat_flow == 0:
             self._intervals.pop(-1)
+
+    def __eq__(self, other):
+        equal = True
+
+        equal &= self.intervals == other.intervals
+        equal &= self.heat_offset == other.heat_offset
+
+        return equal

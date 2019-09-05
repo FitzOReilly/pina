@@ -9,6 +9,7 @@ class TestSensibleSegment(unittest.TestCase):
     """
     Test class for SensibleSegment
     """
+
     def setUp(self):
         self.neutral_segment = SensibleSegment(2, 50, 50)
         self.zero_capacity_segment = SensibleSegment(0, 80, 120)

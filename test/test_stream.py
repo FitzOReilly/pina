@@ -10,6 +10,7 @@ class TestStream(unittest.TestCase):
     """
     Test class for Stream
     """
+
     def setUp(self):
         self.cold_segments = [
             SensibleSegment(4, 20, 100),

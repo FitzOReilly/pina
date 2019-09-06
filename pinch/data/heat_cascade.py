@@ -49,6 +49,8 @@ class HeatCascade(object):
           starts or ends
         * The second list contains the cumulative heat flow at each of these
           temperatures
+        The cumulative heat flow at the lowest temperature can be changed by
+        setting heat_offset (default value: 0).
 
         The two lists form the coordinates of the composite curves.
         """

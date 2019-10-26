@@ -1,4 +1,4 @@
-from pinch.data.heat_cascade import HeatCascade
+from pinch.heat_cascade import HeatCascade
 
 
 class StreamTable(object):

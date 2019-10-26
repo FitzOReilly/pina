@@ -1,9 +1,9 @@
 import unittest
 
-from pinch.data.latent_segment import LatentSegment
-from pinch.data.sensible_segment import SensibleSegment
-from pinch.data.stream import Stream
-from pinch.data.stream_enums import HeatType, StreamType
+from pinch.latent_segment import LatentSegment
+from pinch.sensible_segment import SensibleSegment
+from pinch.stream import Stream
+from pinch.stream_enums import HeatType, StreamType
 
 
 class TestStream(unittest.TestCase):

@@ -1,5 +1,5 @@
-from pinch.data.abstract_segment import AbstractSegment
-from pinch.data.stream_enums import HeatType
+from pinch.abstract_segment import AbstractSegment
+from pinch.stream_enums import HeatType
 
 
 class LatentSegment(AbstractSegment):

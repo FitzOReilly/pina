@@ -1,10 +1,10 @@
 import unittest
 
-from pinch.data.heat_cascade import HeatCascade
-from pinch.data.latent_segment import LatentSegment
-from pinch.data.sensible_segment import SensibleSegment
-from pinch.data.stream import Stream
-from pinch.data.stream_table import StreamTable
+from pinch.heat_cascade import HeatCascade
+from pinch.latent_segment import LatentSegment
+from pinch.sensible_segment import SensibleSegment
+from pinch.stream import Stream
+from pinch.stream_table import StreamTable
 
 
 class TestStreamTable(unittest.TestCase):

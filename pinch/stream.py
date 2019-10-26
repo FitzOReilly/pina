@@ -1,4 +1,4 @@
-from pinch.data.stream_enums import StreamType
+from pinch.stream_enums import StreamType
 
 
 class Stream(object):

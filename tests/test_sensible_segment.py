@@ -264,60 +264,71 @@ class TestSensibleSegment(unittest.TestCase):
         self.assertEqual(SensibleSegment(-1.8, 150, 50).with_inverted_heat_flow(), SensibleSegment(1.8, 150, 50))
         self.assertEqual(SensibleSegment(1.8, 150, 50, 10).with_inverted_heat_flow(), SensibleSegment(-1.8, 150, 50, 10))
 
-    def test_add_if_possible(self):
-        self.assertIsNone(self.cold_segment.add_if_possible(self.neutral_segment))
-        self.assertIsNone(self.neutral_segment.add_if_possible(self.hot_segment))
-        self.assertIsNone(self.cold_segment.add_if_possible(self.hot_segment))
-        self.assertIsNone(self.hot_segment.add_if_possible(self.cold_segment, 10))
+    def test_add(self):
+        with self.assertRaises(ValueError):
+            self.cold_segment.add(self.neutral_segment)
+        with self.assertRaises(ValueError):
+            self.neutral_segment.add(self.hot_segment)
+        with self.assertRaises(ValueError):
+            self.cold_segment.add(self.hot_segment)
+        with self.assertRaises(ValueError):
+            self.hot_segment.add(self.cold_segment, 10)
 
         self.assertEqual(
-            self.neutral_segment.add_if_possible(self.neutral_segment),
+            self.neutral_segment.add(self.neutral_segment),
             SensibleSegment(4, 50, 50)
         )
         self.assertEqual(
-            SensibleSegment(2, 100, 180).add_if_possible(SensibleSegment(0, 100, 180)),
+            SensibleSegment(2, 100, 180).add(SensibleSegment(0, 100, 180)),
             SensibleSegment(2, 100, 180)
         )
         self.assertEqual(
-            SensibleSegment(0, 100, 180).add_if_possible(SensibleSegment(2, 100, 180)),
+            SensibleSegment(0, 100, 180).add(SensibleSegment(2, 100, 180)),
             SensibleSegment(2, 100, 180)
         )
         self.assertEqual(
-            SensibleSegment(2, 100, 180).add_if_possible(SensibleSegment(5, 100, 180)),
+            SensibleSegment(2, 100, 180).add(SensibleSegment(5, 100, 180)),
             SensibleSegment(7, 100, 180)
         )
         self.assertEqual(
-            SensibleSegment(4, 100, 180, 2).add_if_possible(SensibleSegment(2.5, 180, 100, 5), 10),
+            SensibleSegment(4, 100, 180, 2).add(SensibleSegment(2.5, 180, 100, 5), 10),
             SensibleSegment(1.5, 100, 180, 10)
         )
 
-    def test_merge_if_possible(self):
-        self.assertIsNone(self.cold_segment.merge_if_possible(self.neutral_segment))
-        self.assertIsNone(self.cold_segment.merge_if_possible(self.hot_segment))
-        self.assertIsNone(self.hot_segment.merge_if_possible(self.cold_segment, 10))
-        self.assertIsNone(SensibleSegment(2, 100, 180).merge_if_possible(SensibleSegment(5, 100, 180)))
-        self.assertIsNone(SensibleSegment(2, 100, 180).merge_if_possible(SensibleSegment(5, 150, 220, 5)))
-        self.assertIsNone(SensibleSegment(2, 100, 180).merge_if_possible(SensibleSegment(5, 180, 240)))
-        self.assertIsNone(SensibleSegment(2, 100, 180).merge_if_possible(SensibleSegment(-2, 180, 220)))
+    def test_link(self):
+        with self.assertRaises(ValueError):
+            self.cold_segment.link(self.neutral_segment)
+        with self.assertRaises(ValueError):
+            self.cold_segment.link(self.hot_segment)
+        with self.assertRaises(ValueError):
+            self.hot_segment.link(self.cold_segment, 10)
+        with self.assertRaises(ValueError):
+            SensibleSegment(2, 100, 180).link(SensibleSegment(5, 100, 180))
+        with self.assertRaises(ValueError):
+            SensibleSegment(2, 100, 180).link(SensibleSegment(5, 150, 220, 5))
+        with self.assertRaises(ValueError):
+            SensibleSegment(2, 100, 180).link(SensibleSegment(5, 180, 240))
+        with self.assertRaises(ValueError):
+            SensibleSegment(2, 100, 180).link(SensibleSegment(-2, 180, 220))
 
         self.assertEqual(
-            self.neutral_segment.merge_if_possible(self.neutral_segment),
+            self.neutral_segment.link(self.neutral_segment),
             SensibleSegment(2, 50, 50)
         )
         self.assertEqual(
-            SensibleSegment(0, 80, 180).merge_if_possible(SensibleSegment(0, 180, 120)),
+            SensibleSegment(0, 80, 180).link(SensibleSegment(0, 180, 120)),
             SensibleSegment(0, 80, 120)
         )
         self.assertEqual(
-            SensibleSegment(2, 100, 180).merge_if_possible(SensibleSegment(2, 180, 220)),
+            SensibleSegment(2, 100, 180).link(SensibleSegment(2, 180, 220)),
             SensibleSegment(2, 100, 220)
         )
         self.assertEqual(
-            SensibleSegment(2, 100, 180).merge_if_possible(SensibleSegment(2, 180, 140), 5),
+            SensibleSegment(2, 100, 180).link(SensibleSegment(2, 180, 140), 5),
             SensibleSegment(2, 100, 140, 5)
         )
         self.assertEqual(
-            SensibleSegment(2, 100, 180).merge_if_possible(SensibleSegment(2, 180, 100)),
+            SensibleSegment(2, 100, 180).link(SensibleSegment(2, 180, 100)),
             SensibleSegment(2, 100, 100)
         )
 

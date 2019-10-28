@@ -109,43 +109,51 @@ class TestLatentSegment(unittest.TestCase):
         self.assertEqual(LatentSegment(-300, 150).with_inverted_heat_flow(), LatentSegment(300, 150))
         self.assertEqual(LatentSegment(-300, 150, 10).with_inverted_heat_flow(), LatentSegment(300, 150, 10))
 
-    def test_add_if_possible(self):
-        self.assertIsNone(self.cold_segment.add_if_possible(self.neutral_segment))
-        self.assertIsNone(self.neutral_segment.add_if_possible(self.hot_segment))
-        self.assertIsNone(self.cold_segment.add_if_possible(self.hot_segment))
-        self.assertIsNone(self.hot_segment.add_if_possible(self.cold_segment, 10))
+    def test_add(self):
+        with self.assertRaises(ValueError):
+            self.cold_segment.add(self.neutral_segment)
+        with self.assertRaises(ValueError):
+            self.neutral_segment.add(self.hot_segment)
+        with self.assertRaises(ValueError):
+            self.cold_segment.add(self.hot_segment)
+        with self.assertRaises(ValueError):
+            self.hot_segment.add(self.cold_segment, 10)
 
         self.assertEqual(
-            self.neutral_segment.add_if_possible(self.neutral_segment),
+            self.neutral_segment.add(self.neutral_segment),
             LatentSegment(0, 80)
         )
 
         self.assertEqual(
-            LatentSegment(200, 100).add_if_possible(LatentSegment(50, 100)),
+            LatentSegment(200, 100).add(LatentSegment(50, 100)),
             LatentSegment(250, 100)
         )
         self.assertEqual(
-            LatentSegment(200, 100, 20).add_if_possible(LatentSegment(-150, 100, 5), 10),
+            LatentSegment(200, 100, 20).add(LatentSegment(-150, 100, 5), 10),
             LatentSegment(50, 100, 10)
         )
 
-    def test_merge_if_possible(self):
-        self.assertIsNone(self.cold_segment.merge_if_possible(self.neutral_segment))
-        self.assertIsNone(self.neutral_segment.merge_if_possible(self.hot_segment))
-        self.assertIsNone(self.cold_segment.merge_if_possible(self.hot_segment))
-        self.assertIsNone(self.hot_segment.merge_if_possible(self.cold_segment, 10))
+    def test_link(self):
+        with self.assertRaises(ValueError):
+            self.cold_segment.link(self.neutral_segment)
+        with self.assertRaises(ValueError):
+            self.neutral_segment.link(self.hot_segment)
+        with self.assertRaises(ValueError):
+            self.cold_segment.link(self.hot_segment)
+        with self.assertRaises(ValueError):
+            self.hot_segment.link(self.cold_segment, 10)
 
         self.assertEqual(
-            self.neutral_segment.merge_if_possible(self.neutral_segment),
+            self.neutral_segment.link(self.neutral_segment),
             LatentSegment(0, 80)
         )
 
         self.assertEqual(
-            LatentSegment(200, 100).merge_if_possible(LatentSegment(50, 100)),
+            LatentSegment(200, 100).link(LatentSegment(50, 100)),
             LatentSegment(250, 100)
         )
         self.assertEqual(
-            LatentSegment(200, 100, 20).merge_if_possible(LatentSegment(-150, 100, 5), 10),
+            LatentSegment(200, 100, 20).link(LatentSegment(-150, 100, 5), 10),
             LatentSegment(50, 100, 10)
         )
 

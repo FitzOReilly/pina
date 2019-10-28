@@ -190,7 +190,7 @@ class TestHeatCascade(unittest.TestCase):
             cascade.cumulative_heat_flow,
             ([20, 60, 85, 120], [0, -80, -155, -190]))
 
-    def test_merge_cold_sensible_segments(self):
+    def test_link_cold_sensible_segments(self):
         segments = [
             SensibleSegment(2, 20, 80),
             SensibleSegment(2, 80, 120)
@@ -202,7 +202,7 @@ class TestHeatCascade(unittest.TestCase):
             cascade.cumulative_heat_flow,
             ([20, 120], [0, 200]))
 
-    def test_merge_hot_sensible_segments(self):
+    def test_link_hot_sensible_segments(self):
         segments = [
             SensibleSegment(2, 120, 80),
             SensibleSegment(2, 80, 20)
@@ -214,7 +214,7 @@ class TestHeatCascade(unittest.TestCase):
             cascade.cumulative_heat_flow,
             ([20, 120], [0, -200]))
 
-    def test_merge_latent_segments(self):
+    def test_link_latent_segments(self):
         segments = [
             LatentSegment(200, 100),
             LatentSegment(150, 100),

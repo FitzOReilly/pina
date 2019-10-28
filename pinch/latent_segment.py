@@ -65,17 +65,22 @@ class LatentSegment(AbstractSegment):
         # entire segment
         return [self]
 
-    def add_if_possible(self, other, temperature_difference_contribution=None):
-        if self._heat_type == other.heat_type \
-        and self._supply_temperature == other.supply_temperature:
-            return LatentSegment(
-                self._heat_flow + other.heat_flow,
-                self._supply_temperature,
-                temperature_difference_contribution
-            )
+    def add(self, other, temperature_difference_contribution=None):
+        if self._heat_type != other.heat_type:
+            raise ValueError("Heat type mismatch: {} != {}".format(
+                self._heat_type, other.heat_type))
+        elif self._supply_temperature != other.supply_temperature:
+            raise ValueError("Temperature mismatch: {} != {}".format(
+                self._supply_temperature, other.supply_temperature))
 
-    def merge_if_possible(self, other, temperature_difference_contribution=None):
-        return self.add_if_possible(other, temperature_difference_contribution)
+        return LatentSegment(
+            self._heat_flow + other.heat_flow,
+            self._supply_temperature,
+            temperature_difference_contribution
+        )
+
+    def link(self, other, temperature_difference_contribution=None):
+        return self.add(other, temperature_difference_contribution)
 
     def __repr__(self):
         return \

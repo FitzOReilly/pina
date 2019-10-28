@@ -86,7 +86,7 @@ class HeatCascade(object):
 
         self._add_tailored(subsegments)
 
-        self._merge_intervals()
+        self._link_intervals()
 
     def _add_tailored(self, segments):
         # Add the segments to the heat cascade.
@@ -101,28 +101,28 @@ class HeatCascade(object):
                     index += 1
                     continue
 
-                added_interval = self._intervals[index].add_if_possible(s)
-                if added_interval is None:
+                try:
+                    # Add segment to interval
+                    self._intervals[index] = self._intervals[index].add(s)
+                except ValueError:
                     # No matching interval found, insert new one
                     self._intervals.insert(index, s)
-                else:
-                    # Matching interval found, add segment to it
-                    self._intervals[index] = added_interval
 
                 break
             else:
                 # No matching interval found, append new one
                 self._intervals.append(s)
 
-    def _merge_intervals(self):
-        # Merges adjacent intervals, if possible.
+    def _link_intervals(self):
+        # Links adjacent intervals, if possible.
         index = 0
         while index < len(self._intervals) - 1:
-            merged_interval = \
-                self._intervals[index] \
-                    .merge_if_possible(self._intervals[index + 1])
-            if merged_interval is not None:
-                self._intervals[index] = merged_interval
+            try:
+                self._intervals[index] = \
+                    self._intervals[index].link(self._intervals[index + 1])
+            except ValueError:
+                pass
+            else:
                 self._intervals.pop(index + 1)
 
             if self._intervals[index].heat_flow == 0:

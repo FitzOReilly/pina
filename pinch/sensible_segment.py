@@ -88,41 +88,66 @@ class SensibleSegment(AbstractSegment):
         else:
             return [self]
 
-    def add_if_possible(self, other, temperature_difference_contribution=None):
-        if self.heat_type == other.heat_type \
-        and self.min_temperature == other.min_temperature \
-        and self.max_temperature == other.max_temperature:
-            if self.supply_temperature == other.supply_temperature:
-                heat_capacity_flow_rate = \
-                    self.heat_capacity_flow_rate + other.heat_capacity_flow_rate
-            else:
-                heat_capacity_flow_rate = \
-                    self.heat_capacity_flow_rate - other.heat_capacity_flow_rate
+    def add(self, other, temperature_difference_contribution=None):
+        if self._heat_type != other.heat_type:
+            raise ValueError("Heat type mismatch: {} != {}".format(
+                self._heat_type, other.heat_type))
+        elif self.min_temperature != other.min_temperature:
+            raise ValueError("Minimum temperature mismatch: {} != {}".format(
+                self.min_temperature, other.min_temperature))
+        elif self.max_temperature != other.max_temperature:
+            raise ValueError("Maximum temperature mismatch: {} != {}".format(
+                self.max_temperature, other.max_temperature))
 
+        if self.supply_temperature == other.supply_temperature:
+            heat_capacity_flow_rate = \
+                self.heat_capacity_flow_rate + other.heat_capacity_flow_rate
+        else:
+            heat_capacity_flow_rate = \
+                self.heat_capacity_flow_rate - other.heat_capacity_flow_rate
+
+        return SensibleSegment(
+            heat_capacity_flow_rate,
+            self._supply_temperature,
+            self._target_temperature,
+            temperature_difference_contribution
+        )
+
+    def link(self, other, temperature_difference_contribution=None):
+        if self._heat_type != other.heat_type:
+            raise ValueError("Heat type mismatch: {} != {}".format(
+                self._heat_type, other.heat_type))
+        elif self.heat_capacity_flow_rate != other.heat_capacity_flow_rate:
+            raise ValueError("Heat capacity flowrate mismatch: {} != {}".format(
+                self._heat_capacity_flow_rate, other.heat_capacity_flow_rate))
+
+        temp_match = False
+        if self.target_temperature == other.supply_temperature:
+            temp_match = True
+            supply_temp = self._supply_temperature
+            target_temp = other.target_temperature
+        elif self.supply_temperature == other.target_temperature:
+            temp_match = True
+            supply_temp = other.supply_temperature
+            target_temp = self._target_temperature
+
+        if temp_match:
             return SensibleSegment(
-                heat_capacity_flow_rate,
-                self._supply_temperature,
-                self._target_temperature,
+                self._heat_capacity_flow_rate,
+                supply_temp,
+                target_temp,
                 temperature_difference_contribution
             )
-
-    def merge_if_possible(self, other, temperature_difference_contribution=None):
-        if self.heat_type == other.heat_type \
-        and self.heat_capacity_flow_rate == other.heat_capacity_flow_rate:
-            if self.target_temperature == other.supply_temperature:
-                return SensibleSegment(
-                    self._heat_capacity_flow_rate,
-                    self._supply_temperature,
-                    other.target_temperature,
-                    temperature_difference_contribution
+        else:
+            raise ValueError(
+                "No matching supply and target temperatures found:\n"
+                "\tself.supply_temp: {}, self.target_temp: {}\n"
+                "\tother.supply_temp: {}, other.target_temp: {}\n"
+                .format(
+                    self._supply_temperature, self._target_temperature,
+                    other.supply_temperature, other.target_temperature
                 )
-            elif self.supply_temperature == other.target_temperature:
-                return SensibleSegment(
-                    self._heat_capacity_flow_rate,
-                    other.supply_temperature,
-                    self._target_temperature,
-                    temperature_difference_contribution
-                )
+            )
 
     def _split_ascending(self, temperatures):
         if not temperatures:

@@ -104,21 +104,22 @@ class AbstractSegment(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def add_if_possible(self, other, temperature_difference_contribution):
+    def add(self, other, temperature_difference_contribution):
         """
         Returns a segment with the added heat flows of self and other if both
         have equal minimum temperature and equal maximum temperature, otherwise
-        returns None.
+        returns a ValueError.
         """
         pass
 
     @abc.abstractmethod
-    def merge_if_possible(self, other, temperature_difference_contribution):
+    def link(self, other, temperature_difference_contribution):
         """
         If self and other have equal heat capacity flow rate and one's supply
         temperature equals the other's target temperature then this method
-        returns a segment with the same heat capacity flow rate and the distinct
-        supply and target temperatures. Otherwise returns None.
+        returns a segment with the same heat capacity flow rate and the
+        differing supply and target temperatures. Otherwise returns a
+        ValueError.
         """
         pass
 

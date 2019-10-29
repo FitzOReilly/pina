@@ -1,8 +1,8 @@
 import unittest
 
 from pinch.heat_cascade import HeatCascade
-from pinch.latent_segment import LatentSegment
-from pinch.sensible_segment import SensibleSegment
+from pinch.segments.latent_segment import LatentSegment
+from pinch.segments.sensible_segment import SensibleSegment
 
 
 class TestHeatCascade(unittest.TestCase):

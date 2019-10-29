@@ -1,4 +1,4 @@
-from pinch.abstract_segment import AbstractSegment
+from pinch.segments.abstract_segment import AbstractSegment
 from pinch.stream_enums import HeatType
 
 

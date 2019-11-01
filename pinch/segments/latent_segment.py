@@ -14,11 +14,14 @@ class LatentSegment(AbstractSegment):
             temperature_difference_contribution=None
     ):
         super().__init__(
-            heat_type=HeatType.LATENT,
             supply_temperature=supply_temperature,
             temperature_difference_contribution=temperature_difference_contribution
         )
         self._heat_flow = heat_flow
+
+    @property
+    def heat_type(self):
+        return HeatType.LATENT
 
     @property
     def target_temperature(self):
@@ -66,9 +69,9 @@ class LatentSegment(AbstractSegment):
         return [self]
 
     def add(self, other, temperature_difference_contribution=None):
-        if self._heat_type != other.heat_type:
+        if self.heat_type != other.heat_type:
             raise ValueError("Heat type mismatch: {} != {}".format(
-                self._heat_type, other.heat_type))
+                self.heat_type, other.heat_type))
         elif self._supply_temperature != other.supply_temperature:
             raise ValueError("Temperature mismatch: {} != {}".format(
                 self._supply_temperature, other.supply_temperature))

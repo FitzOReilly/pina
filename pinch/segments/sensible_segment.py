@@ -15,12 +15,15 @@ class SensibleSegment(AbstractSegment):
             temperature_difference_contribution=None
     ):
         super().__init__(
-            heat_type=HeatType.SENSIBLE,
             supply_temperature=supply_temperature,
             temperature_difference_contribution=temperature_difference_contribution
         )
         self._target_temperature = target_temperature
         self._heat_capacity_flow_rate = heat_capacity_flow_rate
+
+    @property
+    def heat_type(self):
+        return HeatType.SENSIBLE
 
     @property
     def target_temperature(self):
@@ -89,9 +92,9 @@ class SensibleSegment(AbstractSegment):
             return [self]
 
     def add(self, other, temperature_difference_contribution=None):
-        if self._heat_type != other.heat_type:
+        if self.heat_type != other.heat_type:
             raise ValueError("Heat type mismatch: {} != {}".format(
-                self._heat_type, other.heat_type))
+                self.heat_type, other.heat_type))
         elif self.min_temperature != other.min_temperature:
             raise ValueError("Minimum temperature mismatch: {} != {}".format(
                 self.min_temperature, other.min_temperature))
@@ -114,9 +117,9 @@ class SensibleSegment(AbstractSegment):
         )
 
     def link(self, other, temperature_difference_contribution=None):
-        if self._heat_type != other.heat_type:
+        if self.heat_type != other.heat_type:
             raise ValueError("Heat type mismatch: {} != {}".format(
-                self._heat_type, other.heat_type))
+                self.heat_type, other.heat_type))
         elif self.heat_capacity_flow_rate != other.heat_capacity_flow_rate:
             raise ValueError("Heat capacity flowrate mismatch: {} != {}".format(
                 self._heat_capacity_flow_rate, other.heat_capacity_flow_rate))

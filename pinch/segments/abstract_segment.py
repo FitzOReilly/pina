@@ -8,17 +8,16 @@ class AbstractSegment(abc.ABC):
 
     def __init__(
             self,
-            heat_type,
             supply_temperature,
             temperature_difference_contribution
     ):
-        self._heat_type = heat_type
         self._supply_temperature = supply_temperature
         self._temperature_difference_contribution = temperature_difference_contribution
 
     @property
+    @abc.abstractmethod
     def heat_type(self):
-        return self._heat_type
+        pass
 
     @property
     def temperature_difference_contribution(self):

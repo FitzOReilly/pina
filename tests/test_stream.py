@@ -75,19 +75,19 @@ class TestStream(unittest.TestCase):
         self.assertEqual(self.hot_stream.stream_type, StreamType.HOT)
         self.assertEqual(self.neutral_stream.stream_type, StreamType.NEUTRAL)
 
-    def test_supply_temperature(self):
-        self.assertEqual(self.single_sensible_segment.supply_temperature, 20)
-        self.assertEqual(self.single_latent_segment.supply_temperature, 100)
-        self.assertEqual(self.cold_stream.supply_temperature, 20)
-        self.assertEqual(self.hot_stream.supply_temperature, 250)
-        self.assertEqual(self.neutral_stream.supply_temperature, 20)
+    def test_supply_temp(self):
+        self.assertEqual(self.single_sensible_segment.supply_temp, 20)
+        self.assertEqual(self.single_latent_segment.supply_temp, 100)
+        self.assertEqual(self.cold_stream.supply_temp, 20)
+        self.assertEqual(self.hot_stream.supply_temp, 250)
+        self.assertEqual(self.neutral_stream.supply_temp, 20)
 
-    def test_target_temperature(self):
-        self.assertEqual(self.single_sensible_segment.target_temperature, 100)
-        self.assertEqual(self.single_latent_segment.target_temperature, 100)
-        self.assertEqual(self.cold_stream.target_temperature, 380)
-        self.assertEqual(self.hot_stream.target_temperature, 50)
-        self.assertEqual(self.neutral_stream.target_temperature, 20)
+    def test_target_temp(self):
+        self.assertEqual(self.single_sensible_segment.target_temp, 100)
+        self.assertEqual(self.single_latent_segment.target_temp, 100)
+        self.assertEqual(self.cold_stream.target_temp, 380)
+        self.assertEqual(self.hot_stream.target_temp, 50)
+        self.assertEqual(self.neutral_stream.target_temp, 20)
 
     def test_heat_flow(self):
         self.assertEqual(self.single_sensible_segment.heat_flow, 320)

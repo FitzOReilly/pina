@@ -22,12 +22,12 @@ class Stream(object):
             return StreamType.NEUTRAL
 
     @property
-    def supply_temperature(self):
-        return self._segments[0].supply_temperature
+    def supply_temp(self):
+        return self._segments[0].supply_temp
 
     @property
-    def target_temperature(self):
-        return self._segments[-1].target_temperature
+    def target_temp(self):
+        return self._segments[-1].target_temp
 
     @property
     def heat_flow(self):
@@ -69,6 +69,6 @@ class Stream(object):
 
         # Stream must be continuous
         for i in range(len(segments) - 1):
-            if (segments[i + 1].supply_temperature
-                != segments[i].target_temperature):
+            if (segments[i + 1].supply_temp
+                != segments[i].target_temp):
                 raise ValueError("Stream must be continuous over all segments")

@@ -31,17 +31,17 @@ class TestSensibleSegment(unittest.TestCase):
         self.assertEqual(self.cold_segment.heat_capacity_flow_rate, 1)
         self.assertEqual(self.hot_segment.heat_capacity_flow_rate, 1.8)
 
-    def test_supply_temperature(self):
-        self.assertEqual(self.neutral_segment.supply_temperature, 50)
-        self.assertEqual(self.zero_capacity_segment.supply_temperature, 80)
-        self.assertEqual(self.cold_segment.supply_temperature, 20)
-        self.assertEqual(self.hot_segment.supply_temperature, 150)
+    def test_supply_temp(self):
+        self.assertEqual(self.neutral_segment.supply_temp, 50)
+        self.assertEqual(self.zero_capacity_segment.supply_temp, 80)
+        self.assertEqual(self.cold_segment.supply_temp, 20)
+        self.assertEqual(self.hot_segment.supply_temp, 150)
 
-    def test_target_temperature(self):
-        self.assertEqual(self.neutral_segment.target_temperature, 50)
-        self.assertEqual(self.zero_capacity_segment.target_temperature, 120)
-        self.assertEqual(self.cold_segment.target_temperature, 200)
-        self.assertEqual(self.hot_segment.target_temperature, 50)
+    def test_target_temp(self):
+        self.assertEqual(self.neutral_segment.target_temp, 50)
+        self.assertEqual(self.zero_capacity_segment.target_temp, 120)
+        self.assertEqual(self.cold_segment.target_temp, 200)
+        self.assertEqual(self.hot_segment.target_temp, 50)
 
     def test_heat_flow(self):
         self.assertEqual(self.neutral_segment.heat_flow, 0)
@@ -49,27 +49,27 @@ class TestSensibleSegment(unittest.TestCase):
         self.assertEqual(self.cold_segment.heat_flow, 180)
         self.assertEqual(self.hot_segment.heat_flow, -180)
 
-    def test_default_temperature_difference_contribution(self):
-        self.assertEqual(self.cold_segment.temperature_difference_contribution, None)
-        self.assertEqual(self.hot_segment.temperature_difference_contribution, None)
+    def test_default_temp_diff_contrib(self):
+        self.assertEqual(self.cold_segment.temp_diff_contrib, None)
+        self.assertEqual(self.hot_segment.temp_diff_contrib, None)
 
-    def test_temperature_difference_contribution(self):
+    def test_temp_diff_contrib(self):
         segment = SensibleSegment(1, 20, 200, 5)
-        self.assertEqual(segment.temperature_difference_contribution, 5)
+        self.assertEqual(segment.temp_diff_contrib, 5)
 
-    def test_min_temperature(self):
-        self.assertEqual(self.neutral_segment.min_temperature, 50)
-        self.assertEqual(self.zero_capacity_segment.min_temperature, 80)
-        self.assertEqual(self.cold_segment.min_temperature, 20)
-        self.assertEqual(self.hot_segment.min_temperature, 50)
+    def test_min_temp(self):
+        self.assertEqual(self.neutral_segment.min_temp, 50)
+        self.assertEqual(self.zero_capacity_segment.min_temp, 80)
+        self.assertEqual(self.cold_segment.min_temp, 20)
+        self.assertEqual(self.hot_segment.min_temp, 50)
 
-    def test_max_temperature(self):
-        self.assertEqual(self.neutral_segment.max_temperature, 50)
-        self.assertEqual(self.zero_capacity_segment.max_temperature, 120)
-        self.assertEqual(self.cold_segment.max_temperature, 200)
-        self.assertEqual(self.hot_segment.max_temperature, 150)
+    def test_max_temp(self):
+        self.assertEqual(self.neutral_segment.max_temp, 50)
+        self.assertEqual(self.zero_capacity_segment.max_temp, 120)
+        self.assertEqual(self.cold_segment.max_temp, 200)
+        self.assertEqual(self.hot_segment.max_temp, 150)
 
-    def test_shift_no_temperature_difference_contribution_given(self):
+    def test_shift_no_temp_diff_contrib_given(self):
         self.assertEqual(SensibleSegment(2, 50, 50).shift(), SensibleSegment(2, 50, 50, 0))
         self.assertEqual(SensibleSegment(0, 80, 120).shift(), SensibleSegment(0, 80, 120, 0))
         with self.assertRaises(ValueError):
@@ -77,19 +77,19 @@ class TestSensibleSegment(unittest.TestCase):
         with self.assertRaises(ValueError):
             SensibleSegment(1.8, 150, 50).shift()
 
-    def test_shift_self_temperature_difference_contribution(self):
+    def test_shift_self_temp_diff_contrib(self):
         self.assertEqual(SensibleSegment(2, 50, 50, 10).shift(), SensibleSegment(2, 50, 50, 0))
         self.assertEqual(SensibleSegment(0, 80, 120, 10).shift(), SensibleSegment(0, 80, 120, 0))
         self.assertEqual(SensibleSegment(1, 20, 200, 10).shift(), SensibleSegment(1, 30, 210, 0))
         self.assertEqual(SensibleSegment(1.8, 150, 50, 10).shift(), SensibleSegment(1.8, 140, 40, 0))
 
-    def test_shift_default_temperature_difference_contribution(self):
+    def test_shift_default_temp_diff_contrib(self):
         self.assertEqual(SensibleSegment(2, 50, 50).shift(5), SensibleSegment(2, 50, 50, 0))
         self.assertEqual(SensibleSegment(0, 80, 120).shift(5), SensibleSegment(0, 80, 120, 0))
         self.assertEqual(SensibleSegment(1, 20, 200).shift(5), SensibleSegment(1, 25, 205, 0))
         self.assertEqual(SensibleSegment(1.8, 150, 50).shift(5), SensibleSegment(1.8, 145, 45, 0))
 
-    def test_shift_self_and_default_temperature_difference_contribution_(self):
+    def test_shift_self_and_default_temp_diff_contrib_(self):
         self.assertEqual(SensibleSegment(2, 50, 50, 10).shift(5), SensibleSegment(2, 50, 50, 0))
         self.assertEqual(SensibleSegment(0, 80, 120, 10).shift(5), SensibleSegment(0, 80, 120, 0))
         self.assertEqual(SensibleSegment(1, 20, 200, 10).shift(5), SensibleSegment(1, 30, 210, 0))
@@ -112,8 +112,8 @@ class TestSensibleSegment(unittest.TestCase):
 
         # Cold segment
         heat_capacity_flow_rate = self.cold_segment.heat_capacity_flow_rate
-        min_temp = self.cold_segment.min_temperature
-        max_temp = self.cold_segment.max_temperature
+        min_temp = self.cold_segment.min_temp
+        max_temp = self.cold_segment.max_temp
 
         match_min_max = [20, 200]
         beyond_min_max = [-25, 430]
@@ -178,8 +178,8 @@ class TestSensibleSegment(unittest.TestCase):
 
         # Hot segment
         heat_capacity_flow_rate = self.hot_segment.heat_capacity_flow_rate
-        min_temp = self.hot_segment.min_temperature
-        max_temp = self.hot_segment.max_temperature
+        min_temp = self.hot_segment.min_temp
+        max_temp = self.hot_segment.max_temp
 
         match_min_max = [150, 50]
         beyond_min_max = [-25, 430]
@@ -241,10 +241,10 @@ class TestSensibleSegment(unittest.TestCase):
             ]
         )
 
-    def test_with_low_supply_temperature(self):
-        self.assertEqual(self.neutral_segment.with_low_supply_temperature(), self.neutral_segment)
-        self.assertEqual(self.cold_segment.with_low_supply_temperature(), self.cold_segment)
-        self.assertEqual(self.hot_segment.with_low_supply_temperature(), SensibleSegment(-1.8, 50, 150))
+    def test_with_low_supply_temp(self):
+        self.assertEqual(self.neutral_segment.with_low_supply_temp(), self.neutral_segment)
+        self.assertEqual(self.cold_segment.with_low_supply_temp(), self.cold_segment)
+        self.assertEqual(self.hot_segment.with_low_supply_temp(), SensibleSegment(-1.8, 50, 150))
 
     def test_with_absolute_heat_flow(self):
         self.assertEqual(SensibleSegment(2, 50, 50).with_absolute_heat_flow(), SensibleSegment(2, 50, 50))

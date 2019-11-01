@@ -57,31 +57,30 @@ class HeatCascade(object):
         temperatures = []
         heat_flows = []
         if self._intervals:
-            temperatures.append(self._intervals[0].supply_temperature)
+            temperatures.append(self._intervals[0].supply_temp)
             heat_flows.append(self._heat_offset)
             for i in self._intervals:
-                if i.supply_temperature != temperatures[-1]:
+                if i.supply_temp != temperatures[-1]:
                     # There is a temperature gap between 2 intervals
-                    temperatures.append(i.supply_temperature)
+                    temperatures.append(i.supply_temp)
                     heat_flows.append(heat_flows[-1])
-                temperatures.append(i.target_temperature)
+                temperatures.append(i.target_temp)
                 heat_flows.append(heat_flows[-1] + i.heat_flow)
 
         return temperatures, heat_flows
 
     def _add_one(self, segment):
         # Split new segment and existing intervals to get rid of overlaps
-        subsegments = segment.with_low_supply_temperature().split(
+        subsegments = segment.with_low_supply_temp().split(
             temperature
             for interval in self._intervals
-            for temperature in [
-                interval.min_temperature, interval.max_temperature]
+            for temperature in [interval.min_temp, interval.max_temp]
         )
         self._intervals = [
             new_interval
             for old_interval in self._intervals
             for new_interval in old_interval.split([
-                segment.min_temperature, segment.max_temperature])
+                segment.min_temp, segment.max_temp])
         ]
 
         self._add_tailored(subsegments)
@@ -96,7 +95,7 @@ class HeatCascade(object):
         index = 0
         for s in segments:
             while index < len(self._intervals):
-                if s.min_temperature >= self._intervals[index].max_temperature:
+                if s.min_temp >= self._intervals[index].max_temp:
                     # The segment will be added at higher temperatures
                     index += 1
                     continue

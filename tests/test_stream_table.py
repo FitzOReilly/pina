@@ -26,7 +26,7 @@ class TestStreamTable(unittest.TestCase):
         self.assertEqual(table.hot_utility_target, 0)
         self.assertEqual(table.heat_recovery_target, 0)
         self.assertEqual(table.pinch_temps, [])
-        self.assertEqual(table.default_temp_diff_cont, None)
+        self.assertEqual(table.default_temp_diff_contrib, None)
         self.assertEqual(table.streams, [])
         self.assertEqual(table.cold_cascade, HeatCascade())
         self.assertEqual(table.hot_cascade, HeatCascade())
@@ -40,7 +40,7 @@ class TestStreamTable(unittest.TestCase):
         cold_stream = Stream("Cold stream", [cold_segment])
         hot_stream = Stream("Hot stream", [hot_segment])
         table = StreamTable()
-        table.default_temp_diff_cont = 10
+        table.default_temp_diff_contrib = 10
         table.add([cold_stream, hot_stream])
 
         self.assertEqual(table.cooling_demand, 180)
@@ -49,7 +49,7 @@ class TestStreamTable(unittest.TestCase):
         self.assertEqual(table.hot_utility_target, 70)
         self.assertEqual(table.heat_recovery_target, 110)
         self.assertEqual(table.pinch_temps, [140])
-        self.assertEqual(table.default_temp_diff_cont, 10)
+        self.assertEqual(table.default_temp_diff_contrib, 10)
 
         self.assertEqual(table.streams, [cold_stream, hot_stream])
 
@@ -87,7 +87,7 @@ class TestStreamTable(unittest.TestCase):
         cold_stream = Stream("Cold stream", [cold_segment])
         hot_stream = Stream("Hot stream", [hot_segment])
         table = StreamTable()
-        table.default_temp_diff_cont = 1
+        table.default_temp_diff_contrib = 1
         table.add([cold_stream, hot_stream])
 
         self.assertEqual(table.cooling_demand, 267)
@@ -96,7 +96,7 @@ class TestStreamTable(unittest.TestCase):
         self.assertEqual(table.hot_utility_target, 6)
         self.assertEqual(table.heat_recovery_target, 219)
         self.assertEqual(table.pinch_temps, [21, 94])
-        self.assertEqual(table.default_temp_diff_cont, 1)
+        self.assertEqual(table.default_temp_diff_contrib, 1)
 
     def test_2_pinches(self):
         cold_stream = Stream("Cold stream", [
@@ -106,7 +106,7 @@ class TestStreamTable(unittest.TestCase):
         ])
         hot_stream = Stream("Hot stream", [SensibleSegment(2, 150, 20)])
         table = StreamTable()
-        table.default_temp_diff_cont = 5
+        table.default_temp_diff_contrib = 5
         table.add([cold_stream, hot_stream])
 
         self.assertEqual(table.cooling_demand, 260)
@@ -115,12 +115,12 @@ class TestStreamTable(unittest.TestCase):
         self.assertEqual(table.hot_utility_target, 60)
         self.assertEqual(table.heat_recovery_target, 130)
         self.assertEqual(table.pinch_temps, [105, 145])
-        self.assertEqual(table.default_temp_diff_cont, 5)
+        self.assertEqual(table.default_temp_diff_contrib, 5)
 
     def test_cold_stream_only(self):
         cold_stream = Stream("Cold stream", [LatentSegment(40, 100)])
         table = StreamTable()
-        table.default_temp_diff_cont = 5
+        table.default_temp_diff_contrib = 5
         table.add([cold_stream])
 
         self.assertEqual(table.cooling_demand, 0)
@@ -129,12 +129,12 @@ class TestStreamTable(unittest.TestCase):
         self.assertEqual(table.hot_utility_target, 40)
         self.assertEqual(table.heat_recovery_target, 0)
         self.assertEqual(table.pinch_temps, [105])
-        self.assertEqual(table.default_temp_diff_cont, 5)
+        self.assertEqual(table.default_temp_diff_contrib, 5)
 
     def test_hot_stream_only(self):
         hot_stream = Stream("Hot stream", [SensibleSegment(2, 150, 20)])
         table = StreamTable()
-        table.default_temp_diff_cont = 5
+        table.default_temp_diff_contrib = 5
         table.add([hot_stream])
 
         self.assertEqual(table.cooling_demand, 260)
@@ -143,12 +143,12 @@ class TestStreamTable(unittest.TestCase):
         self.assertEqual(table.hot_utility_target, 0)
         self.assertEqual(table.heat_recovery_target, 0)
         self.assertEqual(table.pinch_temps, [145])
-        self.assertEqual(table.default_temp_diff_cont, 5)
+        self.assertEqual(table.default_temp_diff_contrib, 5)
 
-    def test_individual_temp_diff_cont(self):
+    def test_individual_temp_diff_contrib(self):
         cold_stream = Stream("Cold stream", [LatentSegment(40, 100, 10)])
         table = StreamTable()
-        table.default_temp_diff_cont = 5
+        table.default_temp_diff_contrib = 5
         table.add([cold_stream])
 
         self.assertEqual(table.cooling_demand, 0)
@@ -157,7 +157,7 @@ class TestStreamTable(unittest.TestCase):
         self.assertEqual(table.hot_utility_target, 40)
         self.assertEqual(table.heat_recovery_target, 0)
         self.assertEqual(table.pinch_temps, [110])
-        self.assertEqual(table.default_temp_diff_cont, 5)
+        self.assertEqual(table.default_temp_diff_contrib, 5)
 
 
 if __name__ == "__main__":

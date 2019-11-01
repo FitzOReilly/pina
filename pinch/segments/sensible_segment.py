@@ -1,24 +1,24 @@
-from pinch.segments.abstract_segment import AbstractSegment
+from pinch.segments.base_segment import BaseSegment
 from pinch.stream_enums import HeatType
 
 
-class SensibleSegment(AbstractSegment):
+class SensibleSegment(BaseSegment):
     """
     Sensible segment of a stream in which its temperature changes.
     """
 
     def __init__(
-            self,
-            heat_capacity_flow_rate,
-            supply_temperature,
-            target_temperature,
-            temperature_difference_contribution=None
+        self,
+        heat_capacity_flow_rate,
+        supply_temp,
+        target_temp,
+        temp_diff_contrib=None
     ):
         super().__init__(
-            supply_temperature=supply_temperature,
-            temperature_difference_contribution=temperature_difference_contribution
+            supply_temp=supply_temp,
+            temp_diff_contrib=temp_diff_contrib
         )
-        self._target_temperature = target_temperature
+        self._target_temp = target_temp
         self._heat_capacity_flow_rate = heat_capacity_flow_rate
 
     @property
@@ -26,8 +26,8 @@ class SensibleSegment(AbstractSegment):
         return HeatType.SENSIBLE
 
     @property
-    def target_temperature(self):
-        return self._target_temperature
+    def target_temp(self):
+        return self._target_temp
 
     @property
     def heat_capacity_flow_rate(self):
@@ -37,18 +37,18 @@ class SensibleSegment(AbstractSegment):
     def heat_flow(self):
         return \
             self._heat_capacity_flow_rate \
-            * (self._target_temperature - self._supply_temperature)
+            * (self._target_temp - self._supply_temp)
 
-    def shift(self, default_temperature_difference_contribution=None):
+    def shift(self, default_temp_diff_contrib=None):
         shift_by = None
 
         if self.heat_flow == 0:
             shift_by = 0
 
         if shift_by is None:
-            shift_by = self.temperature_difference_contribution
+            shift_by = self.temp_diff_contrib
             if shift_by is None:
-                shift_by = default_temperature_difference_contribution
+                shift_by = default_temp_diff_contrib
                 if shift_by is None:
                     raise ValueError("No temperature difference contribution given.")
 
@@ -58,18 +58,18 @@ class SensibleSegment(AbstractSegment):
         return \
             SensibleSegment(
                 self._heat_capacity_flow_rate,
-                self._supply_temperature + shift_by,
-                self._target_temperature + shift_by,
+                self._supply_temp + shift_by,
+                self._target_temp + shift_by,
                 0
             )
 
-    def with_low_supply_temperature(self):
-        if self.supply_temperature > self.target_temperature:
+    def with_low_supply_temp(self):
+        if self.supply_temp > self.target_temp:
             return SensibleSegment(
                 - self.heat_capacity_flow_rate,
-                self.target_temperature,
-                self.supply_temperature,
-                self.temperature_difference_contribution
+                self.target_temp,
+                self.supply_temp,
+                self.temp_diff_contrib
             )
         else:
             return self
@@ -78,31 +78,31 @@ class SensibleSegment(AbstractSegment):
         return \
             SensibleSegment(
                 - self._heat_capacity_flow_rate,
-                self._supply_temperature,
-                self._target_temperature,
-                self._temperature_difference_contribution
+                self._supply_temp,
+                self._target_temp,
+                self._temp_diff_contrib
             )
 
     def split(self, temperatures):
-        if self.supply_temperature < self.target_temperature:
+        if self.supply_temp < self.target_temp:
             return self._split_ascending(temperatures)
-        elif self.supply_temperature > self.target_temperature:
+        elif self.supply_temp > self.target_temp:
             return self._split_descending(temperatures)
         else:
             return [self]
 
-    def add(self, other, temperature_difference_contribution=None):
+    def add(self, other, temp_diff_contrib=None):
         if self.heat_type != other.heat_type:
             raise ValueError("Heat type mismatch: {} != {}".format(
                 self.heat_type, other.heat_type))
-        elif self.min_temperature != other.min_temperature:
+        elif self.min_temp != other.min_temp:
             raise ValueError("Minimum temperature mismatch: {} != {}".format(
-                self.min_temperature, other.min_temperature))
-        elif self.max_temperature != other.max_temperature:
+                self.min_temp, other.min_temp))
+        elif self.max_temp != other.max_temp:
             raise ValueError("Maximum temperature mismatch: {} != {}".format(
-                self.max_temperature, other.max_temperature))
+                self.max_temp, other.max_temp))
 
-        if self.supply_temperature == other.supply_temperature:
+        if self.supply_temp == other.supply_temp:
             heat_capacity_flow_rate = \
                 self.heat_capacity_flow_rate + other.heat_capacity_flow_rate
         else:
@@ -111,12 +111,12 @@ class SensibleSegment(AbstractSegment):
 
         return SensibleSegment(
             heat_capacity_flow_rate,
-            self._supply_temperature,
-            self._target_temperature,
-            temperature_difference_contribution
+            self._supply_temp,
+            self._target_temp,
+            temp_diff_contrib
         )
 
-    def link(self, other, temperature_difference_contribution=None):
+    def link(self, other, temp_diff_contrib=None):
         if self.heat_type != other.heat_type:
             raise ValueError("Heat type mismatch: {} != {}".format(
                 self.heat_type, other.heat_type))
@@ -125,21 +125,21 @@ class SensibleSegment(AbstractSegment):
                 self._heat_capacity_flow_rate, other.heat_capacity_flow_rate))
 
         temp_match = False
-        if self.target_temperature == other.supply_temperature:
+        if self.target_temp == other.supply_temp:
             temp_match = True
-            supply_temp = self._supply_temperature
-            target_temp = other.target_temperature
-        elif self.supply_temperature == other.target_temperature:
+            supply_temp = self._supply_temp
+            target_temp = other.target_temp
+        elif self.supply_temp == other.target_temp:
             temp_match = True
-            supply_temp = other.supply_temperature
-            target_temp = self._target_temperature
+            supply_temp = other.supply_temp
+            target_temp = self._target_temp
 
         if temp_match:
             return SensibleSegment(
                 self._heat_capacity_flow_rate,
                 supply_temp,
                 target_temp,
-                temperature_difference_contribution
+                temp_diff_contrib
             )
         else:
             raise ValueError(
@@ -147,8 +147,8 @@ class SensibleSegment(AbstractSegment):
                 "\tself.supply_temp: {}, self.target_temp: {}\n"
                 "\tother.supply_temp: {}, other.target_temp: {}\n"
                 .format(
-                    self._supply_temperature, self._target_temperature,
-                    other.supply_temperature, other.target_temperature
+                    self._supply_temp, self._target_temp,
+                    other.supply_temp, other.target_temp
                 )
             )
 
@@ -158,8 +158,8 @@ class SensibleSegment(AbstractSegment):
 
         subsegments = []
         sorted_temps = sorted(temperatures)
-        low_temp = self.min_temperature
-        high_temp = self.max_temperature
+        low_temp = self.min_temp
+        high_temp = self.max_temp
 
         for current_temp in sorted_temps:
             if current_temp <= low_temp:
@@ -172,7 +172,7 @@ class SensibleSegment(AbstractSegment):
                 self.heat_capacity_flow_rate,
                 low_temp,
                 current_temp,
-                self.temperature_difference_contribution
+                self.temp_diff_contrib
             ))
 
             low_temp = current_temp
@@ -182,7 +182,7 @@ class SensibleSegment(AbstractSegment):
                 self.heat_capacity_flow_rate,
                 low_temp,
                 high_temp,
-                self.temperature_difference_contribution
+                self.temp_diff_contrib
             ))
 
         return subsegments
@@ -193,8 +193,8 @@ class SensibleSegment(AbstractSegment):
 
         subsegments = []
         sorted_temps = sorted(temperatures, reverse=True)
-        low_temp = self.min_temperature
-        high_temp = self.max_temperature
+        low_temp = self.min_temp
+        high_temp = self.max_temp
 
         for current_temp in sorted_temps:
             if current_temp >= high_temp:
@@ -207,7 +207,7 @@ class SensibleSegment(AbstractSegment):
                 self.heat_capacity_flow_rate,
                 high_temp,
                 current_temp,
-                self.temperature_difference_contribution
+                self.temp_diff_contrib
             ))
 
             high_temp = current_temp
@@ -217,7 +217,7 @@ class SensibleSegment(AbstractSegment):
                 self.heat_capacity_flow_rate,
                 high_temp,
                 low_temp,
-                self.temperature_difference_contribution
+                self.temp_diff_contrib
             ))
 
         return subsegments
@@ -232,7 +232,7 @@ class SensibleSegment(AbstractSegment):
             "{}({}, {}, {}, {})".format(
                 type(self).__qualname__,
                 self._heat_capacity_flow_rate,
-                self._supply_temperature,
-                self._target_temperature,
-                self._temperature_difference_contribution
+                self._supply_temp,
+                self._target_temp,
+                self._temp_diff_contrib
             )

@@ -22,56 +22,56 @@ class TestLatentSegment(unittest.TestCase):
         self.assertEqual(self.cold_segment.heat_type, HeatType.LATENT)
         self.assertEqual(self.hot_segment.heat_type, HeatType.LATENT)
 
-    def test_supply_temperature(self):
-        self.assertEqual(self.neutral_segment.supply_temperature, 80)
-        self.assertEqual(self.cold_segment.supply_temperature, 100)
-        self.assertEqual(self.hot_segment.supply_temperature, 150)
+    def test_supply_temp(self):
+        self.assertEqual(self.neutral_segment.supply_temp, 80)
+        self.assertEqual(self.cold_segment.supply_temp, 100)
+        self.assertEqual(self.hot_segment.supply_temp, 150)
 
-    def test_target_temperature(self):
-        self.assertEqual(self.neutral_segment.target_temperature, 80)
-        self.assertEqual(self.cold_segment.target_temperature, 100)
-        self.assertEqual(self.hot_segment.target_temperature, 150)
+    def test_target_temp(self):
+        self.assertEqual(self.neutral_segment.target_temp, 80)
+        self.assertEqual(self.cold_segment.target_temp, 100)
+        self.assertEqual(self.hot_segment.target_temp, 150)
 
     def test_heat_flow(self):
         self.assertEqual(self.neutral_segment.heat_flow, 0)
         self.assertEqual(self.cold_segment.heat_flow, 200)
         self.assertEqual(self.hot_segment.heat_flow, -300)
 
-    def test_default_temperature_difference_contribution(self):
-        self.assertEqual(self.neutral_segment.temperature_difference_contribution, None)
-        self.assertEqual(self.cold_segment.temperature_difference_contribution, None)
-        self.assertEqual(self.hot_segment.temperature_difference_contribution, None)
+    def test_default_temp_diff_contrib(self):
+        self.assertEqual(self.neutral_segment.temp_diff_contrib, None)
+        self.assertEqual(self.cold_segment.temp_diff_contrib, None)
+        self.assertEqual(self.hot_segment.temp_diff_contrib, None)
 
-    def test_temperature_difference_contribution(self):
+    def test_temp_diff_contrib(self):
         segment = LatentSegment(100, 200, 10)
-        self.assertEqual(segment.temperature_difference_contribution, 10)
+        self.assertEqual(segment.temp_diff_contrib, 10)
 
-    def test_min_and_max_temperatures(self):
-        self.assertEqual(self.neutral_segment.min_temperature, 80)
-        self.assertEqual(self.neutral_segment.max_temperature, 80)
-        self.assertEqual(self.cold_segment.min_temperature, 100)
-        self.assertEqual(self.cold_segment.max_temperature, 100)
-        self.assertEqual(self.hot_segment.min_temperature, 150)
-        self.assertEqual(self.hot_segment.max_temperature, 150)
+    def test_min_and_max_temps(self):
+        self.assertEqual(self.neutral_segment.min_temp, 80)
+        self.assertEqual(self.neutral_segment.max_temp, 80)
+        self.assertEqual(self.cold_segment.min_temp, 100)
+        self.assertEqual(self.cold_segment.max_temp, 100)
+        self.assertEqual(self.hot_segment.min_temp, 150)
+        self.assertEqual(self.hot_segment.max_temp, 150)
 
-    def test_shift_no_temperature_difference_contribution_given(self):
+    def test_shift_no_temp_diff_contrib_given(self):
         self.assertEqual(LatentSegment(0, 80).shift(), LatentSegment(0, 80, 0))
         with self.assertRaises(ValueError):
             LatentSegment(200, 100).shift()
         with self.assertRaises(ValueError):
             LatentSegment(-300, 150).shift()
 
-    def test_shift_self_temperature_difference_contribution(self):
+    def test_shift_self_temp_diff_contrib(self):
         self.assertEqual(LatentSegment(0, 80, 10).shift(), LatentSegment(0, 80, 0))
         self.assertEqual(LatentSegment(200, 100, 10).shift(), LatentSegment(200, 110, 0))
         self.assertEqual(LatentSegment(-300, 150, 10).shift(), LatentSegment(-300, 140, 0))
 
-    def test_shift_default_temperature_difference_contribution(self):
+    def test_shift_default_temp_diff_contrib(self):
         self.assertEqual(LatentSegment(0, 80).shift(5), LatentSegment(0, 80, 0))
         self.assertEqual(LatentSegment(200, 100).shift(5), LatentSegment(200, 105, 0))
         self.assertEqual(LatentSegment(-300, 150).shift(5), LatentSegment(-300, 145, 0))
 
-    def test_shift_self_and_default_temperature_difference_contribution_(self):
+    def test_shift_self_and_default_temp_diff_contrib_(self):
         self.assertEqual(LatentSegment(0, 80, 10).shift(5), LatentSegment(0, 80, 0))
         self.assertEqual(LatentSegment(200, 100, 10).shift(5), LatentSegment(200, 110, 0))
         self.assertEqual(LatentSegment(-300, 150, 10).shift(5), LatentSegment(-300, 140, 0))
@@ -90,10 +90,10 @@ class TestLatentSegment(unittest.TestCase):
         self.assertEqual(self.hot_segment.split(segment_temp_included), [self.hot_segment])
         self.assertEqual(self.hot_segment.split(segment_temp_not_included), [self.hot_segment])
 
-    def test_with_low_supply_temperature(self):
-        self.assertEqual(self.neutral_segment.with_low_supply_temperature(), self.neutral_segment)
-        self.assertEqual(self.cold_segment.with_low_supply_temperature(), self.cold_segment)
-        self.assertEqual(self.hot_segment.with_low_supply_temperature(), self.hot_segment)
+    def test_with_low_supply_temp(self):
+        self.assertEqual(self.neutral_segment.with_low_supply_temp(), self.neutral_segment)
+        self.assertEqual(self.cold_segment.with_low_supply_temp(), self.cold_segment)
+        self.assertEqual(self.hot_segment.with_low_supply_temp(), self.hot_segment)
 
     def test_with_absolute_heat_flow(self):
         self.assertEqual(LatentSegment(0, 80).with_absolute_heat_flow(), LatentSegment(0, 80))

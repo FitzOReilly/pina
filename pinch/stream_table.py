@@ -7,8 +7,8 @@ class StreamTable(object):
     them.
     """
 
-    def __init__(self, default_temp_diff_cont=None, streams=[]):
-        self._default_temp_diff_cont = default_temp_diff_cont
+    def __init__(self, default_temp_diff_contrib=None, streams=[]):
+        self._default_temp_diff_contrib = default_temp_diff_contrib
         self._streams = []
 
         self._cold_cascade = HeatCascade()
@@ -44,12 +44,12 @@ class StreamTable(object):
         return self._pinch_temps
 
     @property
-    def default_temp_diff_cont(self):
-        return self._default_temp_diff_cont
+    def default_temp_diff_contrib(self):
+        return self._default_temp_diff_contrib
 
-    @default_temp_diff_cont.setter
-    def default_temp_diff_cont(self, default_temp_diff_cont):
-        self._default_temp_diff_cont = default_temp_diff_cont
+    @default_temp_diff_contrib.setter
+    def default_temp_diff_contrib(self, default_temp_diff_contrib):
+        self._default_temp_diff_contrib = default_temp_diff_contrib
 
     @property
     def streams(self):
@@ -93,13 +93,13 @@ class StreamTable(object):
 
         for s in stream.cold_segments:
             self._cold_cascade.add([s.with_absolute_heat_flow()])
-            shifted = s.shift(self._default_temp_diff_cont)
+            shifted = s.shift(self._default_temp_diff_contrib)
             self._shifted_cold_cascade.add([shifted.with_absolute_heat_flow()])
             self._shifted_grand_cascade.add([shifted])
 
         for s in stream.hot_segments:
             self._hot_cascade.add([s.with_absolute_heat_flow()])
-            shifted = s.shift(self._default_temp_diff_cont)
+            shifted = s.shift(self._default_temp_diff_contrib)
             self._shifted_hot_cascade.add([shifted.with_absolute_heat_flow()])
             self._shifted_grand_cascade.add([shifted])
 

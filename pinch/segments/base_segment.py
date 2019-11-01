@@ -1,18 +1,14 @@
 import abc
 
 
-class AbstractSegment(abc.ABC):
+class BaseSegment(abc.ABC):
     """
-    Abstract stream segment
+    Abstract base class for stream segments
     """
 
-    def __init__(
-            self,
-            supply_temperature,
-            temperature_difference_contribution
-    ):
-        self._supply_temperature = supply_temperature
-        self._temperature_difference_contribution = temperature_difference_contribution
+    def __init__(self, supply_temp, temp_diff_contrib):
+        self._supply_temp = supply_temp
+        self._temp_diff_contrib = temp_diff_contrib
 
     @property
     @abc.abstractmethod
@@ -20,16 +16,17 @@ class AbstractSegment(abc.ABC):
         pass
 
     @property
-    def temperature_difference_contribution(self):
-        return self._temperature_difference_contribution
+    def temp_diff_contrib(self):
+        # Temperature difference contribution
+        return self._temp_diff_contrib
 
     @property
-    def supply_temperature(self):
-        return self._supply_temperature
+    def supply_temp(self):
+        return self._supply_temp
 
     @property
     @abc.abstractmethod
-    def target_temperature(self):
+    def target_temp(self):
         pass
 
     @property
@@ -38,34 +35,33 @@ class AbstractSegment(abc.ABC):
         pass
 
     @property
-    def min_temperature(self):
-        if self.supply_temperature <= self.target_temperature:
-            return self.supply_temperature
+    def min_temp(self):
+        if self.supply_temp <= self.target_temp:
+            return self.supply_temp
         else:
-            return self.target_temperature
+            return self.target_temp
 
     @property
-    def max_temperature(self):
-        if self.supply_temperature >= self.target_temperature:
-            return self.supply_temperature
+    def max_temp(self):
+        if self.supply_temp >= self.target_temp:
+            return self.supply_temp
         else:
-            return self.target_temperature
+            return self.target_temp
 
     @abc.abstractmethod
-    def shift(self, default_temperature_difference_contribution=None):
+    def shift(self, default_temp_diff_contrib=None):
         """
         Returns the segment with supply and target temperatures shifted by
-        (+ temperature_difference_contribution) for cold segments and
-        (- temperature_difference_contribution) for hot segments. If the
-        segment's temperature_difference_contribution is None, the
-        default_temperature_difference_contribution parameter is used instead.
-        If it is also None, an Exception is raised. The
-        temperature_difference_contribution of the returned segment is set to 0.
+        (+ temp_diff_contrib) for cold segments and (- temp_diff_contrib) for
+        hot segments. If the segment's temp_diff_contrib is None, the
+        default_temp_diff_contrib parameter is used instead. If it is also
+        None, a ValueError is raised. The temp_diff_contrib of the returned
+        segment is set to 0.
         """
         pass
 
     @abc.abstractmethod
-    def with_low_supply_temperature(self):
+    def with_low_supply_temp(self):
         """
         Returns a segment like self, but with equal supply and minimum
         temperature and equal target and maximum temperature. The supply and
@@ -103,7 +99,7 @@ class AbstractSegment(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def add(self, other, temperature_difference_contribution):
+    def add(self, other, temp_diff_contrib):
         """
         Returns a segment with the added heat flows of self and other if both
         have equal minimum temperature and equal maximum temperature, otherwise
@@ -112,7 +108,7 @@ class AbstractSegment(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def link(self, other, temperature_difference_contribution):
+    def link(self, other, temp_diff_contrib):
         """
         If self and other have equal heat capacity flow rate and one's supply
         temperature equals the other's target temperature then this method
@@ -127,8 +123,8 @@ class AbstractSegment(abc.ABC):
 
         equal &= self.heat_type == other.heat_type
         equal &= self.heat_flow == other.heat_flow
-        equal &= self.supply_temperature == other.supply_temperature
-        equal &= self.target_temperature == other.target_temperature
-        equal &= self.temperature_difference_contribution == other.temperature_difference_contribution
+        equal &= self.supply_temp == other.supply_temp
+        equal &= self.target_temp == other.target_temp
+        equal &= self.temp_diff_contrib == other.temp_diff_contrib
 
         return equal

@@ -7,9 +7,8 @@ class Stream(object):
     of which has its own properties.
     """
 
-    def __init__(self, name, segments):
+    def __init__(self, segments):
         Stream._check_segments(segments)
-        self.name = name
         self._segments = tuple(segments)
 
     @property

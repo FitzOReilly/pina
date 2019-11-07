@@ -37,8 +37,8 @@ class TestStreamTable(unittest.TestCase):
     def test_2_stream_example(self):
         cold_segment = SensibleSegment(1, 20, 200)
         hot_segment = SensibleSegment(1.8, 150, 50)
-        cold_stream = Stream("Cold stream", [cold_segment])
-        hot_stream = Stream("Hot stream", [hot_segment])
+        cold_stream = Stream([cold_segment])
+        hot_stream = Stream([hot_segment])
         table = StreamTable()
         table.default_temp_diff_contrib = 10
         table.add([cold_stream, hot_stream])
@@ -84,8 +84,8 @@ class TestStreamTable(unittest.TestCase):
     def test_extended_pinch(self):
         cold_segment = SensibleSegment(3, 20, 95)
         hot_segment = SensibleSegment(3, 95, 6)
-        cold_stream = Stream("Cold stream", [cold_segment])
-        hot_stream = Stream("Hot stream", [hot_segment])
+        cold_stream = Stream([cold_segment])
+        hot_stream = Stream([hot_segment])
         table = StreamTable()
         table.default_temp_diff_contrib = 1
         table.add([cold_stream, hot_stream])
@@ -99,12 +99,12 @@ class TestStreamTable(unittest.TestCase):
         self.assertEqual(table.default_temp_diff_contrib, 1)
 
     def test_2_pinches(self):
-        cold_stream = Stream("Cold stream", [
+        cold_stream = Stream([
             SensibleSegment(1, 50, 100),
             LatentSegment(40, 100),
             SensibleSegment(1, 100, 200)
         ])
-        hot_stream = Stream("Hot stream", [SensibleSegment(2, 150, 20)])
+        hot_stream = Stream([SensibleSegment(2, 150, 20)])
         table = StreamTable()
         table.default_temp_diff_contrib = 5
         table.add([cold_stream, hot_stream])
@@ -118,7 +118,7 @@ class TestStreamTable(unittest.TestCase):
         self.assertEqual(table.default_temp_diff_contrib, 5)
 
     def test_cold_stream_only(self):
-        cold_stream = Stream("Cold stream", [LatentSegment(40, 100)])
+        cold_stream = Stream([LatentSegment(40, 100)])
         table = StreamTable()
         table.default_temp_diff_contrib = 5
         table.add([cold_stream])
@@ -132,7 +132,7 @@ class TestStreamTable(unittest.TestCase):
         self.assertEqual(table.default_temp_diff_contrib, 5)
 
     def test_hot_stream_only(self):
-        hot_stream = Stream("Hot stream", [SensibleSegment(2, 150, 20)])
+        hot_stream = Stream([SensibleSegment(2, 150, 20)])
         table = StreamTable()
         table.default_temp_diff_contrib = 5
         table.add([hot_stream])
@@ -146,7 +146,7 @@ class TestStreamTable(unittest.TestCase):
         self.assertEqual(table.default_temp_diff_contrib, 5)
 
     def test_individual_temp_diff_contrib(self):
-        cold_stream = Stream("Cold stream", [LatentSegment(40, 100, 10)])
+        cold_stream = Stream([LatentSegment(40, 100, 10)])
         table = StreamTable()
         table.default_temp_diff_contrib = 5
         table.add([cold_stream])

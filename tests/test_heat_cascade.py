@@ -56,12 +56,12 @@ class TestHeatCascade(unittest.TestCase):
         self.assertEqual(cascade.net_heat_flow, 180)
         self.assertEqual(
             cascade.cumulative_heat_flow,
-            ([20, 200], [0, 180]))
+            ([0, 180], [20, 200]))
         cascade.heat_offset = -50
         self.assertEqual(cascade.net_heat_flow, 180)
         self.assertEqual(
             cascade.cumulative_heat_flow,
-            ([20, 200], [-50, 130]))
+            ([-50, 130], [20, 200]))
 
     def test_hot_sensible_segment(self):
         hot_segment = SensibleSegment(1.8, 150, 50)
@@ -70,12 +70,12 @@ class TestHeatCascade(unittest.TestCase):
         self.assertEqual(cascade.net_heat_flow, -180)
         self.assertEqual(
             cascade.cumulative_heat_flow,
-            ([50, 150], [0, -180]))
+            ([0, -180], [50, 150]))
         cascade.heat_offset = 180
         self.assertEqual(cascade.net_heat_flow, -180)
         self.assertEqual(
             cascade.cumulative_heat_flow,
-            ([50, 150], [180, 0]))
+            ([180, 0], [50, 150]))
 
     def test_neutral_latent_segment(self):
         neutral_segment = LatentSegment(0, 80)
@@ -94,12 +94,12 @@ class TestHeatCascade(unittest.TestCase):
         self.assertEqual(cascade.net_heat_flow, 200)
         self.assertEqual(
             cascade.cumulative_heat_flow,
-            ([100, 100], [0, 200]))
+            ([0, 200], [100, 100]))
         cascade.heat_offset = 50
         self.assertEqual(cascade.net_heat_flow, 200)
         self.assertEqual(
             cascade.cumulative_heat_flow,
-            ([100, 100], [50, 250]))
+            ([50, 250], [100, 100]))
 
     def test_hot_latent_segment(self):
         hot_segment = LatentSegment(-300, 150)
@@ -108,12 +108,12 @@ class TestHeatCascade(unittest.TestCase):
         self.assertEqual(cascade.net_heat_flow, -300)
         self.assertEqual(
             cascade.cumulative_heat_flow,
-            ([150, 150], [0, -300]))
+            ([0, -300], [150, 150]))
         cascade.heat_offset = -100
         self.assertEqual(cascade.net_heat_flow, -300)
         self.assertEqual(
             cascade.cumulative_heat_flow,
-            ([150, 150], [-100, -400]))
+            ([-100, -400], [150, 150]))
 
     def test_touching_segments(self):
         cold_segments = [
@@ -125,7 +125,7 @@ class TestHeatCascade(unittest.TestCase):
         self.assertEqual(cold_cascade.net_heat_flow, 140)
         self.assertEqual(
             cold_cascade.cumulative_heat_flow,
-            ([20, 80, 120], [0, 60, 140]))
+            ([0, 60, 140], [20, 80, 120]))
 
         hot_segments = [
             SensibleSegment(2, 120, 80),
@@ -142,7 +142,7 @@ class TestHeatCascade(unittest.TestCase):
         self.assertEqual(hot_cascade.net_heat_flow, -140)
         self.assertEqual(
             hot_cascade.cumulative_heat_flow,
-            ([20, 80, 120], [0, -60, -140]))
+            ([0, -60, -140], [20, 80, 120]))
 
     def test_detached_segments(self):
         segments = [
@@ -154,7 +154,7 @@ class TestHeatCascade(unittest.TestCase):
         self.assertEqual(cascade.net_heat_flow, 110)
         self.assertEqual(
             cascade.cumulative_heat_flow,
-            ([20, 50, 80, 120], [0, 30, 30, 110]))
+            ([0, 30, 30, 110], [20, 50, 80, 120]))
 
     def test_overlapping_cold_segments(self):
         segments = [
@@ -171,7 +171,7 @@ class TestHeatCascade(unittest.TestCase):
         self.assertEqual(cascade.net_heat_flow, 185)
         self.assertEqual(
             cascade.cumulative_heat_flow,
-            ([20, 60, 85, 120], [0, 40, 115, 185]))
+            ([0, 40, 115, 185], [20, 60, 85, 120]))
 
     def test_overlapping_hot_segments(self):
         segments = [
@@ -188,7 +188,7 @@ class TestHeatCascade(unittest.TestCase):
         self.assertEqual(cascade.net_heat_flow, -190)
         self.assertEqual(
             cascade.cumulative_heat_flow,
-            ([20, 60, 85, 120], [0, -80, -155, -190]))
+            ([0, -80, -155, -190], [20, 60, 85, 120]))
 
     def test_link_cold_sensible_segments(self):
         segments = [
@@ -200,7 +200,7 @@ class TestHeatCascade(unittest.TestCase):
         self.assertEqual(cascade.net_heat_flow, 200)
         self.assertEqual(
             cascade.cumulative_heat_flow,
-            ([20, 120], [0, 200]))
+            ([0, 200], [20, 120]))
 
     def test_link_hot_sensible_segments(self):
         segments = [
@@ -212,7 +212,7 @@ class TestHeatCascade(unittest.TestCase):
         self.assertEqual(cascade.net_heat_flow, -200)
         self.assertEqual(
             cascade.cumulative_heat_flow,
-            ([20, 120], [0, -200]))
+            ([0, -200], [20, 120]))
 
     def test_link_latent_segments(self):
         segments = [
@@ -228,7 +228,7 @@ class TestHeatCascade(unittest.TestCase):
         self.assertEqual(cascade.net_heat_flow, 100)
         self.assertEqual(
             cascade.cumulative_heat_flow,
-            ([100, 100], [0, 100]))
+            ([0, 100], [100, 100]))
 
     def test_detached_latent_segments(self):
         segments = [
@@ -240,7 +240,7 @@ class TestHeatCascade(unittest.TestCase):
         self.assertEqual(cascade.net_heat_flow, 350)
         self.assertEqual(
             cascade.cumulative_heat_flow,
-            ([100, 100, 200, 200], [0, 200, 200, 350]))
+            ([0, 200, 200, 350], [100, 100, 200, 200]))
 
     def test_add_sensible_then_latent_segment(self):
         sensible_then_latent = HeatCascade([
@@ -256,7 +256,7 @@ class TestHeatCascade(unittest.TestCase):
         self.assertEqual(sensible_then_latent.net_heat_flow, 280)
         self.assertEqual(
             sensible_then_latent.cumulative_heat_flow,
-            ([80, 100, 100, 120], [0, 40, 240, 280]))
+            ([0, 40, 240, 280], [80, 100, 100, 120]))
 
     def test_add_latent_then_sensible_segment(self):
         latent_then_sensible = HeatCascade([
@@ -272,7 +272,7 @@ class TestHeatCascade(unittest.TestCase):
         self.assertEqual(latent_then_sensible.net_heat_flow, 280)
         self.assertEqual(
             latent_then_sensible.cumulative_heat_flow,
-            ([80, 100, 100, 120], [0, 40, 240, 280]))
+            ([0, 40, 240, 280], [80, 100, 100, 120]))
 
     def test_mixed_sensible_segments(self):
         segments = [
@@ -290,7 +290,7 @@ class TestHeatCascade(unittest.TestCase):
         self.assertEqual(cascade.net_heat_flow, -60)
         self.assertEqual(
             cascade.cumulative_heat_flow,
-            ([20, 60, 70, 85, 120], [0, -80, -80, -95, -60]))
+            ([0, -80, -80, -95, -60], [20, 60, 70, 85, 120]))
 
     def test_neutralized_heat_flow(self):
         segments = [
@@ -327,13 +327,13 @@ class TestHeatCascade(unittest.TestCase):
         self.assertEqual(mixed_cascade.net_heat_flow, -40)
         self.assertEqual(
             mixed_cascade.cumulative_heat_flow,
-            ([25, 55, 85, 140, 145, 165], [0, 15, -60, 22.5, 20, -40])
+            ([0, 15, -60, 22.5, 20, -40], [25, 55, 85, 140, 145, 165])
         )
         mixed_cascade.heat_offset = 60
         self.assertEqual(mixed_cascade.net_heat_flow, -40)
         self.assertEqual(
             mixed_cascade.cumulative_heat_flow,
-            ([25, 55, 85, 140, 145, 165], [60, 75, 0, 82.5, 80, 20])
+            ([60, 75, 0, 82.5, 80, 20], [25, 55, 85, 140, 145, 165])
         )
 
     def test_equality_comparison(self):

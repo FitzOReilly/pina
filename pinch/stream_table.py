@@ -104,7 +104,7 @@ class StreamTable(object):
             self._shifted_grand_cascade.add([shifted])
 
     def _compute_targets(self):
-        temps, heat_flows = \
+        heat_flows, temps = \
             self._shifted_grand_cascade.cumulative_heat_flow
         if heat_flows:
             min_heat_flow = min(heat_flows)

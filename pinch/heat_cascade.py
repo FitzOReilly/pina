@@ -45,10 +45,10 @@ class HeatCascade(object):
     def cumulative_heat_flow(self):
         """
         Returns a tuple of two lists:
-        * The first list contains all the temperatures at which an interval
-          starts or ends
-        * The second list contains the cumulative heat flow at each of these
-          temperatures
+        * The first list contains the cumulative heat flows at the beginning
+          and end of each interval
+        * The second list contains the corresponding temperatures
+        The two lists are sorted by temperature, from lowest to highest.
         The cumulative heat flow at the lowest temperature can be changed by
         setting heat_offset (default value: 0).
 
@@ -67,7 +67,7 @@ class HeatCascade(object):
                 temperatures.append(i.target_temp)
                 heat_flows.append(heat_flows[-1] + i.heat_flow)
 
-        return temperatures, heat_flows
+        return heat_flows, temperatures
 
     def _add_one(self, segment):
         # Split new segment and existing intervals to get rid of overlaps

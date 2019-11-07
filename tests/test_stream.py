@@ -30,43 +30,32 @@ class TestStream(unittest.TestCase):
             SensibleSegment(4, 100, 20)
         ]
 
-        self.single_sensible_segment = Stream(
-            "Single sensible segment", self.cold_segments[:1])
-        self.single_latent_segment = Stream(
-            "Single latent segment", self.hot_segments[1:2])
-        self.cold_stream = Stream("Cold stream", self.cold_segments)
-        self.hot_stream = Stream("Hot stream", self.hot_segments)
-        self.neutral_stream = Stream("Neutral stream", self.mixed_segments)
+        self.single_sensible_segment = Stream(self.cold_segments[:1])
+        self.single_latent_segment = Stream(self.hot_segments[1:2])
+        self.cold_stream = Stream(self.cold_segments)
+        self.hot_stream = Stream(self.hot_segments)
+        self.neutral_stream = Stream(self.mixed_segments)
 
     def tearDown(self):
         pass
 
     def test_segments_empty(self):
         with self.assertRaises(ValueError):
-            empty_stream = Stream("Segments empty", [])
+            empty_stream = Stream([])
 
     def test_temperature_mismatch(self):
         mismatch_first = [SensibleSegment(1, 50, 200), *self.cold_segments]
         with self.assertRaises(ValueError):
-            Stream("Mismatch on first segment", mismatch_first)
+            Stream(mismatch_first)
 
         mismatch_middle = self.cold_segments
         mismatch_middle[1] = LatentSegment(120, 400)
         with self.assertRaises(ValueError):
-            Stream("Mismatch on middle segment", mismatch_middle)
+            Stream(mismatch_middle)
 
         mismatch_last = [*self.cold_segments, SensibleSegment(1, 50, 200)]
         with self.assertRaises(ValueError):
-            Stream("Mismatch on last segment", mismatch_last)
-
-    def test_name(self):
-        self.assertEqual(self.single_sensible_segment.name, "Single sensible segment")
-        self.assertEqual(self.single_latent_segment.name, "Single latent segment")
-        self.assertEqual(self.cold_stream.name, "Cold stream")
-        self.assertEqual(self.hot_stream.name, "Hot stream")
-        self.assertEqual(self.neutral_stream.name, "Neutral stream")
-        self.neutral_stream.name = "Mixed stream"
-        self.assertEqual(self.neutral_stream.name, "Mixed stream")
+            Stream(mismatch_last)
 
     def test_stream_type(self):
         self.assertEqual(self.single_sensible_segment.stream_type, StreamType.COLD)
@@ -120,7 +109,7 @@ class TestStream(unittest.TestCase):
             SensibleSegment(0, 0, -20)
         ]
 
-        stream = Stream("A complex stream", segments)
+        stream = Stream(segments)
 
         self.assertEqual(stream.segments, segments)
         self.assertEqual(

@@ -9,6 +9,7 @@ class TestLatentSegment(unittest.TestCase):
     """
     Test class for LatentSegment
     """
+
     def setUp(self):
         self.neutral_segment = LatentSegment(0, 80)
         self.cold_segment = LatentSegment(200, 100)

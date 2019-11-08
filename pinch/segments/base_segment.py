@@ -16,9 +16,9 @@ class BaseSegment(abc.ABC):
         pass
 
     @property
-    def temp_diff_contrib(self):
-        # Temperature difference contribution
-        return self._temp_diff_contrib
+    @abc.abstractmethod
+    def heat_flow(self):
+        pass
 
     @property
     def supply_temp(self):
@@ -30,23 +30,17 @@ class BaseSegment(abc.ABC):
         pass
 
     @property
-    @abc.abstractmethod
-    def heat_flow(self):
-        pass
+    def temp_diff_contrib(self):
+        # Temperature difference contribution
+        return self._temp_diff_contrib
 
     @property
     def min_temp(self):
-        if self.supply_temp <= self.target_temp:
-            return self.supply_temp
-        else:
-            return self.target_temp
+        return min(self.supply_temp, self.target_temp)
 
     @property
     def max_temp(self):
-        if self.supply_temp >= self.target_temp:
-            return self.supply_temp
-        else:
-            return self.target_temp
+        return max(self.supply_temp, self.target_temp)
 
     @abc.abstractmethod
     def shift(self, default_temp_diff_contrib=None):
@@ -119,9 +113,7 @@ class BaseSegment(abc.ABC):
         pass
 
     def __eq__(self, other):
-        equal = True
-
-        equal &= self.heat_type == other.heat_type
+        equal = self.heat_type == other.heat_type
         equal &= self.heat_flow == other.heat_flow
         equal &= self.supply_temp == other.supply_temp
         equal &= self.target_temp == other.target_temp

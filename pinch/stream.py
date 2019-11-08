@@ -3,11 +3,17 @@ from pinch.stream_enums import StreamType
 
 class Stream(object):
     """
-    A fluid stream carrying heat. It may consist of one or more segments, each
-    of which has its own properties.
+    A fluid stream carrying heat and consisting of one or multiple segments.
     """
 
     def __init__(self, segments):
+        """
+        `segments` must meet the following conditions:
+        * It must not be an empty sequence.
+        * It must be continuous, i.e. there must be no temperature gaps between
+          adjacent segments.
+        If one of those conditions is not met, a ValueError is raised.
+        """
         Stream._check_segments(segments)
         self._segments = tuple(segments)
 
@@ -21,16 +27,16 @@ class Stream(object):
             return StreamType.NEUTRAL
 
     @property
+    def heat_flow(self):
+        return sum(s.heat_flow for s in self.segments)
+
+    @property
     def supply_temp(self):
-        return self._segments[0].supply_temp
+        return self.segments[0].supply_temp
 
     @property
     def target_temp(self):
-        return self._segments[-1].target_temp
-
-    @property
-    def heat_flow(self):
-        return sum(s.heat_flow for s in self._segments)
+        return self.segments[-1].target_temp
 
     @property
     def segments(self):
@@ -44,30 +50,30 @@ class Stream(object):
         """
         Returns a list of the stream's neutral segments.
         """
-        return [s for s in self._segments if s.heat_flow == 0]
+        return [s for s in self.segments if s.heat_flow == 0]
 
     @property
     def cold_segments(self):
         """
         Returns a list of the stream's cold segments.
         """
-        return [s for s in self._segments if s.heat_flow > 0]
+        return [s for s in self.segments if s.heat_flow > 0]
 
     @property
     def hot_segments(self):
         """
         Returns a list of the stream's hot segments.
         """
-        return [s for s in self._segments if s.heat_flow < 0]
+        return [s for s in self.segments if s.heat_flow < 0]
 
     @staticmethod
     def _check_segments(segments):
-        # Do not allow an empty sequence
         if not segments:
-            raise ValueError("Stream must contain at least one segment")
+            raise ValueError("`segments` empty")
 
-        # Stream must be continuous
         for i in range(len(segments) - 1):
-            if (segments[i + 1].supply_temp
-                != segments[i].target_temp):
-                raise ValueError("Stream must be continuous over all segments")
+            if (segments[i].target_temp != segments[i + 1].supply_temp):
+                raise ValueError(
+                    "Temperature gap between adjacent segments: {}, {}"
+                    .format(segments[i], segments[i + 1])
+                )

@@ -21,11 +21,11 @@ class StreamTable(object):
 
     @property
     def cooling_demand(self):
-        return self._hot_cascade.net_heat_flow
+        return self.hot_cascade.net_heat_flow
 
     @property
     def heating_demand(self):
-        return self._cold_cascade.net_heat_flow
+        return self.cold_cascade.net_heat_flow
 
     @property
     def cold_utility_target(self):
@@ -37,7 +37,7 @@ class StreamTable(object):
 
     @property
     def heat_recovery_target(self):
-        return self.cooling_demand - self._cold_utility_target
+        return self.heating_demand - self.hot_utility_target
 
     @property
     def pinch_temps(self):
@@ -93,23 +93,23 @@ class StreamTable(object):
 
         for s in stream.cold_segments:
             self._cold_cascade.add([s.with_absolute_heat_flow()])
-            shifted = s.shift(self._default_temp_diff_contrib)
+            shifted = s.shift(self.default_temp_diff_contrib)
             self._shifted_cold_cascade.add([shifted.with_absolute_heat_flow()])
             self._shifted_grand_cascade.add([shifted])
 
         for s in stream.hot_segments:
             self._hot_cascade.add([s.with_absolute_heat_flow()])
-            shifted = s.shift(self._default_temp_diff_contrib)
+            shifted = s.shift(self.default_temp_diff_contrib)
             self._shifted_hot_cascade.add([shifted.with_absolute_heat_flow()])
             self._shifted_grand_cascade.add([shifted])
 
     def _compute_targets(self):
-        heat_flows, temps = \
-            self._shifted_grand_cascade.cumulative_heat_flow
+        heat_flows, temps = self.shifted_grand_cascade.cumulative_heat_flow
         if heat_flows:
             min_heat_flow = min(heat_flows)
             self._pinch_temps = [
-                t for t, h in zip(temps, heat_flows) if h == min_heat_flow]
+                t for t, h in zip(temps, heat_flows) if h == min_heat_flow
+            ]
             self._cold_utility_target = heat_flows[0] - min_heat_flow
             self._hot_utility_target = heat_flows[-1] - min_heat_flow
         else:

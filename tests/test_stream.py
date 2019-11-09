@@ -3,7 +3,7 @@ import unittest
 from pinch.segments.latent_segment import LatentSegment
 from pinch.segments.sensible_segment import SensibleSegment
 from pinch.stream import Stream
-from pinch.stream_enums import HeatType, StreamType
+from pinch.enums import HeatType, StreamType
 
 
 class TestStream(unittest.TestCase):

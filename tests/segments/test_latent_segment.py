@@ -2,7 +2,7 @@ import unittest
 
 from pinch.segments.latent_segment import LatentSegment
 from pinch.segments.sensible_segment import SensibleSegment
-from pinch.stream_enums import HeatType
+from pinch.enums import HeatType
 
 
 class TestLatentSegment(unittest.TestCase):

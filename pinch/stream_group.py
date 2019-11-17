@@ -1,10 +1,11 @@
 from pinch.heat_cascade import HeatCascade
 
 
-class StreamTable(object):
+class StreamGroup(object):
     """
-    Stream table that holds a number of streams and performs calculations on
-    them.
+    Stream group that holds a list of streams that can transfer heat between
+    each other. Calculates several heat cascades, the pinch temperature(s) and
+    heat demands and targets.
     """
 
     def __init__(self, default_temp_diff_contrib=None, streams=[]):
@@ -77,7 +78,7 @@ class StreamTable(object):
 
     def add(self, streams):
         """
-        Adds a list of streams to the stream table.
+        Adds a list of streams to the stream group.
         """
         for s in streams:
             self._add_one(s)

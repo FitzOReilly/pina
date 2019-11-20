@@ -40,6 +40,22 @@ class SensibleSegment(BaseSegment):
     def target_temp(self):
         return self._target_temp
 
+    @classmethod
+    def new(cls, heat_flow, supply_temp, target_temp, temp_diff_contrib=None):
+        if (supply_temp == target_temp):
+            raise ValueError(
+                "Temperatures are equal: supply_temp = {}, target_temp = {}"
+                .format(supply_temp, target_temp)
+            )
+
+        heat_capacity_flow_rate = heat_flow / (target_temp - supply_temp)
+        return cls(
+            heat_capacity_flow_rate,
+            supply_temp,
+            target_temp,
+            temp_diff_contrib
+        )
+
     def shift(self, default_temp_diff_contrib=None):
         shift_by = None
 

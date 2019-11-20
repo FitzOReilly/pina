@@ -42,6 +42,19 @@ class BaseSegment(abc.ABC):
     def max_temp(self):
         return max(self.supply_temp, self.target_temp)
 
+    @classmethod
+    @abc.abstractmethod
+    def new(cls, heat_flow, supply_temp, target_temp, temp_diff_contrib):
+        pass
+
+    def clone(self):
+        return self.new(
+            self.heat_flow,
+            self.supply_temp,
+            self.target_temp,
+            self.temp_diff_contrib
+        )
+
     @abc.abstractmethod
     def shift(self, default_temp_diff_contrib=None):
         """

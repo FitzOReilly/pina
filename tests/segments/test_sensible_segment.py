@@ -69,6 +69,31 @@ class TestSensibleSegment(unittest.TestCase):
         self.assertEqual(self.cold_segment.max_temp, 200)
         self.assertEqual(self.hot_segment.max_temp, 150)
 
+    def test_new_equal_temps(self):
+        with self.assertRaises(ValueError):
+            SensibleSegment.new(400, 100, 100)
+        with self.assertRaises(ValueError):
+            SensibleSegment.new(-500, -50, -50, 10)
+
+    def test_new_different_temps(self):
+        self.assertEqual(
+            SensibleSegment.new(400, 100, 200),
+            SensibleSegment(4, 100, 200, None))
+        self.assertEqual(
+            SensibleSegment.new(-500, 100, 0, 10),
+            SensibleSegment(5, 100, 0, 10))
+
+    def test_clone(self):
+        original = SensibleSegment.new(400, 100, 200)
+        clone = original.clone()
+        self.assertEqual(original, clone)
+        self.assertIsNot(original, clone)
+
+        original = SensibleSegment.new(-500, 100, 0, 10)
+        clone = original.clone()
+        self.assertEqual(original, clone)
+        self.assertIsNot(original, clone)
+
     def test_shift_no_temp_diff_contrib_given(self):
         self.assertEqual(SensibleSegment(2, 50, 50).shift(), SensibleSegment(2, 50, 50, 0))
         self.assertEqual(SensibleSegment(0, 80, 120).shift(), SensibleSegment(0, 80, 120, 0))

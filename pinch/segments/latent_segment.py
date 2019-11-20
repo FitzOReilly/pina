@@ -27,6 +27,17 @@ class LatentSegment(BaseSegment):
         # Supply and target temperatures are equal in a latent segment
         return self._supply_temp
 
+    @classmethod
+    def new(cls, heat_flow, supply_temp, target_temp, temp_diff_contrib=None):
+        if (supply_temp != target_temp):
+            raise ValueError(
+                "Temperatures are different: "
+                "supply_temp = {}, target_temp = {}"
+                .format(supply_temp, target_temp)
+            )
+
+        return cls(heat_flow, supply_temp, temp_diff_contrib)
+
     def shift(self, default_temp_diff_contrib=None):
         shift_by = None
 

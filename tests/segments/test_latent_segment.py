@@ -55,6 +55,29 @@ class TestLatentSegment(unittest.TestCase):
         self.assertEqual(self.hot_segment.min_temp, 150)
         self.assertEqual(self.hot_segment.max_temp, 150)
 
+    def test_new_equal_temps(self):
+        self.assertEqual(
+            LatentSegment.new(400, 100, 100), LatentSegment(400, 100, None))
+        self.assertEqual(
+            LatentSegment.new(-500, 0, 0, 10), LatentSegment(-500, 0, 10))
+
+    def test_new_different_temps(self):
+        with self.assertRaises(ValueError):
+            LatentSegment.new(400, 100, 150)
+        with self.assertRaises(ValueError):
+            LatentSegment.new(-500, 0, -50, 10)
+
+    def test_clone(self):
+        original = LatentSegment.new(400, 100, 100)
+        clone = original.clone()
+        self.assertEqual(original, clone)
+        self.assertIsNot(original, clone)
+
+        original = LatentSegment.new(-500, 0, 0, 10)
+        clone = original.clone()
+        self.assertEqual(original, clone)
+        self.assertIsNot(original, clone)
+
     def test_shift_no_temp_diff_contrib_given(self):
         self.assertEqual(LatentSegment(0, 80).shift(), LatentSegment(0, 80, 0))
         with self.assertRaises(ValueError):

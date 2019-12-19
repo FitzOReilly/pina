@@ -1,9 +1,8 @@
 import unittest
 
-from pinch.segments.latent_segment import LatentSegment
-from pinch.segments.sensible_segment import SensibleSegment
+from pinch import segments
 from pinch.stream import Stream
-from pinch.enums import HeatType, StreamType
+from pinch.enums import StreamType
 
 
 class TestStream(unittest.TestCase):
@@ -13,21 +12,21 @@ class TestStream(unittest.TestCase):
 
     def setUp(self):
         self.cold_segments = [
-            SensibleSegment(4, 20, 100),
-            LatentSegment(400, 100),
-            SensibleSegment(1, 100, 250),
-            SensibleSegment(1.5, 250, 380),
+            segments.new(320, 20, 100),
+            segments.new(400, 100, 100),
+            segments.new(150, 100, 250),
+            segments.new(195, 250, 380)
         ]
 
         self.hot_segments = [
-            SensibleSegment(2, 250, 100),
-            LatentSegment(-300, 100),
-            SensibleSegment(2.5, 100, 50)
+            segments.new(-300, 250, 100),
+            segments.new(-300, 100, 100),
+            segments.new(-125, 100, 50)
         ]
 
         self.mixed_segments = [
-            SensibleSegment(4, 20, 100),
-            SensibleSegment(4, 100, 20)
+            segments.new(320, 20, 100),
+            segments.new(-320, 100, 20)
         ]
 
         self.single_sensible_segment = Stream(self.cold_segments[:1])
@@ -41,19 +40,19 @@ class TestStream(unittest.TestCase):
 
     def test_segments_empty(self):
         with self.assertRaises(ValueError):
-            empty_stream = Stream([])
+            Stream([])
 
     def test_temperature_mismatch(self):
-        mismatch_first = [SensibleSegment(1, 50, 200), *self.cold_segments]
+        mismatch_first = [segments.new(150, 50, 200), *self.cold_segments]
         with self.assertRaises(ValueError):
             Stream(mismatch_first)
 
         mismatch_middle = self.cold_segments
-        mismatch_middle[1] = LatentSegment(120, 400)
+        mismatch_middle[1] = segments.new(120, 400, 400)
         with self.assertRaises(ValueError):
             Stream(mismatch_middle)
 
-        mismatch_last = [*self.cold_segments, SensibleSegment(1, 50, 200)]
+        mismatch_last = [*self.cold_segments, segments.new(150, 50, 200)]
         with self.assertRaises(ValueError):
             Stream(mismatch_last)
 
@@ -99,39 +98,37 @@ class TestStream(unittest.TestCase):
         self.assertEqual(self.neutral_stream.segments, self.mixed_segments)
 
     def test_segments_by_type(self):
-        segments = [
-            SensibleSegment(4, 20, 100),
-            LatentSegment(400, 100),
-            LatentSegment(0, 100),
-            SensibleSegment(4, 100, 0),
-            LatentSegment(-300, 0),
-            SensibleSegment(1.5, 0, 0),
-            SensibleSegment(0, 0, -20)
+        test_segments = [
+            segments.new(320, 20, 100),
+            segments.new(400, 100, 100),
+            segments.new(0, 100, 100),
+            segments.new(-400, 100, 0),
+            segments.new(-300, 0, 0),
+            segments.new(0, 0, -20)
         ]
 
-        stream = Stream(segments)
+        stream = Stream(test_segments)
 
-        self.assertEqual(stream.segments, segments)
+        self.assertEqual(stream.segments, test_segments)
         self.assertEqual(
             stream.neutral_segments,
             [
-                LatentSegment(0, 100),
-                SensibleSegment(1.5, 0, 0),
-                SensibleSegment(0, 0, -20)
+                segments.new(0, 100, 100),
+                segments.new(0, 0, -20)
             ]
         )
         self.assertEqual(
             stream.cold_segments,
             [
-                SensibleSegment(4, 20, 100),
-                LatentSegment(400, 100)
+                segments.new(320, 20, 100),
+                segments.new(400, 100, 100)
             ]
         )
         self.assertEqual(
             stream.hot_segments,
             [
-                SensibleSegment(4, 100, 0),
-                LatentSegment(-300, 0)
+                segments.new(-400, 100, 0),
+                segments.new(-300, 0, 0)
             ]
         )
 

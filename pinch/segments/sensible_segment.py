@@ -56,6 +56,14 @@ class SensibleSegment(BaseSegment):
             temp_diff_contrib
         )
 
+    def clone(self):
+        return SensibleSegment(
+            heat_capacity_flow_rate=self.heat_capacity_flow_rate,
+            supply_temp=self.supply_temp,
+            target_temp=self.target_temp,
+            temp_diff_contrib=self.temp_diff_contrib
+        )
+
     def shift(self, default_temp_diff_contrib=None):
         shift_by = None
 

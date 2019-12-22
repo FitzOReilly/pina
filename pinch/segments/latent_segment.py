@@ -38,6 +38,13 @@ class LatentSegment(BaseSegment):
 
         return cls(heat_flow, supply_temp, temp_diff_contrib)
 
+    def clone(self):
+        return LatentSegment(
+            heat_flow=self.heat_flow,
+            supply_temp=self.supply_temp,
+            temp_diff_contrib=self.temp_diff_contrib
+        )
+
     def shift(self, default_temp_diff_contrib=None):
         shift_by = None
 

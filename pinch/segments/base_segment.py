@@ -47,13 +47,9 @@ class BaseSegment(abc.ABC):
     def new(cls, heat_flow, supply_temp, target_temp, temp_diff_contrib):
         pass
 
+    @abc.abstractmethod
     def clone(self):
-        return self.new(
-            self.heat_flow,
-            self.supply_temp,
-            self.target_temp,
-            self.temp_diff_contrib
-        )
+        pass
 
     @abc.abstractmethod
     def shift(self, default_temp_diff_contrib=None):

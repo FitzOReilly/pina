@@ -48,10 +48,6 @@ class StreamGroup(object):
     def default_temp_diff_contrib(self):
         return self._default_temp_diff_contrib
 
-    @default_temp_diff_contrib.setter
-    def default_temp_diff_contrib(self, default_temp_diff_contrib):
-        self._default_temp_diff_contrib = default_temp_diff_contrib
-
     @property
     def streams(self):
         return self._streams

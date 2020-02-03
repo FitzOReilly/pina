@@ -1,4 +1,4 @@
-from pinch.segments.base_segment import BaseSegment
+from pinch.segment.base_segment import BaseSegment
 from pinch.enums import HeatType
 
 

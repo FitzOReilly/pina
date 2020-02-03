@@ -1,7 +1,7 @@
 import unittest
 
-from pinch.segments.latent_segment import LatentSegment
-from pinch.segments.sensible_segment import SensibleSegment
+from pinch.segment.latent_segment import LatentSegment
+from pinch.segment.sensible_segment import SensibleSegment
 from pinch.enums import HeatType
 
 

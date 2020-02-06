@@ -7,12 +7,3 @@ class HeatType(Enum):
     """
     SENSIBLE = auto()
     LATENT = auto()
-
-
-class StreamType(Enum):
-    """
-    The possible stream types.
-    """
-    NEUTRAL = auto()
-    COLD = auto()
-    HOT = auto()

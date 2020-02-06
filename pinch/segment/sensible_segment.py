@@ -33,7 +33,7 @@ class SensibleSegment(BaseSegment):
     def heat_flow(self):
         return (
             self._heat_capacity_flow_rate
-            * (self._target_temp - self._supply_temp)
+            * (self._supply_temp - self._target_temp)
         )
 
     @property
@@ -48,7 +48,7 @@ class SensibleSegment(BaseSegment):
                 .format(supply_temp, target_temp)
             )
 
-        heat_capacity_flow_rate = heat_flow / (target_temp - supply_temp)
+        heat_capacity_flow_rate = heat_flow / (supply_temp - target_temp)
         return cls(
             heat_capacity_flow_rate,
             supply_temp,
@@ -78,7 +78,7 @@ class SensibleSegment(BaseSegment):
                     raise ValueError(
                         "No temperature difference contribution given.")
 
-        if self.heat_flow < 0:
+        if self.heat_flow > 0:
             shift_by *= -1
 
         return SensibleSegment(

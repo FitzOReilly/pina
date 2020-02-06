@@ -1,6 +1,3 @@
-from pinch.enums import StreamType
-
-
 class Stream(object):
     """
     A fluid stream carrying heat and consisting of one or multiple segments.
@@ -16,15 +13,6 @@ class Stream(object):
         """
         Stream._check_segments(segments)
         self._segments = tuple(segments)
-
-    @property
-    def stream_type(self):
-        if self.heat_flow > 0:
-            return StreamType.COLD
-        elif self.heat_flow < 0:
-            return StreamType.HOT
-        else:
-            return StreamType.NEUTRAL
 
     @property
     def heat_flow(self):
@@ -57,14 +45,14 @@ class Stream(object):
         """
         Returns a list of the stream's cold segments.
         """
-        return [s for s in self.segments if s.heat_flow > 0]
+        return [s for s in self.segments if s.heat_flow < 0]
 
     @property
     def hot_segments(self):
         """
         Returns a list of the stream's hot segments.
         """
-        return [s for s in self.segments if s.heat_flow < 0]
+        return [s for s in self.segments if s.heat_flow > 0]
 
     @staticmethod
     def _check_segments(segments):

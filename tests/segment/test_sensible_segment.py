@@ -21,7 +21,8 @@ class TestSensibleSegment(unittest.TestCase):
 
     def test_heat_type(self):
         self.assertEqual(self.neutral_segment.heat_type, HeatType.SENSIBLE)
-        self.assertEqual(self.zero_capacity_segment.heat_type, HeatType.SENSIBLE)
+        self.assertEqual(
+            self.zero_capacity_segment.heat_type, HeatType.SENSIBLE)
         self.assertEqual(self.cold_segment.heat_type, HeatType.SENSIBLE)
         self.assertEqual(self.hot_segment.heat_type, HeatType.SENSIBLE)
 
@@ -46,8 +47,8 @@ class TestSensibleSegment(unittest.TestCase):
     def test_heat_flow(self):
         self.assertEqual(self.neutral_segment.heat_flow, 0)
         self.assertEqual(self.zero_capacity_segment.heat_flow, 0)
-        self.assertEqual(self.cold_segment.heat_flow, 180)
-        self.assertEqual(self.hot_segment.heat_flow, -180)
+        self.assertEqual(self.cold_segment.heat_flow, -180)
+        self.assertEqual(self.hot_segment.heat_flow, 180)
 
     def test_default_temp_diff_contrib(self):
         self.assertEqual(self.cold_segment.temp_diff_contrib, None)
@@ -77,10 +78,10 @@ class TestSensibleSegment(unittest.TestCase):
 
     def test_new_different_temps(self):
         self.assertEqual(
-            SensibleSegment.new(400, 100, 200),
+            SensibleSegment.new(-400, 100, 200),
             SensibleSegment(4, 100, 200, None))
         self.assertEqual(
-            SensibleSegment.new(-500, 100, 0, 10),
+            SensibleSegment.new(500, 100, 0, 10),
             SensibleSegment(5, 100, 0, 10))
 
     def test_clone(self):
@@ -95,38 +96,68 @@ class TestSensibleSegment(unittest.TestCase):
         self.assertIsNot(original, clone)
 
     def test_shift_no_temp_diff_contrib_given(self):
-        self.assertEqual(SensibleSegment(2, 50, 50).shift(), SensibleSegment(2, 50, 50, 0))
-        self.assertEqual(SensibleSegment(0, 80, 120).shift(), SensibleSegment(0, 80, 120, 0))
+        self.assertEqual(
+            SensibleSegment(2, 50, 50).shift(), SensibleSegment(2, 50, 50, 0))
+        self.assertEqual(
+            SensibleSegment(0, 80, 120).shift(),
+            SensibleSegment(0, 80, 120, 0))
         with self.assertRaises(ValueError):
             SensibleSegment(1, 20, 200).shift()
         with self.assertRaises(ValueError):
             SensibleSegment(1.8, 150, 50).shift()
 
     def test_shift_self_temp_diff_contrib(self):
-        self.assertEqual(SensibleSegment(2, 50, 50, 10).shift(), SensibleSegment(2, 50, 50, 0))
-        self.assertEqual(SensibleSegment(0, 80, 120, 10).shift(), SensibleSegment(0, 80, 120, 0))
-        self.assertEqual(SensibleSegment(1, 20, 200, 10).shift(), SensibleSegment(1, 30, 210, 0))
-        self.assertEqual(SensibleSegment(1.8, 150, 50, 10).shift(), SensibleSegment(1.8, 140, 40, 0))
+        self.assertEqual(
+            SensibleSegment(2, 50, 50, 10).shift(),
+            SensibleSegment(2, 50, 50, 0))
+        self.assertEqual(
+            SensibleSegment(0, 80, 120, 10).shift(),
+            SensibleSegment(0, 80, 120, 0))
+        self.assertEqual(
+            SensibleSegment(1, 20, 200, 10).shift(),
+            SensibleSegment(1, 30, 210, 0))
+        self.assertEqual(
+            SensibleSegment(1.8, 150, 50, 10).shift(),
+            SensibleSegment(1.8, 140, 40, 0))
 
     def test_shift_default_temp_diff_contrib(self):
-        self.assertEqual(SensibleSegment(2, 50, 50).shift(5), SensibleSegment(2, 50, 50, 0))
-        self.assertEqual(SensibleSegment(0, 80, 120).shift(5), SensibleSegment(0, 80, 120, 0))
-        self.assertEqual(SensibleSegment(1, 20, 200).shift(5), SensibleSegment(1, 25, 205, 0))
-        self.assertEqual(SensibleSegment(1.8, 150, 50).shift(5), SensibleSegment(1.8, 145, 45, 0))
+        self.assertEqual(
+            SensibleSegment(2, 50, 50).shift(5),
+            SensibleSegment(2, 50, 50, 0))
+        self.assertEqual(
+            SensibleSegment(0, 80, 120).shift(5),
+            SensibleSegment(0, 80, 120, 0))
+        self.assertEqual(
+            SensibleSegment(1, 20, 200).shift(5),
+            SensibleSegment(1, 25, 205, 0))
+        self.assertEqual(
+            SensibleSegment(1.8, 150, 50).shift(5),
+            SensibleSegment(1.8, 145, 45, 0))
 
     def test_shift_self_and_default_temp_diff_contrib_(self):
-        self.assertEqual(SensibleSegment(2, 50, 50, 10).shift(5), SensibleSegment(2, 50, 50, 0))
-        self.assertEqual(SensibleSegment(0, 80, 120, 10).shift(5), SensibleSegment(0, 80, 120, 0))
-        self.assertEqual(SensibleSegment(1, 20, 200, 10).shift(5), SensibleSegment(1, 30, 210, 0))
-        self.assertEqual(SensibleSegment(1.8, 150, 50, 10).shift(5), SensibleSegment(1.8, 140, 40, 0))
+        self.assertEqual(
+            SensibleSegment(2, 50, 50, 10).shift(5),
+            SensibleSegment(2, 50, 50, 0))
+        self.assertEqual(
+            SensibleSegment(0, 80, 120, 10).shift(5),
+            SensibleSegment(0, 80, 120, 0))
+        self.assertEqual(
+            SensibleSegment(1, 20, 200, 10).shift(5),
+            SensibleSegment(1, 30, 210, 0))
+        self.assertEqual(
+            SensibleSegment(1.8, 150, 50, 10).shift(5),
+            SensibleSegment(1.8, 140, 40, 0))
 
     def test_split(self):
         # Neutral segment
-        self.assertEqual(self.neutral_segment.split([]), [self.neutral_segment])
-        self.assertEqual(self.neutral_segment.split([10, 50, 100]), [self.neutral_segment])
+        self.assertEqual(
+            self.neutral_segment.split([]), [self.neutral_segment])
+        self.assertEqual(
+            self.neutral_segment.split([10, 50, 100]), [self.neutral_segment])
 
         # Neutral segment with zero heat capacity flow rate
-        self.assertEqual(self.zero_capacity_segment.split([]), [self.zero_capacity_segment])
+        self.assertEqual(
+            self.zero_capacity_segment.split([]), [self.zero_capacity_segment])
         self.assertEqual(
             self.zero_capacity_segment.split([10, 50, 100]),
             [
@@ -151,10 +182,14 @@ class TestSensibleSegment(unittest.TestCase):
         unsorted = [150, 80, 120]
 
         self.assertEqual(self.cold_segment.split([]), [self.cold_segment])
-        self.assertEqual(self.cold_segment.split(match_min_max), [self.cold_segment])
-        self.assertEqual(self.cold_segment.split(beyond_min_max), [self.cold_segment])
-        self.assertEqual(self.cold_segment.split(below_min), [self.cold_segment])
-        self.assertEqual(self.cold_segment.split(above_max), [self.cold_segment])
+        self.assertEqual(
+            self.cold_segment.split(match_min_max), [self.cold_segment])
+        self.assertEqual(
+            self.cold_segment.split(beyond_min_max), [self.cold_segment])
+        self.assertEqual(
+            self.cold_segment.split(below_min), [self.cold_segment])
+        self.assertEqual(
+            self.cold_segment.split(above_max), [self.cold_segment])
 
         self.assertEqual(
             self.cold_segment.split(include_min),
@@ -217,10 +252,14 @@ class TestSensibleSegment(unittest.TestCase):
         unsorted = [150, 80, 120]
 
         self.assertEqual(self.hot_segment.split([]), [self.hot_segment])
-        self.assertEqual(self.hot_segment.split(match_min_max), [self.hot_segment])
-        self.assertEqual(self.hot_segment.split(beyond_min_max), [self.hot_segment])
-        self.assertEqual(self.hot_segment.split(below_min), [self.hot_segment])
-        self.assertEqual(self.hot_segment.split(above_max), [self.hot_segment])
+        self.assertEqual(
+            self.hot_segment.split(match_min_max), [self.hot_segment])
+        self.assertEqual(
+            self.hot_segment.split(beyond_min_max), [self.hot_segment])
+        self.assertEqual(
+            self.hot_segment.split(below_min), [self.hot_segment])
+        self.assertEqual(
+            self.hot_segment.split(above_max), [self.hot_segment])
 
         self.assertEqual(
             self.hot_segment.split(include_min),
@@ -267,27 +306,59 @@ class TestSensibleSegment(unittest.TestCase):
         )
 
     def test_with_low_supply_temp(self):
-        self.assertEqual(self.neutral_segment.with_low_supply_temp(), self.neutral_segment)
-        self.assertEqual(self.cold_segment.with_low_supply_temp(), self.cold_segment)
-        self.assertEqual(self.hot_segment.with_low_supply_temp(), SensibleSegment(-1.8, 50, 150))
+        self.assertEqual(
+            self.neutral_segment.with_low_supply_temp(), self.neutral_segment)
+        self.assertEqual(
+            self.cold_segment.with_low_supply_temp(), self.cold_segment)
+        self.assertEqual(
+            self.hot_segment.with_low_supply_temp(),
+            SensibleSegment(-1.8, 50, 150))
 
     def test_with_absolute_heat_flow(self):
-        self.assertEqual(SensibleSegment(2, 50, 50).with_absolute_heat_flow(), SensibleSegment(2, 50, 50))
-        self.assertEqual(SensibleSegment(0, 80, 120).with_absolute_heat_flow(), SensibleSegment(0, 80, 120))
-        self.assertEqual(SensibleSegment(1, 20, 200).with_absolute_heat_flow(), SensibleSegment(1, 20, 200))
-        self.assertEqual(SensibleSegment(-1, 20, 200, 5).with_absolute_heat_flow(), SensibleSegment(1, 20, 200, 5))
-        self.assertEqual(SensibleSegment(1.8, 150, 50).with_absolute_heat_flow(), SensibleSegment(-1.8, 150, 50))
-        self.assertEqual(SensibleSegment(-1.8, 150, 50).with_absolute_heat_flow(), SensibleSegment(-1.8, 150, 50))
-        self.assertEqual(SensibleSegment(1.8, 150, 50, 10).with_absolute_heat_flow(), SensibleSegment(-1.8, 150, 50, 10))
+        self.assertEqual(
+            SensibleSegment(2, 50, 50).with_absolute_heat_flow(),
+            SensibleSegment(2, 50, 50))
+        self.assertEqual(
+            SensibleSegment(0, 80, 120).with_absolute_heat_flow(),
+            SensibleSegment(0, 80, 120))
+        self.assertEqual(
+            SensibleSegment(1, 20, 200).with_absolute_heat_flow(),
+            SensibleSegment(-1, 20, 200))
+        self.assertEqual(
+            SensibleSegment(-1, 20, 200, 5).with_absolute_heat_flow(),
+            SensibleSegment(-1, 20, 200, 5))
+        self.assertEqual(
+            SensibleSegment(1.8, 150, 50).with_absolute_heat_flow(),
+            SensibleSegment(1.8, 150, 50))
+        self.assertEqual(
+            SensibleSegment(-1.8, 150, 50).with_absolute_heat_flow(),
+            SensibleSegment(1.8, 150, 50))
+        self.assertEqual(
+            SensibleSegment(1.8, 150, 50, 10).with_absolute_heat_flow(),
+            SensibleSegment(1.8, 150, 50, 10))
 
     def test_with_inverted_heat_flow(self):
-        self.assertEqual(SensibleSegment(2, 50, 50).with_inverted_heat_flow(), SensibleSegment(-2, 50, 50))
-        self.assertEqual(SensibleSegment(0, 80, 120).with_inverted_heat_flow(), SensibleSegment(0, 80, 120))
-        self.assertEqual(SensibleSegment(1, 20, 200).with_inverted_heat_flow(), SensibleSegment(-1, 20, 200))
-        self.assertEqual(SensibleSegment(-1, 20, 200, 5).with_inverted_heat_flow(), SensibleSegment(1, 20, 200, 5))
-        self.assertEqual(SensibleSegment(1.8, 150, 50).with_inverted_heat_flow(), SensibleSegment(-1.8, 150, 50))
-        self.assertEqual(SensibleSegment(-1.8, 150, 50).with_inverted_heat_flow(), SensibleSegment(1.8, 150, 50))
-        self.assertEqual(SensibleSegment(1.8, 150, 50, 10).with_inverted_heat_flow(), SensibleSegment(-1.8, 150, 50, 10))
+        self.assertEqual(
+            SensibleSegment(2, 50, 50).with_inverted_heat_flow(),
+            SensibleSegment(-2, 50, 50))
+        self.assertEqual(
+            SensibleSegment(0, 80, 120).with_inverted_heat_flow(),
+            SensibleSegment(0, 80, 120))
+        self.assertEqual(
+            SensibleSegment(1, 20, 200).with_inverted_heat_flow(),
+            SensibleSegment(-1, 20, 200))
+        self.assertEqual(
+            SensibleSegment(-1, 20, 200, 5).with_inverted_heat_flow(),
+            SensibleSegment(1, 20, 200, 5))
+        self.assertEqual(
+            SensibleSegment(1.8, 150, 50).with_inverted_heat_flow(),
+            SensibleSegment(-1.8, 150, 50))
+        self.assertEqual(
+            SensibleSegment(-1.8, 150, 50).with_inverted_heat_flow(),
+            SensibleSegment(1.8, 150, 50))
+        self.assertEqual(
+            SensibleSegment(1.8, 150, 50, 10).with_inverted_heat_flow(),
+            SensibleSegment(-1.8, 150, 50, 10))
 
     def test_add(self):
         with self.assertRaises(ValueError):
@@ -316,7 +387,13 @@ class TestSensibleSegment(unittest.TestCase):
             SensibleSegment(7, 100, 180)
         )
         self.assertEqual(
-            SensibleSegment(4, 100, 180, 2).add(SensibleSegment(2.5, 180, 100, 5), 10),
+            SensibleSegment(4, 100, 180, 2)
+            .add(SensibleSegment(2.5, 180, 100, 5)),
+            SensibleSegment(1.5, 100, 180)
+        )
+        self.assertEqual(
+            SensibleSegment(4, 100, 180, 2)
+            .add(SensibleSegment(2.5, 180, 100, 5), 10),
             SensibleSegment(1.5, 100, 180, 10)
         )
 
@@ -359,18 +436,24 @@ class TestSensibleSegment(unittest.TestCase):
 
     def test_equality_comparison(self):
         self.assertEqual(self.neutral_segment, SensibleSegment(2, 50, 50))
-        self.assertNotEqual(self.neutral_segment, SensibleSegment(2, 50, 50, 5))
+        self.assertNotEqual(
+            self.neutral_segment, SensibleSegment(2, 50, 50, 5))
         self.assertNotEqual(self.neutral_segment, SensibleSegment(3.5, 50, 50))
         self.assertNotEqual(self.neutral_segment, SensibleSegment(2, 40, 50))
         self.assertNotEqual(self.neutral_segment, SensibleSegment(2, 50, 40))
         self.assertNotEqual(self.neutral_segment, SensibleSegment(2, 40, 40))
         self.assertNotEqual(self.neutral_segment, LatentSegment(0, 50))
 
-        self.assertEqual(self.zero_capacity_segment, SensibleSegment(0, 80, 120))
-        self.assertNotEqual(self.zero_capacity_segment, SensibleSegment(0, 80, 120, 5))
-        self.assertNotEqual(self.zero_capacity_segment, SensibleSegment(3.5, 80, 120))
-        self.assertNotEqual(self.zero_capacity_segment, SensibleSegment(0, 40, 120))
-        self.assertNotEqual(self.zero_capacity_segment, SensibleSegment(0, 80, 40))
+        self.assertEqual(
+            self.zero_capacity_segment, SensibleSegment(0, 80, 120))
+        self.assertNotEqual(
+            self.zero_capacity_segment, SensibleSegment(0, 80, 120, 5))
+        self.assertNotEqual(
+            self.zero_capacity_segment, SensibleSegment(3.5, 80, 120))
+        self.assertNotEqual(
+            self.zero_capacity_segment, SensibleSegment(0, 40, 120))
+        self.assertNotEqual(
+            self.zero_capacity_segment, SensibleSegment(0, 80, 40))
         self.assertNotEqual(self.zero_capacity_segment, LatentSegment(0, 80))
         self.assertNotEqual(self.zero_capacity_segment, LatentSegment(0, 120))
 
@@ -383,7 +466,8 @@ class TestSensibleSegment(unittest.TestCase):
         self.assertNotEqual(self.cold_segment, LatentSegment(200, 180))
 
         self.assertEqual(self.hot_segment, SensibleSegment(1.8, 150, 50))
-        self.assertNotEqual(self.hot_segment, SensibleSegment(1.8, 150, 50, 15))
+        self.assertNotEqual(
+            self.hot_segment, SensibleSegment(1.8, 150, 50, 15))
         self.assertNotEqual(self.hot_segment, SensibleSegment(4, 150, 50))
         self.assertNotEqual(self.hot_segment, SensibleSegment(1.8, 240, 50))
         self.assertNotEqual(self.hot_segment, SensibleSegment(1.8, 150, 80))

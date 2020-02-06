@@ -12,8 +12,8 @@ class TestLatentSegment(unittest.TestCase):
 
     def setUp(self):
         self.neutral_segment = LatentSegment(0, 80)
-        self.cold_segment = LatentSegment(200, 100)
-        self.hot_segment = LatentSegment(-300, 150)
+        self.cold_segment = LatentSegment(-200, 100)
+        self.hot_segment = LatentSegment(300, 150)
 
     def tearDown(self):
         pass
@@ -35,8 +35,8 @@ class TestLatentSegment(unittest.TestCase):
 
     def test_heat_flow(self):
         self.assertEqual(self.neutral_segment.heat_flow, 0)
-        self.assertEqual(self.cold_segment.heat_flow, 200)
-        self.assertEqual(self.hot_segment.heat_flow, -300)
+        self.assertEqual(self.cold_segment.heat_flow, -200)
+        self.assertEqual(self.hot_segment.heat_flow, 300)
 
     def test_default_temp_diff_contrib(self):
         self.assertEqual(self.neutral_segment.temp_diff_contrib, None)
@@ -81,57 +81,99 @@ class TestLatentSegment(unittest.TestCase):
     def test_shift_no_temp_diff_contrib_given(self):
         self.assertEqual(LatentSegment(0, 80).shift(), LatentSegment(0, 80, 0))
         with self.assertRaises(ValueError):
-            LatentSegment(200, 100).shift()
+            LatentSegment(-200, 100).shift()
         with self.assertRaises(ValueError):
-            LatentSegment(-300, 150).shift()
+            LatentSegment(300, 150).shift()
 
     def test_shift_self_temp_diff_contrib(self):
-        self.assertEqual(LatentSegment(0, 80, 10).shift(), LatentSegment(0, 80, 0))
-        self.assertEqual(LatentSegment(200, 100, 10).shift(), LatentSegment(200, 110, 0))
-        self.assertEqual(LatentSegment(-300, 150, 10).shift(), LatentSegment(-300, 140, 0))
+        self.assertEqual(
+            LatentSegment(0, 80, 10).shift(), LatentSegment(0, 80, 0))
+        self.assertEqual(
+            LatentSegment(-200, 100, 10).shift(), LatentSegment(-200, 110, 0))
+        self.assertEqual(
+            LatentSegment(300, 150, 10).shift(), LatentSegment(300, 140, 0))
 
     def test_shift_default_temp_diff_contrib(self):
-        self.assertEqual(LatentSegment(0, 80).shift(5), LatentSegment(0, 80, 0))
-        self.assertEqual(LatentSegment(200, 100).shift(5), LatentSegment(200, 105, 0))
-        self.assertEqual(LatentSegment(-300, 150).shift(5), LatentSegment(-300, 145, 0))
+        self.assertEqual(
+            LatentSegment(0, 80).shift(5), LatentSegment(0, 80, 0))
+        self.assertEqual(
+            LatentSegment(-200, 100).shift(5), LatentSegment(-200, 105, 0))
+        self.assertEqual(
+            LatentSegment(300, 150).shift(5), LatentSegment(300, 145, 0))
 
     def test_shift_self_and_default_temp_diff_contrib_(self):
-        self.assertEqual(LatentSegment(0, 80, 10).shift(5), LatentSegment(0, 80, 0))
-        self.assertEqual(LatentSegment(200, 100, 10).shift(5), LatentSegment(200, 110, 0))
-        self.assertEqual(LatentSegment(-300, 150, 10).shift(5), LatentSegment(-300, 140, 0))
+        self.assertEqual(
+            LatentSegment(0, 80, 10).shift(5), LatentSegment(0, 80, 0))
+        self.assertEqual(
+            LatentSegment(-200, 100, 10).shift(5), LatentSegment(-200, 110, 0))
+        self.assertEqual(
+            LatentSegment(300, 150, 10).shift(5), LatentSegment(300, 140, 0))
 
     def test_split(self):
-        self.assertEqual(self.neutral_segment.split([]), [self.neutral_segment])
-        self.assertEqual(self.neutral_segment.split([50, 80, 90]), [self.neutral_segment])
+        self.assertEqual(
+            self.neutral_segment.split([]), [self.neutral_segment])
+        self.assertEqual(
+            self.neutral_segment.split([50, 80, 90]), [self.neutral_segment])
 
         segment_temp_included = [100, 150]
         segment_temp_not_included = [90, 140]
         self.assertEqual(self.cold_segment.split([]), [self.cold_segment])
-        self.assertEqual(self.cold_segment.split(segment_temp_included), [self.cold_segment])
-        self.assertEqual(self.cold_segment.split(segment_temp_not_included), [self.cold_segment])
+        self.assertEqual(
+            self.cold_segment.split(segment_temp_included),
+            [self.cold_segment])
+        self.assertEqual(
+            self.cold_segment.split(segment_temp_not_included),
+            [self.cold_segment])
 
-        self.assertEqual(self.hot_segment.split([]), [self.hot_segment])
-        self.assertEqual(self.hot_segment.split(segment_temp_included), [self.hot_segment])
-        self.assertEqual(self.hot_segment.split(segment_temp_not_included), [self.hot_segment])
+        self.assertEqual(
+            self.hot_segment.split([]), [self.hot_segment])
+        self.assertEqual(
+            self.hot_segment.split(segment_temp_included), [self.hot_segment])
+        self.assertEqual(
+            self.hot_segment.split(segment_temp_not_included),
+            [self.hot_segment])
 
     def test_with_low_supply_temp(self):
-        self.assertEqual(self.neutral_segment.with_low_supply_temp(), self.neutral_segment)
-        self.assertEqual(self.cold_segment.with_low_supply_temp(), self.cold_segment)
-        self.assertEqual(self.hot_segment.with_low_supply_temp(), self.hot_segment)
+        self.assertEqual(
+            self.neutral_segment.with_low_supply_temp(), self.neutral_segment)
+        self.assertEqual(
+            self.cold_segment.with_low_supply_temp(), self.cold_segment)
+        self.assertEqual(
+            self.hot_segment.with_low_supply_temp(), self.hot_segment)
 
     def test_with_absolute_heat_flow(self):
-        self.assertEqual(LatentSegment(0, 80).with_absolute_heat_flow(), LatentSegment(0, 80))
-        self.assertEqual(LatentSegment(200, 100).with_absolute_heat_flow(), LatentSegment(200, 100))
-        self.assertEqual(LatentSegment(200, 100, 5).with_absolute_heat_flow(), LatentSegment(200, 100, 5))
-        self.assertEqual(LatentSegment(-300, 150).with_absolute_heat_flow(), LatentSegment(300, 150))
-        self.assertEqual(LatentSegment(-300, 150, 10).with_absolute_heat_flow(), LatentSegment(300, 150, 10))
+        self.assertEqual(
+            LatentSegment(0, 80).with_absolute_heat_flow(),
+            LatentSegment(0, 80))
+        self.assertEqual(
+            LatentSegment(-200, 100).with_absolute_heat_flow(),
+            LatentSegment(200, 100))
+        self.assertEqual(
+            LatentSegment(-200, 100, 5).with_absolute_heat_flow(),
+            LatentSegment(200, 100, 5))
+        self.assertEqual(
+            LatentSegment(300, 150).with_absolute_heat_flow(),
+            LatentSegment(300, 150))
+        self.assertEqual(
+            LatentSegment(300, 150, 10).with_absolute_heat_flow(),
+            LatentSegment(300, 150, 10))
 
     def test_with_inverted_heat_flow(self):
-        self.assertEqual(LatentSegment(0, 80).with_inverted_heat_flow(), LatentSegment(0, 80))
-        self.assertEqual(LatentSegment(200, 100).with_inverted_heat_flow(), LatentSegment(-200, 100))
-        self.assertEqual(LatentSegment(200, 100, 5).with_inverted_heat_flow(), LatentSegment(-200, 100, 5))
-        self.assertEqual(LatentSegment(-300, 150).with_inverted_heat_flow(), LatentSegment(300, 150))
-        self.assertEqual(LatentSegment(-300, 150, 10).with_inverted_heat_flow(), LatentSegment(300, 150, 10))
+        self.assertEqual(
+            LatentSegment(0, 80).with_inverted_heat_flow(),
+            LatentSegment(0, 80))
+        self.assertEqual(
+            LatentSegment(-200, 100).with_inverted_heat_flow(),
+            LatentSegment(200, 100))
+        self.assertEqual(
+            LatentSegment(-200, 100, 5).with_inverted_heat_flow(),
+            LatentSegment(200, 100, 5))
+        self.assertEqual(
+            LatentSegment(300, 150).with_inverted_heat_flow(),
+            LatentSegment(-300, 150))
+        self.assertEqual(
+            LatentSegment(300, 150, 10).with_inverted_heat_flow(),
+            LatentSegment(-300, 150, 10))
 
     def test_add(self):
         with self.assertRaises(ValueError):
@@ -188,16 +230,16 @@ class TestLatentSegment(unittest.TestCase):
         self.assertNotEqual(self.neutral_segment, LatentSegment(0, 120))
         self.assertNotEqual(self.neutral_segment, SensibleSegment(2, 50, 200))
 
-        self.assertEqual(self.cold_segment, LatentSegment(200, 100))
-        self.assertNotEqual(self.cold_segment, LatentSegment(200, 100, 10))
-        self.assertNotEqual(self.cold_segment, LatentSegment(300, 100))
-        self.assertNotEqual(self.cold_segment, LatentSegment(200, 150))
+        self.assertEqual(self.cold_segment, LatentSegment(-200, 100))
+        self.assertNotEqual(self.cold_segment, LatentSegment(-200, 100, 10))
+        self.assertNotEqual(self.cold_segment, LatentSegment(-300, 100))
+        self.assertNotEqual(self.cold_segment, LatentSegment(-200, 150))
         self.assertNotEqual(self.cold_segment, SensibleSegment(4, 100, 150))
 
-        self.assertEqual(self.hot_segment, LatentSegment(-300, 150))
-        self.assertNotEqual(self.hot_segment, LatentSegment(-300, 150, 5))
-        self.assertNotEqual(self.hot_segment, LatentSegment(-200, 150))
-        self.assertNotEqual(self.hot_segment, LatentSegment(-300, 240))
+        self.assertEqual(self.hot_segment, LatentSegment(300, 150))
+        self.assertNotEqual(self.hot_segment, LatentSegment(300, 150, 5))
+        self.assertNotEqual(self.hot_segment, LatentSegment(200, 150))
+        self.assertNotEqual(self.hot_segment, LatentSegment(300, 240))
         self.assertNotEqual(self.cold_segment, SensibleSegment(6, 150, 100))
 
 

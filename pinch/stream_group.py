@@ -92,13 +92,15 @@ class StreamGroup(object):
             self._cold_cascade.add([s.with_absolute_heat_flow()])
             shifted = s.shift(self.default_temp_diff_contrib)
             self._shifted_cold_cascade.add([shifted.with_absolute_heat_flow()])
-            self._shifted_grand_cascade.add([shifted])
+            self._shifted_grand_cascade.add([
+                shifted.with_inverted_heat_flow()])
 
         for s in stream.hot_segments:
             self._hot_cascade.add([s.with_absolute_heat_flow()])
             shifted = s.shift(self.default_temp_diff_contrib)
             self._shifted_hot_cascade.add([shifted.with_absolute_heat_flow()])
-            self._shifted_grand_cascade.add([shifted])
+            self._shifted_grand_cascade.add([
+                shifted.with_inverted_heat_flow()])
 
     def _compute_targets(self):
         heat_flows, temps = self.shifted_grand_cascade.cumulative_heat_flow

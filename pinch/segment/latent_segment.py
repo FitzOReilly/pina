@@ -59,7 +59,7 @@ class LatentSegment(BaseSegment):
                     raise ValueError(
                         "No temperature difference contribution given.")
 
-        if self.heat_flow < 0:
+        if self.heat_flow > 0:
             shift_by *= -1
 
         return LatentSegment(self.heat_flow, self.supply_temp + shift_by, 0)

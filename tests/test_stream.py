@@ -2,7 +2,6 @@ import unittest
 
 from pinch import segment
 from pinch.stream import Stream
-from pinch.enums import StreamType
 
 
 class TestStream(unittest.TestCase):
@@ -12,21 +11,21 @@ class TestStream(unittest.TestCase):
 
     def setUp(self):
         self.cold_segments = [
-            segment.new(320, 20, 100),
-            segment.new(400, 100, 100),
-            segment.new(150, 100, 250),
-            segment.new(195, 250, 380)
+            segment.new(-320, 20, 100),
+            segment.new(-400, 100, 100),
+            segment.new(-150, 100, 250),
+            segment.new(-195, 250, 380)
         ]
 
         self.hot_segments = [
-            segment.new(-300, 250, 100),
-            segment.new(-300, 100, 100),
-            segment.new(-125, 100, 50)
+            segment.new(300, 250, 100),
+            segment.new(300, 100, 100),
+            segment.new(125, 100, 50)
         ]
 
         self.mixed_segments = [
-            segment.new(320, 20, 100),
-            segment.new(-320, 100, 20)
+            segment.new(-320, 20, 100),
+            segment.new(320, 100, 20)
         ]
 
         self.single_sensible_segment = Stream(self.cold_segments[:1])
@@ -43,25 +42,18 @@ class TestStream(unittest.TestCase):
             Stream([])
 
     def test_temperature_mismatch(self):
-        mismatch_first = [segment.new(150, 50, 200), *self.cold_segments]
+        mismatch_first = [segment.new(-150, 50, 200), *self.cold_segments]
         with self.assertRaises(ValueError):
             Stream(mismatch_first)
 
         mismatch_middle = self.cold_segments
-        mismatch_middle[1] = segment.new(120, 400, 400)
+        mismatch_middle[1] = segment.new(-120, 400, 400)
         with self.assertRaises(ValueError):
             Stream(mismatch_middle)
 
-        mismatch_last = [*self.cold_segments, segment.new(150, 50, 200)]
+        mismatch_last = [*self.cold_segments, segment.new(-150, 50, 200)]
         with self.assertRaises(ValueError):
             Stream(mismatch_last)
-
-    def test_stream_type(self):
-        self.assertEqual(self.single_sensible_segment.stream_type, StreamType.COLD)
-        self.assertEqual(self.single_latent_segment.stream_type, StreamType.HOT)
-        self.assertEqual(self.cold_stream.stream_type, StreamType.COLD)
-        self.assertEqual(self.hot_stream.stream_type, StreamType.HOT)
-        self.assertEqual(self.neutral_stream.stream_type, StreamType.NEUTRAL)
 
     def test_supply_temp(self):
         self.assertEqual(self.single_sensible_segment.supply_temp, 20)
@@ -78,10 +70,10 @@ class TestStream(unittest.TestCase):
         self.assertEqual(self.neutral_stream.target_temp, 20)
 
     def test_heat_flow(self):
-        self.assertEqual(self.single_sensible_segment.heat_flow, 320)
-        self.assertEqual(self.single_latent_segment.heat_flow, -300)
-        self.assertEqual(self.cold_stream.heat_flow, 1065)
-        self.assertEqual(self.hot_stream.heat_flow, -725)
+        self.assertEqual(self.single_sensible_segment.heat_flow, -320)
+        self.assertEqual(self.single_latent_segment.heat_flow, 300)
+        self.assertEqual(self.cold_stream.heat_flow, -1065)
+        self.assertEqual(self.hot_stream.heat_flow, 725)
         self.assertEqual(self.neutral_stream.heat_flow, 0)
 
     def test_segments(self):
@@ -99,11 +91,11 @@ class TestStream(unittest.TestCase):
 
     def test_segments_by_type(self):
         test_segments = [
-            segment.new(320, 20, 100),
-            segment.new(400, 100, 100),
+            segment.new(-320, 20, 100),
+            segment.new(-400, 100, 100),
             segment.new(0, 100, 100),
-            segment.new(-400, 100, 0),
-            segment.new(-300, 0, 0),
+            segment.new(400, 100, 0),
+            segment.new(300, 0, 0),
             segment.new(0, 0, -20)
         ]
 
@@ -120,15 +112,15 @@ class TestStream(unittest.TestCase):
         self.assertEqual(
             stream.cold_segments,
             [
-                segment.new(320, 20, 100),
-                segment.new(400, 100, 100)
+                segment.new(-320, 20, 100),
+                segment.new(-400, 100, 100)
             ]
         )
         self.assertEqual(
             stream.hot_segments,
             [
-                segment.new(-400, 100, 0),
-                segment.new(-300, 0, 0)
+                segment.new(400, 100, 0),
+                segment.new(300, 0, 0)
             ]
         )
 

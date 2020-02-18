@@ -31,7 +31,7 @@ class TestStreamGroup(unittest.TestCase):
         self.assertEqual(group.hot_cascade, HeatCascade())
         self.assertEqual(group.shifted_cold_cascade, HeatCascade())
         self.assertEqual(group.shifted_hot_cascade, HeatCascade())
-        self.assertEqual(group.shifted_grand_cascade, HeatCascade())
+        self.assertEqual(group.grand_cascade, HeatCascade())
 
     def test_2_stream_example(self):
         cold_segment = segment.new(-180, 20, 200)
@@ -73,12 +73,11 @@ class TestStreamGroup(unittest.TestCase):
         self.assertEqual(
             group.shifted_hot_cascade, expected_shifted_hot_cascade)
 
-        expected_shifted_grand_cascade = HeatCascade([
+        expected_grand_cascade = HeatCascade([
             cold_segment.shift(10).with_inverted_heat_flow(),
             hot_segment.shift(10).with_inverted_heat_flow()])
-        expected_shifted_grand_cascade.heat_offset = 70
-        self.assertEqual(
-            group.shifted_grand_cascade, expected_shifted_grand_cascade)
+        expected_grand_cascade.heat_offset = 70
+        self.assertEqual(group.grand_cascade, expected_grand_cascade)
 
     def test_extended_pinch(self):
         cold_segment = segment.new(-225, 20, 95)

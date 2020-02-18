@@ -16,7 +16,7 @@ class StreamGroup(object):
         self._hot_cascade = HeatCascade()
         self._shifted_cold_cascade = HeatCascade()
         self._shifted_hot_cascade = HeatCascade()
-        self._shifted_grand_cascade = HeatCascade()
+        self._grand_cascade = HeatCascade()
 
         self.add(streams)
 
@@ -69,8 +69,8 @@ class StreamGroup(object):
         return self._shifted_hot_cascade
 
     @property
-    def shifted_grand_cascade(self):
-        return self._shifted_grand_cascade
+    def grand_cascade(self):
+        return self._grand_cascade
 
     def add(self, streams):
         """
@@ -83,7 +83,7 @@ class StreamGroup(object):
 
         self._cold_cascade.heat_offset = self.cold_utility_target
         self._shifted_cold_cascade.heat_offset = self.cold_utility_target
-        self._shifted_grand_cascade.heat_offset = self.cold_utility_target
+        self._grand_cascade.heat_offset = self.cold_utility_target
 
     def _add_one(self, stream):
         self._streams.append(stream)
@@ -92,18 +92,16 @@ class StreamGroup(object):
             self._cold_cascade.add([s.with_absolute_heat_flow()])
             shifted = s.shift(self.default_temp_diff_contrib)
             self._shifted_cold_cascade.add([shifted.with_absolute_heat_flow()])
-            self._shifted_grand_cascade.add([
-                shifted.with_inverted_heat_flow()])
+            self._grand_cascade.add([shifted.with_inverted_heat_flow()])
 
         for s in stream.hot_segments:
             self._hot_cascade.add([s.with_absolute_heat_flow()])
             shifted = s.shift(self.default_temp_diff_contrib)
             self._shifted_hot_cascade.add([shifted.with_absolute_heat_flow()])
-            self._shifted_grand_cascade.add([
-                shifted.with_inverted_heat_flow()])
+            self._grand_cascade.add([shifted.with_inverted_heat_flow()])
 
     def _compute_targets(self):
-        heat_flows, temps = self.shifted_grand_cascade.cumulative_heat_flow
+        heat_flows, temps = self.grand_cascade.cumulative_heat_flow
         if heat_flows:
             min_heat_flow = min(heat_flows)
             self._pinch_temps = [

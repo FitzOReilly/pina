@@ -6,9 +6,9 @@ class BaseSegment(abc.ABC):
     Abstract base class for stream segments
     """
 
-    def __init__(self, supply_temp, temp_diff_contrib):
+    def __init__(self, supply_temp, temp_shift):
         self._supply_temp = supply_temp
-        self._temp_diff_contrib = temp_diff_contrib
+        self._temp_shift = temp_shift
 
     @property
     @abc.abstractmethod
@@ -30,9 +30,8 @@ class BaseSegment(abc.ABC):
         pass
 
     @property
-    def temp_diff_contrib(self):
-        # Temperature difference contribution
-        return self._temp_diff_contrib
+    def temp_shift(self):
+        return self._temp_shift
 
     @property
     def min_temp(self):
@@ -44,7 +43,7 @@ class BaseSegment(abc.ABC):
 
     @classmethod
     @abc.abstractmethod
-    def new(cls, heat_flow, supply_temp, target_temp, temp_diff_contrib):
+    def new(cls, heat_flow, supply_temp, target_temp, temp_shift):
         pass
 
     @abc.abstractmethod
@@ -52,14 +51,13 @@ class BaseSegment(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def shift(self, default_temp_diff_contrib=None):
+    def shift(self, default_temp_shift=None):
         """
         Returns the segment with supply and target temperatures shifted by
-        (+ temp_diff_contrib) for cold segments and (- temp_diff_contrib) for
-        hot segments. If the segment's temp_diff_contrib is None, the
-        default_temp_diff_contrib parameter is used instead. If it is also
-        None, a ValueError is raised. The temp_diff_contrib of the returned
-        segment is set to 0.
+        (+ temp_shift) for cold segments and (- temp_shift) for hot segments.
+        If the segment's temp_shift is None, the default_temp_shift is used
+        instead. If it is also None, a ValueError is raised. The temp_shift of
+        the returned segment is set to 0.
         """
         pass
 
@@ -102,7 +100,7 @@ class BaseSegment(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def add(self, other, temp_diff_contrib):
+    def add(self, other, temp_shift):
         """
         Returns a segment with the added heat flows of self and other if both
         have equal minimum temperature and equal maximum temperature, otherwise
@@ -111,7 +109,7 @@ class BaseSegment(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def link(self, other, temp_diff_contrib):
+    def link(self, other, temp_shift):
         """
         If self and other have equal heat capacity flow rate and one's supply
         temperature equals the other's target temperature then this method
@@ -126,6 +124,6 @@ class BaseSegment(abc.ABC):
         equal &= self.heat_flow == other.heat_flow
         equal &= self.supply_temp == other.supply_temp
         equal &= self.target_temp == other.target_temp
-        equal &= self.temp_diff_contrib == other.temp_diff_contrib
+        equal &= self.temp_shift == other.temp_shift
 
         return equal

@@ -1,4 +1,4 @@
-def new(heat_flow, supply_temp, target_temp, temp_diff_contrib=None):
+def new(heat_flow, supply_temp, target_temp, temp_shift=None):
     """
     Creates a new segment with the given properties.
     """
@@ -9,4 +9,4 @@ def new(heat_flow, supply_temp, target_temp, temp_diff_contrib=None):
         from pinch.segment.sensible_segment import SensibleSegment
         cls = SensibleSegment
 
-    return cls.new(heat_flow, supply_temp, target_temp, temp_diff_contrib)
+    return cls.new(heat_flow, supply_temp, target_temp, temp_shift)

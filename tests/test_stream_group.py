@@ -25,7 +25,7 @@ class TestStreamGroup(unittest.TestCase):
         self.assertEqual(group.hot_utility_target, 0)
         self.assertEqual(group.heat_recovery_target, 0)
         self.assertEqual(group.pinch_temps, [])
-        self.assertEqual(group.default_temp_diff_contrib, None)
+        self.assertEqual(group.default_temp_shift, None)
         self.assertEqual(group.streams, [])
         self.assertEqual(group.cold_cascade, HeatCascade())
         self.assertEqual(group.hot_cascade, HeatCascade())
@@ -38,7 +38,7 @@ class TestStreamGroup(unittest.TestCase):
         hot_segment = segment.new(180, 150, 50)
         cold_stream = Stream([cold_segment])
         hot_stream = Stream([hot_segment])
-        group = StreamGroup(default_temp_diff_contrib=10)
+        group = StreamGroup(default_temp_shift=10)
         group.add([cold_stream, hot_stream])
 
         self.assertEqual(group.cooling_demand, 180)
@@ -47,7 +47,7 @@ class TestStreamGroup(unittest.TestCase):
         self.assertEqual(group.hot_utility_target, 70)
         self.assertEqual(group.heat_recovery_target, 110)
         self.assertEqual(group.pinch_temps, [140])
-        self.assertEqual(group.default_temp_diff_contrib, 10)
+        self.assertEqual(group.default_temp_shift, 10)
 
         self.assertEqual(group.streams, [cold_stream, hot_stream])
 
@@ -84,7 +84,7 @@ class TestStreamGroup(unittest.TestCase):
         hot_segment = segment.new(267, 95, 6)
         cold_stream = Stream([cold_segment])
         hot_stream = Stream([hot_segment])
-        group = StreamGroup(default_temp_diff_contrib=1)
+        group = StreamGroup(default_temp_shift=1)
         group.add([cold_stream, hot_stream])
 
         self.assertEqual(group.cooling_demand, 267)
@@ -93,7 +93,7 @@ class TestStreamGroup(unittest.TestCase):
         self.assertEqual(group.hot_utility_target, 6)
         self.assertEqual(group.heat_recovery_target, 219)
         self.assertEqual(group.pinch_temps, [21, 94])
-        self.assertEqual(group.default_temp_diff_contrib, 1)
+        self.assertEqual(group.default_temp_shift, 1)
 
     def test_2_pinches(self):
         cold_stream = Stream([
@@ -102,7 +102,7 @@ class TestStreamGroup(unittest.TestCase):
             segment.new(-100, 100, 200)
         ])
         hot_stream = Stream([segment.new(260, 150, 20)])
-        group = StreamGroup(default_temp_diff_contrib=5)
+        group = StreamGroup(default_temp_shift=5)
         group.add([cold_stream, hot_stream])
 
         self.assertEqual(group.cooling_demand, 260)
@@ -111,11 +111,11 @@ class TestStreamGroup(unittest.TestCase):
         self.assertEqual(group.hot_utility_target, 60)
         self.assertEqual(group.heat_recovery_target, 130)
         self.assertEqual(group.pinch_temps, [105, 145])
-        self.assertEqual(group.default_temp_diff_contrib, 5)
+        self.assertEqual(group.default_temp_shift, 5)
 
     def test_cold_stream_only(self):
         cold_stream = Stream([segment.new(-40, 100, 100)])
-        group = StreamGroup(default_temp_diff_contrib=5)
+        group = StreamGroup(default_temp_shift=5)
         group.add([cold_stream])
 
         self.assertEqual(group.cooling_demand, 0)
@@ -124,11 +124,11 @@ class TestStreamGroup(unittest.TestCase):
         self.assertEqual(group.hot_utility_target, 40)
         self.assertEqual(group.heat_recovery_target, 0)
         self.assertEqual(group.pinch_temps, [105])
-        self.assertEqual(group.default_temp_diff_contrib, 5)
+        self.assertEqual(group.default_temp_shift, 5)
 
     def test_hot_stream_only(self):
         hot_stream = Stream([segment.new(260, 150, 20)])
-        group = StreamGroup(default_temp_diff_contrib=5)
+        group = StreamGroup(default_temp_shift=5)
         group.add([hot_stream])
 
         self.assertEqual(group.cooling_demand, 260)
@@ -137,11 +137,11 @@ class TestStreamGroup(unittest.TestCase):
         self.assertEqual(group.hot_utility_target, 0)
         self.assertEqual(group.heat_recovery_target, 0)
         self.assertEqual(group.pinch_temps, [145])
-        self.assertEqual(group.default_temp_diff_contrib, 5)
+        self.assertEqual(group.default_temp_shift, 5)
 
-    def test_individual_temp_diff_contrib(self):
+    def test_individual_temp_shift(self):
         cold_stream = Stream([segment.new(-40, 100, 100, 10)])
-        group = StreamGroup(default_temp_diff_contrib=5)
+        group = StreamGroup(default_temp_shift=5)
         group.add([cold_stream])
 
         self.assertEqual(group.cooling_demand, 0)
@@ -150,7 +150,7 @@ class TestStreamGroup(unittest.TestCase):
         self.assertEqual(group.hot_utility_target, 40)
         self.assertEqual(group.heat_recovery_target, 0)
         self.assertEqual(group.pinch_temps, [110])
-        self.assertEqual(group.default_temp_diff_contrib, 5)
+        self.assertEqual(group.default_temp_shift, 5)
 
 
 if __name__ == "__main__":

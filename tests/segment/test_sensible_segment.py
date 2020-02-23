@@ -50,13 +50,13 @@ class TestSensibleSegment(unittest.TestCase):
         self.assertEqual(self.cold_segment.heat_flow, -180)
         self.assertEqual(self.hot_segment.heat_flow, 180)
 
-    def test_default_temp_diff_contrib(self):
-        self.assertEqual(self.cold_segment.temp_diff_contrib, None)
-        self.assertEqual(self.hot_segment.temp_diff_contrib, None)
+    def test_default_temp_shift(self):
+        self.assertEqual(self.cold_segment.temp_shift, None)
+        self.assertEqual(self.hot_segment.temp_shift, None)
 
-    def test_temp_diff_contrib(self):
+    def test_temp_shift(self):
         segment = SensibleSegment(1, 20, 200, 5)
-        self.assertEqual(segment.temp_diff_contrib, 5)
+        self.assertEqual(segment.temp_shift, 5)
 
     def test_min_temp(self):
         self.assertEqual(self.neutral_segment.min_temp, 50)
@@ -95,7 +95,7 @@ class TestSensibleSegment(unittest.TestCase):
         self.assertEqual(original, clone)
         self.assertIsNot(original, clone)
 
-    def test_shift_no_temp_diff_contrib_given(self):
+    def test_shift_no_temp_shift_given(self):
         self.assertEqual(
             SensibleSegment(2, 50, 50).shift(), SensibleSegment(2, 50, 50, 0))
         self.assertEqual(
@@ -106,7 +106,7 @@ class TestSensibleSegment(unittest.TestCase):
         with self.assertRaises(ValueError):
             SensibleSegment(1.8, 150, 50).shift()
 
-    def test_shift_self_temp_diff_contrib(self):
+    def test_shift_self_temp_shift(self):
         self.assertEqual(
             SensibleSegment(2, 50, 50, 10).shift(),
             SensibleSegment(2, 50, 50, 0))
@@ -120,7 +120,7 @@ class TestSensibleSegment(unittest.TestCase):
             SensibleSegment(1.8, 150, 50, 10).shift(),
             SensibleSegment(1.8, 140, 40, 0))
 
-    def test_shift_default_temp_diff_contrib(self):
+    def test_shift_default_temp_shift(self):
         self.assertEqual(
             SensibleSegment(2, 50, 50).shift(5),
             SensibleSegment(2, 50, 50, 0))
@@ -134,7 +134,7 @@ class TestSensibleSegment(unittest.TestCase):
             SensibleSegment(1.8, 150, 50).shift(5),
             SensibleSegment(1.8, 145, 45, 0))
 
-    def test_shift_self_and_default_temp_diff_contrib_(self):
+    def test_shift_self_and_default_temp_shift(self):
         self.assertEqual(
             SensibleSegment(2, 50, 50, 10).shift(5),
             SensibleSegment(2, 50, 50, 0))

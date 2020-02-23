@@ -8,8 +8,8 @@ class StreamGroup(object):
     heat demands and targets.
     """
 
-    def __init__(self, default_temp_diff_contrib=None, streams=[]):
-        self._default_temp_diff_contrib = default_temp_diff_contrib
+    def __init__(self, default_temp_shift=None, streams=[]):
+        self._default_temp_shift = default_temp_shift
         self._streams = []
 
         self._cold_cascade = HeatCascade()
@@ -45,8 +45,8 @@ class StreamGroup(object):
         return self._pinch_temps
 
     @property
-    def default_temp_diff_contrib(self):
-        return self._default_temp_diff_contrib
+    def default_temp_shift(self):
+        return self._default_temp_shift
 
     @property
     def streams(self):
@@ -90,13 +90,13 @@ class StreamGroup(object):
 
         for s in stream.cold_segments:
             self._cold_cascade.add([s.with_absolute_heat_flow()])
-            shifted = s.shift(self.default_temp_diff_contrib)
+            shifted = s.shift(self.default_temp_shift)
             self._shifted_cold_cascade.add([shifted.with_absolute_heat_flow()])
             self._grand_cascade.add([shifted.with_inverted_heat_flow()])
 
         for s in stream.hot_segments:
             self._hot_cascade.add([s.with_absolute_heat_flow()])
-            shifted = s.shift(self.default_temp_diff_contrib)
+            shifted = s.shift(self.default_temp_shift)
             self._shifted_hot_cascade.add([shifted.with_absolute_heat_flow()])
             self._grand_cascade.add([shifted.with_inverted_heat_flow()])
 

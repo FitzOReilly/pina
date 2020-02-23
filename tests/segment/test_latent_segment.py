@@ -38,14 +38,14 @@ class TestLatentSegment(unittest.TestCase):
         self.assertEqual(self.cold_segment.heat_flow, -200)
         self.assertEqual(self.hot_segment.heat_flow, 300)
 
-    def test_default_temp_diff_contrib(self):
-        self.assertEqual(self.neutral_segment.temp_diff_contrib, None)
-        self.assertEqual(self.cold_segment.temp_diff_contrib, None)
-        self.assertEqual(self.hot_segment.temp_diff_contrib, None)
+    def test_default_temp_shift(self):
+        self.assertEqual(self.neutral_segment.temp_shift, None)
+        self.assertEqual(self.cold_segment.temp_shift, None)
+        self.assertEqual(self.hot_segment.temp_shift, None)
 
-    def test_temp_diff_contrib(self):
+    def test_temp_shift(self):
         segment = LatentSegment(100, 200, 10)
-        self.assertEqual(segment.temp_diff_contrib, 10)
+        self.assertEqual(segment.temp_shift, 10)
 
     def test_min_and_max_temps(self):
         self.assertEqual(self.neutral_segment.min_temp, 80)
@@ -78,14 +78,14 @@ class TestLatentSegment(unittest.TestCase):
         self.assertEqual(original, clone)
         self.assertIsNot(original, clone)
 
-    def test_shift_no_temp_diff_contrib_given(self):
+    def test_shift_no_temp_shift_given(self):
         self.assertEqual(LatentSegment(0, 80).shift(), LatentSegment(0, 80, 0))
         with self.assertRaises(ValueError):
             LatentSegment(-200, 100).shift()
         with self.assertRaises(ValueError):
             LatentSegment(300, 150).shift()
 
-    def test_shift_self_temp_diff_contrib(self):
+    def test_shift_self_temp_shift(self):
         self.assertEqual(
             LatentSegment(0, 80, 10).shift(), LatentSegment(0, 80, 0))
         self.assertEqual(
@@ -93,7 +93,7 @@ class TestLatentSegment(unittest.TestCase):
         self.assertEqual(
             LatentSegment(300, 150, 10).shift(), LatentSegment(300, 140, 0))
 
-    def test_shift_default_temp_diff_contrib(self):
+    def test_shift_default_temp_shift(self):
         self.assertEqual(
             LatentSegment(0, 80).shift(5), LatentSegment(0, 80, 0))
         self.assertEqual(
@@ -101,7 +101,7 @@ class TestLatentSegment(unittest.TestCase):
         self.assertEqual(
             LatentSegment(300, 150).shift(5), LatentSegment(300, 145, 0))
 
-    def test_shift_self_and_default_temp_diff_contrib_(self):
+    def test_shift_self_and_default_temp_shift(self):
         self.assertEqual(
             LatentSegment(0, 80, 10).shift(5), LatentSegment(0, 80, 0))
         self.assertEqual(

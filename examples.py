@@ -2,7 +2,7 @@ from matplotlib import pyplot as plt
 
 from pinch import segment
 from pinch.stream import Stream
-from pinch.stream_group import StreamGroup
+from pinch.stream_analyzer import StreamAnalyzer
 
 
 # Some customizations to make the plots pretty
@@ -40,7 +40,7 @@ def four_stream():
         Stream([segment.new(180, 150, 30)])
     ]
 
-    stream_group = StreamGroup(default_temp_shift, streams)
+    analyzer = StreamAnalyzer(default_temp_shift, streams)
 
     print(
         "Heating demand: {0:0.2f}\n"
@@ -50,21 +50,21 @@ def four_stream():
         "Heat recovery target: {4:0.2f}\n"
         "Pinch temperature(s): {5}\n"
         .format(
-            stream_group.heating_demand, stream_group.cooling_demand,
-            stream_group.hot_utility_target, stream_group.cold_utility_target,
-            stream_group.heat_recovery_target, stream_group.pinch_temps))
+            analyzer.heating_demand, analyzer.cooling_demand,
+            analyzer.hot_utility_target, analyzer.cold_utility_target,
+            analyzer.heat_recovery_target, analyzer.pinch_temps))
 
     fig, ax = plt.subplots(1, 2, figsize=FIGSIZE)
     fig.suptitle("Four stream example", fontweight="bold")
 
-    ax[0].plot(*stream_group.hot_cascade.cumulative_heat_flow, **HCC_STYLE)
-    ax[0].plot(*stream_group.cold_cascade.cumulative_heat_flow, **CCC_STYLE)
+    ax[0].plot(*analyzer.hot_cascade.cumulative_heat_flow, **HCC_STYLE)
+    ax[0].plot(*analyzer.cold_cascade.cumulative_heat_flow, **CCC_STYLE)
     ax[0].legend()
     ax[0].set_title("Hot and cold composite curves")
     ax[0].set_xlabel("Heat flow [kW]")
     ax[0].set_ylabel("Actual temperature [\u2103]")
 
-    ax[1].plot(*stream_group.grand_cascade.cumulative_heat_flow, **GCC_STYLE)
+    ax[1].plot(*analyzer.grand_cascade.cumulative_heat_flow, **GCC_STYLE)
     ax[1].legend()
     ax[1].set_title("Grand composite curve")
     ax[1].set_xlabel("Net heat flow [kW]")
@@ -116,7 +116,7 @@ def aromatics_plant():
     streams.append(Stream([segment.new(-4.1, 85, 125)]))
     streams.append(Stream([segment.new(-32.5, 480, 500)]))
 
-    stream_group = StreamGroup(default_temp_shift, streams)
+    analyzer = StreamAnalyzer(default_temp_shift, streams)
 
     print(
         "Heating demand: {0:0.2f}\n"
@@ -126,21 +126,21 @@ def aromatics_plant():
         "Heat recovery target: {4:0.2f}\n"
         "Pinch temperature(s): {5}\n"
         .format(
-            stream_group.heating_demand, stream_group.cooling_demand,
-            stream_group.hot_utility_target, stream_group.cold_utility_target,
-            stream_group.heat_recovery_target, stream_group.pinch_temps))
+            analyzer.heating_demand, analyzer.cooling_demand,
+            analyzer.hot_utility_target, analyzer.cold_utility_target,
+            analyzer.heat_recovery_target, analyzer.pinch_temps))
 
     fig, ax = plt.subplots(1, 2, figsize=FIGSIZE)
     fig.suptitle("Aromatics plant", fontweight="bold")
 
-    ax[0].plot(*stream_group.hot_cascade.cumulative_heat_flow, **HCC_STYLE)
-    ax[0].plot(*stream_group.cold_cascade.cumulative_heat_flow, **CCC_STYLE)
+    ax[0].plot(*analyzer.hot_cascade.cumulative_heat_flow, **HCC_STYLE)
+    ax[0].plot(*analyzer.cold_cascade.cumulative_heat_flow, **CCC_STYLE)
     ax[0].legend()
     ax[0].set_title("Hot and cold composite curves")
     ax[0].set_xlabel("Heat flow [ttc/h]")
     ax[0].set_ylabel("Actual temperature [\u2103]")
 
-    ax[1].plot(*stream_group.grand_cascade.cumulative_heat_flow, **GCC_STYLE)
+    ax[1].plot(*analyzer.grand_cascade.cumulative_heat_flow, **GCC_STYLE)
     ax[1].legend()
     ax[1].set_title("Grand composite curve")
     ax[1].set_xlabel("Net heat flow [ttc/h]")
@@ -184,9 +184,9 @@ def evaporator_dryer_plant():
     # dryer_streams.append(Stream([segment.new(140, 60, 13)]))
     # dryer_streams.append(Stream([segment.new(189, 55, 13)]))
 
-    stream_group = StreamGroup(default_temp_shift)
-    stream_group.add(evaporator_streams)
-    stream_group.add(dryer_streams)
+    analyzer = StreamAnalyzer(default_temp_shift)
+    analyzer.add(evaporator_streams)
+    analyzer.add(dryer_streams)
 
     print(
         "Heating demand: {0:0.2f}\n"
@@ -196,21 +196,21 @@ def evaporator_dryer_plant():
         "Heat recovery target: {4:0.2f}\n"
         "Pinch temperature(s): {5}\n"
         .format(
-            stream_group.heating_demand, stream_group.cooling_demand,
-            stream_group.hot_utility_target, stream_group.cold_utility_target,
-            stream_group.heat_recovery_target, stream_group.pinch_temps))
+            analyzer.heating_demand, analyzer.cooling_demand,
+            analyzer.hot_utility_target, analyzer.cold_utility_target,
+            analyzer.heat_recovery_target, analyzer.pinch_temps))
 
     fig, ax = plt.subplots(1, 2, figsize=FIGSIZE)
     fig.suptitle("Evaporator/dryer plant", fontweight="bold")
 
-    ax[0].plot(*stream_group.hot_cascade.cumulative_heat_flow, **HCC_STYLE)
-    ax[0].plot(*stream_group.cold_cascade.cumulative_heat_flow, **CCC_STYLE)
+    ax[0].plot(*analyzer.hot_cascade.cumulative_heat_flow, **HCC_STYLE)
+    ax[0].plot(*analyzer.cold_cascade.cumulative_heat_flow, **CCC_STYLE)
     ax[0].legend()
     ax[0].set_title("Hot and cold composite curves")
     ax[0].set_xlabel("Heat flow [kW]")
     ax[0].set_ylabel("Actual temperature [\u2103]")
 
-    ax[1].plot(*stream_group.grand_cascade.cumulative_heat_flow, **GCC_STYLE)
+    ax[1].plot(*analyzer.grand_cascade.cumulative_heat_flow, **GCC_STYLE)
     ax[1].legend()
     ax[1].set_title("Grand composite curve")
     ax[1].set_xlabel("Net heat flow [kW]")

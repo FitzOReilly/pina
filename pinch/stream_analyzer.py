@@ -1,11 +1,11 @@
 from pinch.heat_cascade import HeatCascade
 
 
-class StreamGroup(object):
+class StreamAnalyzer(object):
     """
-    Stream group that holds a list of streams that can transfer heat between
-    each other. Calculates several heat cascades, the pinch temperature(s) and
-    heat demands and targets.
+    This class performs pinch analysis calculations on a list of streams:
+    heating and cooling requirements, heat cascades and the pinch
+    temperature(s).
     """
 
     def __init__(self, default_temp_shift=None, streams=[]):

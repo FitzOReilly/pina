@@ -8,22 +8,11 @@ class HeatCascade(object):
         # List of intervals (which are simply segments) in the cascade
         self._intervals = []
 
-        # The cumulative heat flow at the lowest temperature in the cascade
-        self._heat_offset = 0
-
         self.add(segments)
 
     @property
     def intervals(self):
         return self._intervals
-
-    @property
-    def heat_offset(self):
-        return self._heat_offset
-
-    @heat_offset.setter
-    def heat_offset(self, heat_offset):
-        self._heat_offset = heat_offset
 
     def add(self, segments):
         """
@@ -33,23 +22,21 @@ class HeatCascade(object):
         for s in segments:
             self._add_one(s)
 
-    @property
     def net_heat_flow(self):
         """
         Returns the net heat flow summed over all intervals.
         """
         return sum(i.heat_flow for i in self.intervals)
 
-    @property
-    def cumulative_heat_flow(self):
+    def cumulative_heat_flow(self, heat_offset=0):
         """
         Returns a tuple of two lists:
         * The first list contains the cumulative heat flows at the beginning
           and end of each interval.
         * The second list contains the corresponding temperatures.
         The two lists are sorted by temperature, from lowest to highest.
-        The cumulative heat flow at the lowest temperature can be changed by
-        setting heat_offset (default value: 0).
+        The cumulative heat flow at the lowest temperature is set to
+        heat_offset.
 
         The two lists form the coordinates of the composite curves.
         """
@@ -57,7 +44,7 @@ class HeatCascade(object):
         heat_flows = []
         if self.intervals:
             temperatures.append(self.intervals[0].supply_temp)
-            heat_flows.append(self.heat_offset)
+            heat_flows.append(heat_offset)
             for i in self.intervals:
                 if i.supply_temp != temperatures[-1]:
                     # There is a temperature gap between 2 intervals
@@ -135,6 +122,5 @@ class HeatCascade(object):
 
     def __eq__(self, other):
         equal = self.intervals == other.intervals
-        equal &= self.heat_offset == other.heat_offset
 
         return equal

@@ -11,6 +11,9 @@ class StreamAnalyzer(object):
     def __init__(self, default_temp_shift=None, streams=[]):
         self._default_temp_shift = default_temp_shift
         self._streams = []
+        self._pinch_temps = []
+        self._cold_utility_target = 0
+        self._hot_utility_target = 0
 
         self._cold_cascade = HeatCascade()
         self._hot_cascade = HeatCascade()
@@ -108,7 +111,3 @@ class StreamAnalyzer(object):
             ]
             self._cold_utility_target = heat_flows[0] - min_heat_flow
             self._hot_utility_target = heat_flows[-1] - min_heat_flow
-        else:
-            self._pinch_temps = []
-            self._cold_utility_target = 0
-            self._hot_utility_target = 0

@@ -57,14 +57,14 @@ def four_stream():
     fig, ax = plt.subplots(1, 2, figsize=FIGSIZE)
     fig.suptitle("Four stream example", fontweight="bold")
 
-    ax[0].plot(*analyzer.hot_cascade.cumulative_heat_flow, **HCC_STYLE)
-    ax[0].plot(*analyzer.cold_cascade.cumulative_heat_flow, **CCC_STYLE)
+    ax[0].plot(*analyzer.hot_composite_curve, **HCC_STYLE)
+    ax[0].plot(*analyzer.cold_composite_curve, **CCC_STYLE)
     ax[0].legend()
     ax[0].set_title("Hot and cold composite curves")
     ax[0].set_xlabel("Heat flow [kW]")
     ax[0].set_ylabel("Actual temperature [\u2103]")
 
-    ax[1].plot(*analyzer.grand_cascade.cumulative_heat_flow, **GCC_STYLE)
+    ax[1].plot(*analyzer.grand_composite_curve, **GCC_STYLE)
     ax[1].legend()
     ax[1].set_title("Grand composite curve")
     ax[1].set_xlabel("Net heat flow [kW]")
@@ -133,14 +133,14 @@ def aromatics_plant():
     fig, ax = plt.subplots(1, 2, figsize=FIGSIZE)
     fig.suptitle("Aromatics plant", fontweight="bold")
 
-    ax[0].plot(*analyzer.hot_cascade.cumulative_heat_flow, **HCC_STYLE)
-    ax[0].plot(*analyzer.cold_cascade.cumulative_heat_flow, **CCC_STYLE)
+    ax[0].plot(*analyzer.hot_composite_curve, **HCC_STYLE)
+    ax[0].plot(*analyzer.cold_composite_curve, **CCC_STYLE)
     ax[0].legend()
     ax[0].set_title("Hot and cold composite curves")
     ax[0].set_xlabel("Heat flow [ttc/h]")
     ax[0].set_ylabel("Actual temperature [\u2103]")
 
-    ax[1].plot(*analyzer.grand_cascade.cumulative_heat_flow, **GCC_STYLE)
+    ax[1].plot(*analyzer.grand_composite_curve, **GCC_STYLE)
     ax[1].legend()
     ax[1].set_title("Grand composite curve")
     ax[1].set_xlabel("Net heat flow [ttc/h]")
@@ -203,19 +203,25 @@ def evaporator_dryer_plant():
     fig, ax = plt.subplots(1, 2, figsize=FIGSIZE)
     fig.suptitle("Evaporator/dryer plant", fontweight="bold")
 
-    ax[0].plot(*analyzer.hot_cascade.cumulative_heat_flow, **HCC_STYLE)
-    ax[0].plot(*analyzer.cold_cascade.cumulative_heat_flow, **CCC_STYLE)
+    ax[0].plot(*analyzer.hot_composite_curve, **HCC_STYLE)
+    ax[0].plot(*analyzer.cold_composite_curve, **CCC_STYLE)
     ax[0].legend()
     ax[0].set_title("Hot and cold composite curves")
     ax[0].set_xlabel("Heat flow [kW]")
     ax[0].set_ylabel("Actual temperature [\u2103]")
 
-    ax[1].plot(*analyzer.grand_cascade.cumulative_heat_flow, **GCC_STYLE)
+    # analyzer.grand_cascade.heat_offset = -200
+    # analyzer.grand_cascade.add([segment.new(-1000, 0, 500)])
+    ax[1].plot(*analyzer.grand_composite_curve, **GCC_STYLE)
     ax[1].legend()
     ax[1].set_title("Grand composite curve")
     ax[1].set_xlabel("Net heat flow [kW]")
     ax[1].set_ylabel("Shifted temperature [\u2103]")
-    ax[1].set_ylim(ax[0].get_ylim())
+
+    ylims = (*ax[0].get_ylim(), *ax[1].get_ylim())
+    minmax_ylims = (min(ylims), max(ylims))
+    ax[0].set_ylim(minmax_ylims)
+    ax[1].set_ylim(minmax_ylims)
 
     plt.show()
 

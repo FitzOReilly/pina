@@ -1,7 +1,6 @@
 import unittest
 
 from pinch import segment
-from pinch.heat_cascade import HeatCascade
 from pinch.stream import Stream
 from pinch.stream_analyzer import StreamAnalyzer
 
@@ -27,11 +26,11 @@ class TestStreamAnalyzer(unittest.TestCase):
         self.assertEqual(analyzer.pinch_temps, [])
         self.assertEqual(analyzer.default_temp_shift, None)
         self.assertEqual(analyzer.streams, [])
-        self.assertEqual(analyzer.cold_cascade, HeatCascade())
-        self.assertEqual(analyzer.hot_cascade, HeatCascade())
-        self.assertEqual(analyzer.shifted_cold_cascade, HeatCascade())
-        self.assertEqual(analyzer.shifted_hot_cascade, HeatCascade())
-        self.assertEqual(analyzer.grand_cascade, HeatCascade())
+        self.assertEqual(analyzer.cold_composite_curve, ([], []))
+        self.assertEqual(analyzer.hot_composite_curve, ([], []))
+        self.assertEqual(analyzer.shifted_cold_composite_curve, ([], []))
+        self.assertEqual(analyzer.shifted_hot_composite_curve, ([], []))
+        self.assertEqual(analyzer.grand_composite_curve, ([], []))
 
     def test_2_stream_example(self):
         cold_segment = segment.new(-180, 20, 200)
@@ -51,33 +50,29 @@ class TestStreamAnalyzer(unittest.TestCase):
 
         self.assertEqual(analyzer.streams, [cold_stream, hot_stream])
 
-        expected_cold_cascade = HeatCascade([
-            cold_segment.with_absolute_heat_flow()])
-        expected_cold_cascade.heat_offset = 70
-        self.assertEqual(analyzer.cold_cascade, expected_cold_cascade)
-
-        expected_hot_cascade = HeatCascade([
-            hot_segment.with_absolute_heat_flow()])
-        expected_hot_cascade.heat_offset = 0
-        self.assertEqual(analyzer.hot_cascade, expected_hot_cascade)
-
-        expected_shifted_cold_cascade = HeatCascade([
-            cold_segment.shift(10).with_absolute_heat_flow()])
-        expected_shifted_cold_cascade.heat_offset = 70
+        expected_cold_composite_curve = ([70, 250], [20, 200])
         self.assertEqual(
-            analyzer.shifted_cold_cascade, expected_shifted_cold_cascade)
+            analyzer.cold_composite_curve, expected_cold_composite_curve)
 
-        expected_shifted_hot_cascade = HeatCascade([
-            hot_segment.shift(10).with_absolute_heat_flow()])
-        expected_shifted_hot_cascade.heat_offset = 0
+        expected_hot_composite_curve = ([0, 180], [50, 150])
         self.assertEqual(
-            analyzer.shifted_hot_cascade, expected_shifted_hot_cascade)
+            analyzer.hot_composite_curve, expected_hot_composite_curve)
 
-        expected_grand_cascade = HeatCascade([
-            cold_segment.shift(10).with_inverted_heat_flow(),
-            hot_segment.shift(10).with_inverted_heat_flow()])
-        expected_grand_cascade.heat_offset = 70
-        self.assertEqual(analyzer.grand_cascade, expected_grand_cascade)
+        expected_shifted_cold_composite_curve = ([70, 250], [30, 210])
+        self.assertEqual(
+            analyzer.shifted_cold_composite_curve,
+            expected_shifted_cold_composite_curve
+        )
+
+        expected_shifted_hot_composite_curve = ([0, 180], [40, 140])
+        self.assertEqual(
+            analyzer.shifted_hot_composite_curve,
+            expected_shifted_hot_composite_curve
+        )
+
+        expected_grand_composite_curve = ([70, 80, 0, 70], [30, 40, 140, 210])
+        self.assertEqual(
+            analyzer.grand_composite_curve, expected_grand_composite_curve)
 
     def test_extended_pinch(self):
         cold_segment = segment.new(-225, 20, 95)

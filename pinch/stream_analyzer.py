@@ -22,11 +22,11 @@ class StreamAnalyzer(object):
 
     @property
     def cooling_demand(self):
-        return self.hot_cascade.net_heat_flow
+        return self._hot_cascade.net_heat_flow
 
     @property
     def heating_demand(self):
-        return self.cold_cascade.net_heat_flow
+        return self._cold_cascade.net_heat_flow
 
     @property
     def cold_utility_target(self):
@@ -53,24 +53,24 @@ class StreamAnalyzer(object):
         return self._streams
 
     @property
-    def cold_cascade(self):
-        return self._cold_cascade
+    def cold_composite_curve(self):
+        return self._cold_cascade.cumulative_heat_flow
 
     @property
-    def hot_cascade(self):
-        return self._hot_cascade
+    def hot_composite_curve(self):
+        return self._hot_cascade.cumulative_heat_flow
 
     @property
-    def shifted_cold_cascade(self):
-        return self._shifted_cold_cascade
+    def shifted_cold_composite_curve(self):
+        return self._shifted_cold_cascade.cumulative_heat_flow
 
     @property
-    def shifted_hot_cascade(self):
-        return self._shifted_hot_cascade
+    def shifted_hot_composite_curve(self):
+        return self._shifted_hot_cascade.cumulative_heat_flow
 
     @property
-    def grand_cascade(self):
-        return self._grand_cascade
+    def grand_composite_curve(self):
+        return self._grand_cascade.cumulative_heat_flow
 
     def add(self, streams):
         """
@@ -101,7 +101,7 @@ class StreamAnalyzer(object):
             self._grand_cascade.add([shifted.with_inverted_heat_flow()])
 
     def _compute_targets(self):
-        heat_flows, temps = self.grand_cascade.cumulative_heat_flow
+        heat_flows, temps = self._grand_cascade.cumulative_heat_flow
         if heat_flows:
             min_heat_flow = min(heat_flows)
             self._pinch_temps = [

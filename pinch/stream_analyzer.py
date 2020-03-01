@@ -22,11 +22,11 @@ class StreamAnalyzer(object):
 
     @property
     def cooling_demand(self):
-        return self._hot_cascade.net_heat_flow
+        return self._hot_cascade.net_heat_flow()
 
     @property
     def heating_demand(self):
-        return self._cold_cascade.net_heat_flow
+        return self._cold_cascade.net_heat_flow()
 
     @property
     def cold_utility_target(self):
@@ -54,23 +54,26 @@ class StreamAnalyzer(object):
 
     @property
     def cold_composite_curve(self):
-        return self._cold_cascade.cumulative_heat_flow
+        return self._cold_cascade.cumulative_heat_flow(
+            self.cold_utility_target)
 
     @property
     def hot_composite_curve(self):
-        return self._hot_cascade.cumulative_heat_flow
+        return self._hot_cascade.cumulative_heat_flow()
 
     @property
     def shifted_cold_composite_curve(self):
-        return self._shifted_cold_cascade.cumulative_heat_flow
+        return self._shifted_cold_cascade.cumulative_heat_flow(
+            self.cold_utility_target)
 
     @property
     def shifted_hot_composite_curve(self):
-        return self._shifted_hot_cascade.cumulative_heat_flow
+        return self._shifted_hot_cascade.cumulative_heat_flow()
 
     @property
     def grand_composite_curve(self):
-        return self._grand_cascade.cumulative_heat_flow
+        return self._grand_cascade.cumulative_heat_flow(
+            self.cold_utility_target)
 
     def add(self, streams):
         """
@@ -80,10 +83,6 @@ class StreamAnalyzer(object):
             self._add_one(s)
 
         self._compute_targets()
-
-        self._cold_cascade.heat_offset = self.cold_utility_target
-        self._shifted_cold_cascade.heat_offset = self.cold_utility_target
-        self._grand_cascade.heat_offset = self.cold_utility_target
 
     def _add_one(self, stream):
         self._streams.append(stream)
@@ -101,7 +100,7 @@ class StreamAnalyzer(object):
             self._grand_cascade.add([shifted.with_inverted_heat_flow()])
 
     def _compute_targets(self):
-        heat_flows, temps = self._grand_cascade.cumulative_heat_flow
+        heat_flows, temps = self._grand_cascade.cumulative_heat_flow()
         if heat_flows:
             min_heat_flow = min(heat_flows)
             self._pinch_temps = [

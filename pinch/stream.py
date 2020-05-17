@@ -74,11 +74,11 @@ def new(heat_flow, supply_temp, target_temp, temp_shift=None):
     return new_segmented([heat_flow, supply_temp, target_temp, temp_shift])
 
 
-def new_segmented(*args):
+def new_segmented(*stream_segments):
     """
     Convenience function to create a segmented stream. Each argument represents
     one segment. It must have the following form:
     [heat_flow, supply_temp, target_temp, temp_shift=None]
     """
     from pinch import segment
-    return Stream([segment.new(*arg) for arg in args])
+    return Stream([segment.new(*s) for s in stream_segments])

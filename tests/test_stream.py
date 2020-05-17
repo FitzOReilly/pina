@@ -1,7 +1,7 @@
 import unittest
 
 from pinch import segment
-from pinch.stream import Stream
+from pinch.stream import Stream, new, new_segmented
 
 
 class TestStream(unittest.TestCase):
@@ -123,6 +123,36 @@ class TestStream(unittest.TestCase):
                 segment.new(300, 0, 0)
             ]
         )
+
+    def test_new(self):
+        s = Stream([segment.new(-320, 20, 100, 5)])
+        ns = new(-320, 20, 100, 5)
+        self.assertEqual(s.segments, ns.segments)
+
+        s = Stream([segment.new(-400, 100, 100)])
+        ns = new(-400, 100, 100)
+        self.assertEqual(s.segments, ns.segments)
+
+    def test_new_segmented(self):
+        s = Stream([
+            segment.new(-320, 20, 100, 5),
+            segment.new(-400, 100, 100),
+            segment.new(0, 100, 100, 10),
+            segment.new(400, 100, 0),
+            segment.new(300, 0, 0),
+            segment.new(0, 0, -20)
+        ])
+
+        ns = new_segmented(
+            [-320, 20, 100, 5],
+            [-400, 100, 100],
+            [0, 100, 100, 10],
+            [400, 100, 0],
+            [300, 0, 0],
+            [0, 0, -20]
+        )
+
+        self.assertEqual(s.segments, ns.segments)
 
 
 if __name__ == "__main__":

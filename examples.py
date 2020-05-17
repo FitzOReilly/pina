@@ -1,7 +1,6 @@
 from matplotlib import pyplot as plt
 
-from pinch import segment
-from pinch.stream import Stream
+from pinch import stream
 from pinch.stream_analyzer import StreamAnalyzer
 
 
@@ -34,10 +33,10 @@ def four_stream():
     default_temp_shift = min_temp_diff / 2
 
     streams = [
-        Stream([segment.new(-230, 20, 135)]),
-        Stream([segment.new(330, 170, 60)]),
-        Stream([segment.new(-240, 80, 140)]),
-        Stream([segment.new(180, 150, 30)])
+        stream.new(-230, 20, 135),
+        stream.new(330, 170, 60),
+        stream.new(-240, 80, 140),
+        stream.new(180, 150, 30)
     ]
 
     analyzer = StreamAnalyzer(default_temp_shift, streams)
@@ -85,36 +84,36 @@ def aromatics_plant():
 
     streams = []
     # Streams can consist of multiple segments
-    streams.append(Stream([
-        segment.new(-13.9, 102, 229),
-        segment.new(-8.3, 229, 327)
-    ]))
-    streams.append(Stream([
-        segment.new(13.9, 327, 174),
-        segment.new(9, 174, 92),
-        segment.new(4.2, 92, 50)
-    ]))
-    streams.append(Stream([segment.new(-9, 35, 164)]))
-    streams.append(Stream([
-        segment.new(-7.2, 140, 176),
-        segment.new(-25.2, 176, 367),
-        segment.new(-16.4, 367, 500)
-    ]))
-    streams.append(Stream([segment.new(25.2, 495, 307)]))
-    streams.append(Stream([
-        segment.new(7.2, 220, 160),
-        segment.new(3.3, 160, 144),
-        segment.new(4.1, 144, 125),
-        segment.new(11.6, 125, 59)
-    ]))
-    streams.append(Stream([segment.new(-3.3, 80, 123)]))
-    streams.append(Stream([segment.new(-6.8, 59, 169)]))
-    streams.append(Stream([
-        segment.new(6.8, 220, 130),
-        segment.new(3.8, 130, 67)
-    ]))
-    streams.append(Stream([segment.new(-4.1, 85, 125)]))
-    streams.append(Stream([segment.new(-32.5, 480, 500)]))
+    streams.append(stream.new_segmented(
+        [-13.9, 102, 229],
+        [-8.3, 229, 327]
+    ))
+    streams.append(stream.new_segmented(
+        [13.9, 327, 174],
+        [9, 174, 92],
+        [4.2, 92, 50]
+    ))
+    streams.append(stream.new(-9, 35, 164))
+    streams.append(stream.new_segmented(
+        [-7.2, 140, 176],
+        [-25.2, 176, 367],
+        [-16.4, 367, 500]
+    ))
+    streams.append(stream.new(25.2, 495, 307))
+    streams.append(stream.new_segmented(
+        [7.2, 220, 160],
+        [3.3, 160, 144],
+        [4.1, 144, 125],
+        [11.6, 125, 59]
+    ))
+    streams.append(stream.new(-3.3, 80, 123))
+    streams.append(stream.new(-6.8, 59, 169))
+    streams.append(stream.new_segmented(
+        [6.8, 220, 130],
+        [3.8, 130, 67]
+    ))
+    streams.append(stream.new(-4.1, 85, 125))
+    streams.append(stream.new(-32.5, 480, 500))
 
     analyzer = StreamAnalyzer(default_temp_shift, streams)
 
@@ -160,29 +159,29 @@ def evaporator_dryer_plant():
     default_temp_shift = min_temp_diff / 2
 
     evaporator_streams = []
-    evaporator_streams.append(Stream([segment.new(-183, 10, 70)]))
-    evaporator_streams.append(Stream([segment.new(-198, 37.8, 87.8)]))
+    evaporator_streams.append(stream.new(-183, 10, 70))
+    evaporator_streams.append(stream.new(-198, 37.8, 87.8))
     # Stream segments can have equal supply and target temperatures
     # (which means they transfer latent heat)
-    evaporator_streams.append(Stream([segment.new(-1005.5, 79.4, 79.4)]))
-    evaporator_streams.append(Stream([segment.new(1039, 79.4, 79.4)]))
-    evaporator_streams.append(Stream([segment.new(232, 86.9, 10)]))
-    evaporator_streams.append(Stream([segment.new(-643, 48.8, 48.8)]))
-    evaporator_streams.append(Stream([segment.new(714, 43.3, 43.3)]))
-    evaporator_streams.append(Stream([
-        segment.new(-6.5, 48.8, 54.4),
-        segment.new(-263.5, 54.4, 93.3)
-    ]))
-    evaporator_streams.append(Stream([segment.new(260, 43.3, 43.3)]))
-    evaporator_streams.append(Stream([segment.new(57, 43.3, 10)]))
+    evaporator_streams.append(stream.new(-1005.5, 79.4, 79.4))
+    evaporator_streams.append(stream.new(1039, 79.4, 79.4))
+    evaporator_streams.append(stream.new(232, 86.9, 10))
+    evaporator_streams.append(stream.new(-643, 48.8, 48.8))
+    evaporator_streams.append(stream.new(714, 43.3, 43.3))
+    evaporator_streams.append(stream.new_segmented(
+        [-6.5, 48.8, 54.4],
+        [-263.5, 54.4, 93.3]
+    ))
+    evaporator_streams.append(stream.new(260, 43.3, 43.3))
+    evaporator_streams.append(stream.new(57, 43.3, 10))
 
     dryer_streams = []
-    dryer_streams.append(Stream([segment.new(-93.5, 55, 55)]))
-    dryer_streams.append(Stream([segment.new(-254, 41, 41)]))
-    dryer_streams.append(Stream([segment.new(-124, 60, 60)]))
-    # dryer_streams.append(Stream([segment.new(149, 41, 13)]))
-    # dryer_streams.append(Stream([segment.new(140, 60, 13)]))
-    # dryer_streams.append(Stream([segment.new(189, 55, 13)]))
+    dryer_streams.append(stream.new(-93.5, 55, 55))
+    dryer_streams.append(stream.new(-254, 41, 41))
+    dryer_streams.append(stream.new(-124, 60, 60))
+    # dryer_streams.append(stream.new(149, 41, 13))
+    # dryer_streams.append(stream.new(140, 60, 13))
+    # dryer_streams.append(stream.new(189, 55, 13))
 
     analyzer = StreamAnalyzer(default_temp_shift)
     analyzer.add(evaporator_streams)

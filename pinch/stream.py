@@ -80,5 +80,5 @@ def new_segmented(*stream_segments):
     one segment. It must have the following form:
     [heat_flow, supply_temp, target_temp, temp_shift=None]
     """
-    from pinch import segment
-    return Stream([segment.new(*s) for s in stream_segments])
+    from pinch import segments
+    return Stream([segments.new(*s) for s in stream_segments])

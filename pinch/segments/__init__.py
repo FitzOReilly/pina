@@ -1,4 +1,4 @@
-def new(heat_flow, supply_temp, target_temp, temp_shift=None):
+def make_segment(heat_flow, supply_temp, target_temp, temp_shift=None):
     """
     Creates a new segment with the given properties.
     """

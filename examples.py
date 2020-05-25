@@ -1,6 +1,6 @@
 from matplotlib import pyplot as plt
 
-from pinch import stream
+from pinch.stream import make_stream, make_segmented_stream
 from pinch.stream_analyzer import StreamAnalyzer
 
 
@@ -97,10 +97,10 @@ def four_stream():
     default_temp_shift = min_temp_diff / 2
 
     streams = [
-        stream.new(-230, 20, 135),
-        stream.new(330, 170, 60),
-        stream.new(-240, 80, 140),
-        stream.new(180, 150, 30)
+        make_stream(-230, 20, 135),
+        make_stream(330, 170, 60),
+        make_stream(-240, 80, 140),
+        make_stream(180, 150, 30)
     ]
 
     analyzer = StreamAnalyzer(default_temp_shift, streams)
@@ -136,19 +136,19 @@ def aromatics_plant():
     # Some of the streams consist of multiple segments with individual heat
     # capacities
     streams = [
-        stream.new_segmented([-13.9, 102, 229], [-8.3, 229, 327]),
-        stream.new_segmented([13.9, 327, 174], [9, 174, 92], [4.2, 92, 50]),
-        stream.new(-9, 35, 164),
-        stream.new_segmented(
+        make_segmented_stream([-13.9, 102, 229], [-8.3, 229, 327]),
+        make_segmented_stream([13.9, 327, 174], [9, 174, 92], [4.2, 92, 50]),
+        make_stream(-9, 35, 164),
+        make_segmented_stream(
             [-7.2, 140, 176], [-25.2, 176, 367], [-16.4, 367, 500]),
-        stream.new(25.2, 495, 307),
-        stream.new_segmented(
+        make_stream(25.2, 495, 307),
+        make_segmented_stream(
             [7.2, 220, 160], [3.3, 160, 144], [4.1, 144, 125], [11.6, 125, 59]),
-        stream.new(-3.3, 80, 123),
-        stream.new(-6.8, 59, 169),
-        stream.new_segmented([6.8, 220, 130], [3.8, 130, 67]),
-        stream.new(-4.1, 85, 125),
-        stream.new(-32.5, 480, 500)
+        make_stream(-3.3, 80, 123),
+        make_stream(-6.8, 59, 169),
+        make_segmented_stream([6.8, 220, 130], [3.8, 130, 67]),
+        make_stream(-4.1, 85, 125),
+        make_stream(-32.5, 480, 500)
     ]
 
     analyzer = StreamAnalyzer(default_temp_shift, streams)
@@ -184,26 +184,26 @@ def evaporator_dryer_plant():
     # Some of the streams have equal supply and target temperatures, meaning
     # that they transfer latent heat
     evaporator_streams = [
-        stream.new(-183, 10, 70),
-        stream.new(-198, 37.8, 87.8),
-        stream.new(-1005.5, 79.4, 79.4),
-        stream.new(1039, 79.4, 79.4),
-        stream.new(232, 86.9, 10),
-        stream.new(-643, 48.8, 48.8),
-        stream.new(714, 43.3, 43.3),
-        stream.new_segmented([-6.5, 48.8, 54.4], [-263.5, 54.4, 93.3]),
-        stream.new(260, 43.3, 43.3),
-        stream.new(57, 43.3, 10)
+        make_stream(-183, 10, 70),
+        make_stream(-198, 37.8, 87.8),
+        make_stream(-1005.5, 79.4, 79.4),
+        make_stream(1039, 79.4, 79.4),
+        make_stream(232, 86.9, 10),
+        make_stream(-643, 48.8, 48.8),
+        make_stream(714, 43.3, 43.3),
+        make_segmented_stream([-6.5, 48.8, 54.4], [-263.5, 54.4, 93.3]),
+        make_stream(260, 43.3, 43.3),
+        make_stream(57, 43.3, 10)
     ]
 
     dryer_streams = [
-        stream.new(-93.5, 55, 55),
-        stream.new(-254, 41, 41),
-        stream.new(-124, 60, 60),
+        make_stream(-93.5, 55, 55),
+        make_stream(-254, 41, 41),
+        make_stream(-124, 60, 60),
         # Some optional streams
-        # stream.new(149, 41, 13),
-        # stream.new(140, 60, 13),
-        # stream.new(189, 55, 13)
+        # make_stream(149, 41, 13),
+        # make_stream(140, 60, 13),
+        # make_stream(189, 55, 13)
     ]
 
     analyzer = StreamAnalyzer(default_temp_shift)

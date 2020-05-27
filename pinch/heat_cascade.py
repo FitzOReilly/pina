@@ -121,6 +121,4 @@ class HeatCascade(object):
             self._intervals.pop(-1)
 
     def __eq__(self, other):
-        equal = self.intervals == other.intervals
-
-        return equal
+        return self.intervals == other.intervals

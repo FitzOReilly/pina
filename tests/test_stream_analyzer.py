@@ -142,6 +142,22 @@ class TestStreamAnalyzer(unittest.TestCase):
         self.assertEqual(analyzer.pinch_temps, [110])
         self.assertEqual(analyzer.default_temp_shift, 5)
 
+    def test_neutralizing_streams(self):
+        cold_stream = make_stream(-40, 100, 100, 0)
+        hot_stream = make_stream(40, 100, 100, 0)
+        analyzer = StreamAnalyzer(default_temp_shift=5)
+        analyzer.add([cold_stream])
+        analyzer.add([hot_stream])
+
+        self.assertEqual(analyzer.cooling_demand, 40)
+        self.assertEqual(analyzer.heating_demand, 40)
+        self.assertEqual(analyzer.cold_utility_target, 0)
+        self.assertEqual(analyzer.hot_utility_target, 0)
+        self.assertEqual(analyzer.heat_recovery_target, 40)
+        self.assertEqual(analyzer.pinch_temps, [])
+        self.assertEqual(analyzer.default_temp_shift, 5)
+        self.assertEqual(analyzer.streams, [cold_stream, hot_stream])
+
 
 if __name__ == "__main__":
     unittest.main()

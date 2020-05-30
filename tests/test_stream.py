@@ -125,16 +125,16 @@ class TestStream(unittest.TestCase):
         )
 
     def test_make_stream(self):
-        s = Stream([make_segment(-320, 20, 100, 5)])
-        ns = make_stream(-320, 20, 100, 5)
-        self.assertEqual(s.segments, ns.segments)
+        from_init = Stream([make_segment(-320, 20, 100, 5)])
+        from_make = make_stream(-320, 20, 100, 5)
+        self.assertEqual(from_init.segments, from_make.segments)
 
-        s = Stream([make_segment(-400, 100, 100)])
-        ns = make_stream(-400, 100, 100)
-        self.assertEqual(s.segments, ns.segments)
+        from_init = Stream([make_segment(-400, 100, 100)])
+        from_make = make_stream(-400, 100, 100)
+        self.assertEqual(from_init.segments, from_make.segments)
 
     def test_make_segmented_stream(self):
-        s = Stream([
+        from_init = Stream([
             make_segment(-320, 20, 100, 5),
             make_segment(-400, 100, 100),
             make_segment(0, 100, 100, 10),
@@ -143,7 +143,7 @@ class TestStream(unittest.TestCase):
             make_segment(0, 0, -20)
         ])
 
-        ns = make_segmented_stream(
+        from_make = make_segmented_stream(
             [-320, 20, 100, 5],
             [-400, 100, 100],
             [0, 100, 100, 10],
@@ -152,7 +152,7 @@ class TestStream(unittest.TestCase):
             [0, 0, -20]
         )
 
-        self.assertEqual(s.segments, ns.segments)
+        self.assertEqual(from_init.segments, from_make.segments)
 
 
 if __name__ == "__main__":

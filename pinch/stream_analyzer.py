@@ -111,3 +111,7 @@ class StreamAnalyzer(object):
             ]
             self._cold_utility_target = heat_flows[0] - min_heat_flow
             self._hot_utility_target = heat_flows[-1] - min_heat_flow
+        else:
+            self._pinch_temps = []
+            self._cold_utility_target = 0
+            self._hot_utility_target = 0

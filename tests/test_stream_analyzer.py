@@ -1,7 +1,6 @@
 import unittest
 
-from pinch.segments import make_segment
-from pinch.stream import Stream
+from pinch.stream import make_stream, make_segmented_stream
 from pinch.stream_analyzer import StreamAnalyzer
 
 
@@ -33,10 +32,8 @@ class TestStreamAnalyzer(unittest.TestCase):
         self.assertEqual(analyzer.grand_composite_curve, ([], []))
 
     def test_2_stream_example(self):
-        cold_segment = make_segment(-180, 20, 200)
-        hot_segment = make_segment(180, 150, 50)
-        cold_stream = Stream([cold_segment])
-        hot_stream = Stream([hot_segment])
+        cold_stream = make_stream(-180, 20, 200)
+        hot_stream = make_stream(180, 150, 50)
         analyzer = StreamAnalyzer(default_temp_shift=10)
         analyzer.add([cold_stream, hot_stream])
 
@@ -75,10 +72,8 @@ class TestStreamAnalyzer(unittest.TestCase):
             analyzer.grand_composite_curve, expected_grand_composite_curve)
 
     def test_extended_pinch(self):
-        cold_segment = make_segment(-225, 20, 95)
-        hot_segment = make_segment(267, 95, 6)
-        cold_stream = Stream([cold_segment])
-        hot_stream = Stream([hot_segment])
+        cold_stream = make_stream(-225, 20, 95)
+        hot_stream = make_stream(267, 95, 6)
         analyzer = StreamAnalyzer(default_temp_shift=1)
         analyzer.add([cold_stream, hot_stream])
 
@@ -91,12 +86,12 @@ class TestStreamAnalyzer(unittest.TestCase):
         self.assertEqual(analyzer.default_temp_shift, 1)
 
     def test_2_pinches(self):
-        cold_stream = Stream([
-            make_segment(-50, 50, 100),
-            make_segment(-40, 100, 100),
-            make_segment(-100, 100, 200)
-        ])
-        hot_stream = Stream([make_segment(260, 150, 20)])
+        cold_stream = make_segmented_stream(
+            [-50, 50, 100],
+            [-40, 100, 100],
+            [-100, 100, 200]
+        )
+        hot_stream = make_stream(260, 150, 20)
         analyzer = StreamAnalyzer(default_temp_shift=5)
         analyzer.add([cold_stream, hot_stream])
 
@@ -109,7 +104,7 @@ class TestStreamAnalyzer(unittest.TestCase):
         self.assertEqual(analyzer.default_temp_shift, 5)
 
     def test_cold_stream_only(self):
-        cold_stream = Stream([make_segment(-40, 100, 100)])
+        cold_stream = make_stream(-40, 100, 100)
         analyzer = StreamAnalyzer(default_temp_shift=5)
         analyzer.add([cold_stream])
 
@@ -122,7 +117,7 @@ class TestStreamAnalyzer(unittest.TestCase):
         self.assertEqual(analyzer.default_temp_shift, 5)
 
     def test_hot_stream_only(self):
-        hot_stream = Stream([make_segment(260, 150, 20)])
+        hot_stream = make_stream(260, 150, 20)
         analyzer = StreamAnalyzer(default_temp_shift=5)
         analyzer.add([hot_stream])
 
@@ -135,7 +130,7 @@ class TestStreamAnalyzer(unittest.TestCase):
         self.assertEqual(analyzer.default_temp_shift, 5)
 
     def test_individual_temp_shift(self):
-        cold_stream = Stream([make_segment(-40, 100, 100, 10)])
+        cold_stream = make_stream(-40, 100, 100, 10)
         analyzer = StreamAnalyzer(default_temp_shift=5)
         analyzer.add([cold_stream])
 

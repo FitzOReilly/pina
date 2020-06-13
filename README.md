@@ -6,16 +6,16 @@ Pinch analysis is a method for minimizing the thermal energy consumption of
 processes and designing efficient heat exchanger networks.
 
 ## How to use this package?
-The file [`example_simple.ipynb`](example_simple.ipynb) contains a Jupyter
-Notebook with a simple example and a detailed explanation.
+There is a [`Jupyter Notebook with a simple example`](example_simple.ipynb). It
+also has a detailed explanation.
 
 Some more complex examples can be found in [`examples.py`](examples.py). You can
 simply run all of them from the terminal
 ```
 python -m examples
 ```
-or use them interactively from within python, e.g.:
+or use them interactively from a python console, e.g.:
 ```python
 import examples
-examples.four_stream()
+examples.multiple_pinches()
 ```

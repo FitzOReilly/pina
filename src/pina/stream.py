@@ -82,5 +82,5 @@ def make_segmented_stream(*stream_segments):
     one segment. It must have the following form:
     [heat_flow, supply_temp, target_temp, temp_shift=None]
     """
-    from pinch.segments import make_segment
+    from pina.segments import make_segment
     return Stream([make_segment(*s) for s in stream_segments])

@@ -1,7 +1,7 @@
 import unittest
 
-from pinch.segments import make_segment
-from pinch.heat_cascade import HeatCascade
+from pina.segments import make_segment
+from pina.heat_cascade import HeatCascade
 
 
 class TestHeatCascade(unittest.TestCase):

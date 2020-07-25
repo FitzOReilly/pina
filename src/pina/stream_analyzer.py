@@ -1,4 +1,4 @@
-from pinch.heat_cascade import HeatCascade
+from pina.heat_cascade import HeatCascade
 
 
 class StreamAnalyzer(object):

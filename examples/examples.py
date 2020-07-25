@@ -1,7 +1,7 @@
 from matplotlib import pyplot as plt
 
-from pinch.stream import make_stream, make_segmented_stream
-from pinch.stream_analyzer import StreamAnalyzer
+from pina.stream import make_stream, make_segmented_stream
+from pina.stream_analyzer import StreamAnalyzer
 
 
 # Some customizations to make the plots pretty

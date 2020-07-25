@@ -1,8 +1,8 @@
 import unittest
 
-from pinch.segments import make_segment
-from pinch.segments.latent_segment import LatentSegment
-from pinch.segments.sensible_segment import SensibleSegment
+from pina.segments import make_segment
+from pina.segments.latent_segment import LatentSegment
+from pina.segments.sensible_segment import SensibleSegment
 
 
 class TestSegmentFactory(unittest.TestCase):

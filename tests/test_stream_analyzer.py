@@ -1,7 +1,7 @@
 import unittest
 
-from pinch.stream import make_stream, make_segmented_stream
-from pinch.stream_analyzer import StreamAnalyzer
+from pina.stream import make_stream, make_segmented_stream
+from pina.stream_analyzer import StreamAnalyzer
 
 
 class TestStreamAnalyzer(unittest.TestCase):

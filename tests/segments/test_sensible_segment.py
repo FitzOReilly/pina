@@ -1,8 +1,8 @@
 import unittest
 
-from pinch.segments.latent_segment import LatentSegment
-from pinch.segments.sensible_segment import SensibleSegment
-from pinch.enums import HeatType
+from pina.segments.latent_segment import LatentSegment
+from pina.segments.sensible_segment import SensibleSegment
+from pina.enums import HeatType
 
 
 class TestSensibleSegment(unittest.TestCase):

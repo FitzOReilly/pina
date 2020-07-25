@@ -1,5 +1,5 @@
-from pinch.segments.base_segment import BaseSegment
-from pinch.enums import HeatType
+from pina.segments.base_segment import BaseSegment
+from pina.enums import HeatType
 
 
 class SensibleSegment(BaseSegment):

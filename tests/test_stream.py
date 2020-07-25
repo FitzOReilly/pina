@@ -1,7 +1,7 @@
 import unittest
 
-from pinch.segments import make_segment
-from pinch.stream import Stream, make_stream, make_segmented_stream
+from pina.segments import make_segment
+from pina.stream import Stream, make_stream, make_segmented_stream
 
 
 class TestStream(unittest.TestCase):

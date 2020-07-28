@@ -65,9 +65,7 @@ class HeatCascade(object):
         self._intervals = [
             new_interval
             for old_interval in self._intervals
-            for new_interval in old_interval.split(
-                [segment.min_temp, segment.max_temp]
-            )
+            for new_interval in old_interval.split([segment.min_temp, segment.max_temp])
         ]
 
         self._add_tailored(subsegments)
@@ -103,8 +101,8 @@ class HeatCascade(object):
         index = 0
         while index < len(self.intervals) - 1:
             try:
-                self._intervals[index] = (
-                    self.intervals[index].link(self.intervals[index + 1])
+                self._intervals[index] = self.intervals[index].link(
+                    self.intervals[index + 1]
                 )
             except ValueError:
                 pass

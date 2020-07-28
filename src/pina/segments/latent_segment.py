@@ -1,5 +1,5 @@
-from pina.segments.base_segment import BaseSegment
 from pina.enums import HeatType
+from pina.segments.base_segment import BaseSegment
 
 
 class LatentSegment(BaseSegment):
@@ -8,10 +8,7 @@ class LatentSegment(BaseSegment):
     """
 
     def __init__(self, heat_flow, supply_temp, temp_shift=None):
-        super().__init__(
-            supply_temp=supply_temp,
-            temp_shift=temp_shift
-        )
+        super().__init__(supply_temp=supply_temp, temp_shift=temp_shift)
         self._heat_flow = heat_flow
 
     @property
@@ -29,11 +26,10 @@ class LatentSegment(BaseSegment):
 
     @classmethod
     def new(cls, heat_flow, supply_temp, target_temp, temp_shift=None):
-        if (supply_temp != target_temp):
+        if supply_temp != target_temp:
             raise ValueError(
                 "Temperatures are different: "
-                "supply_temp = {}, target_temp = {}"
-                .format(supply_temp, target_temp)
+                "supply_temp = {}, target_temp = {}".format(supply_temp, target_temp)
             )
 
         return cls(heat_flow, supply_temp, temp_shift)
@@ -42,7 +38,7 @@ class LatentSegment(BaseSegment):
         return LatentSegment(
             heat_flow=self.heat_flow,
             supply_temp=self.supply_temp,
-            temp_shift=self.temp_shift
+            temp_shift=self.temp_shift,
         )
 
     def shift(self, default_temp_shift=None):
@@ -64,11 +60,7 @@ class LatentSegment(BaseSegment):
         return self
 
     def with_inverted_heat_flow(self):
-        return LatentSegment(
-            - self.heat_flow,
-            self.supply_temp,
-            self.temp_shift
-        )
+        return LatentSegment(-self.heat_flow, self.supply_temp, self.temp_shift)
 
     def split(self, temperatures):
         # There is nothing to split in a latent segment because it has a
@@ -79,19 +71,17 @@ class LatentSegment(BaseSegment):
     def add(self, other, temp_shift=None):
         if self.heat_type != other.heat_type:
             raise ValueError(
-                "Heat type mismatch: {} != {}"
-                .format(self.heat_type, other.heat_type)
+                "Heat type mismatch: {} != {}".format(self.heat_type, other.heat_type)
             )
         elif self.supply_temp != other.supply_temp:
             raise ValueError(
-                "Temperature mismatch: {} != {}"
-                .format(self.supply_temp, other.supply_temp)
+                "Temperature mismatch: {} != {}".format(
+                    self.supply_temp, other.supply_temp
+                )
             )
 
         return LatentSegment(
-            self.heat_flow + other.heat_flow,
-            self.supply_temp,
-            temp_shift
+            self.heat_flow + other.heat_flow, self.supply_temp, temp_shift
         )
 
     def link(self, other, temp_shift=None):
@@ -102,5 +92,5 @@ class LatentSegment(BaseSegment):
             type(self).__qualname__,
             self._heat_flow,
             self._supply_temp,
-            self._temp_shift
+            self._temp_shift,
         )

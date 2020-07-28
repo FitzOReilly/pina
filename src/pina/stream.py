@@ -60,10 +60,11 @@ class Stream(object):
             raise ValueError("`segments` empty")
 
         for i in range(len(segments) - 1):
-            if (segments[i].target_temp != segments[i + 1].supply_temp):
+            if segments[i].target_temp != segments[i + 1].supply_temp:
                 raise ValueError(
-                    "Temperature gap between adjacent segments: {}, {}"
-                    .format(segments[i], segments[i + 1])
+                    "Temperature gap between adjacent segments: {}, {}".format(
+                        segments[i], segments[i + 1]
+                    )
                 )
 
 
@@ -71,9 +72,7 @@ def make_stream(heat_flow, supply_temp, target_temp, temp_shift=None):
     """
     Convenience function to create a single segment stream.
     """
-    return make_segmented_stream([
-        heat_flow, supply_temp, target_temp, temp_shift
-    ])
+    return make_segmented_stream([heat_flow, supply_temp, target_temp, temp_shift])
 
 
 def make_segmented_stream(*stream_segments):
@@ -83,4 +82,5 @@ def make_segmented_stream(*stream_segments):
     [heat_flow, supply_temp, target_temp, temp_shift=None]
     """
     from pina.segments import make_segment
+
     return Stream([make_segment(*s) for s in stream_segments])

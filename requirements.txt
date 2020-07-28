@@ -1,4 +1,5 @@
 black
+isort
 matplotlib
 tox
 -e .

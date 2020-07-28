@@ -1,6 +1,6 @@
 import unittest
 
-from pina.stream import make_stream, make_segmented_stream
+from pina.stream import make_segmented_stream, make_stream
 from pina.stream_analyzer import StreamAnalyzer
 
 
@@ -48,28 +48,23 @@ class TestStreamAnalyzer(unittest.TestCase):
         self.assertEqual(analyzer.streams, [cold_stream, hot_stream])
 
         expected_cold_composite_curve = ([70, 250], [20, 200])
-        self.assertEqual(
-            analyzer.cold_composite_curve, expected_cold_composite_curve)
+        self.assertEqual(analyzer.cold_composite_curve, expected_cold_composite_curve)
 
         expected_hot_composite_curve = ([0, 180], [50, 150])
-        self.assertEqual(
-            analyzer.hot_composite_curve, expected_hot_composite_curve)
+        self.assertEqual(analyzer.hot_composite_curve, expected_hot_composite_curve)
 
         expected_shifted_cold_composite_curve = ([70, 250], [30, 210])
         self.assertEqual(
-            analyzer.shifted_cold_composite_curve,
-            expected_shifted_cold_composite_curve
+            analyzer.shifted_cold_composite_curve, expected_shifted_cold_composite_curve
         )
 
         expected_shifted_hot_composite_curve = ([0, 180], [40, 140])
         self.assertEqual(
-            analyzer.shifted_hot_composite_curve,
-            expected_shifted_hot_composite_curve
+            analyzer.shifted_hot_composite_curve, expected_shifted_hot_composite_curve
         )
 
         expected_grand_composite_curve = ([70, 80, 0, 70], [30, 40, 140, 210])
-        self.assertEqual(
-            analyzer.grand_composite_curve, expected_grand_composite_curve)
+        self.assertEqual(analyzer.grand_composite_curve, expected_grand_composite_curve)
 
     def test_extended_pinch(self):
         cold_stream = make_stream(-225, 20, 95)
@@ -87,9 +82,7 @@ class TestStreamAnalyzer(unittest.TestCase):
 
     def test_2_pinches(self):
         cold_stream = make_segmented_stream(
-            [-50, 50, 100],
-            [-40, 100, 100],
-            [-100, 100, 200]
+            [-50, 50, 100], [-40, 100, 100], [-100, 100, 200]
         )
         hot_stream = make_stream(260, 150, 20)
         analyzer = StreamAnalyzer(default_temp_shift=5)

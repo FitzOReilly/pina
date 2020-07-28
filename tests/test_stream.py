@@ -1,7 +1,7 @@
 import unittest
 
 from pina.segments import make_segment
-from pina.stream import Stream, make_stream, make_segmented_stream
+from pina.stream import Stream, make_segmented_stream, make_stream
 
 
 class TestStream(unittest.TestCase):
@@ -14,19 +14,16 @@ class TestStream(unittest.TestCase):
             make_segment(-320, 20, 100),
             make_segment(-400, 100, 100),
             make_segment(-150, 100, 250),
-            make_segment(-195, 250, 380)
+            make_segment(-195, 250, 380),
         ]
 
         self.hot_segments = [
             make_segment(300, 250, 100),
             make_segment(300, 100, 100),
-            make_segment(125, 100, 50)
+            make_segment(125, 100, 50),
         ]
 
-        self.mixed_segments = [
-            make_segment(-320, 20, 100),
-            make_segment(320, 100, 20)
-        ]
+        self.mixed_segments = [make_segment(-320, 20, 100), make_segment(320, 100, 20)]
 
         self.single_sensible_segment = Stream(self.cold_segments[:1])
         self.single_latent_segment = Stream(self.hot_segments[1:2])
@@ -77,14 +74,8 @@ class TestStream(unittest.TestCase):
         self.assertEqual(self.neutral_stream.heat_flow, 0)
 
     def test_segments(self):
-        self.assertEqual(
-            self.single_sensible_segment.segments,
-            self.cold_segments[:1]
-        )
-        self.assertEqual(
-            self.single_latent_segment.segments,
-            self.hot_segments[1:2]
-        )
+        self.assertEqual(self.single_sensible_segment.segments, self.cold_segments[:1])
+        self.assertEqual(self.single_latent_segment.segments, self.hot_segments[1:2])
         self.assertEqual(self.cold_stream.segments, self.cold_segments)
         self.assertEqual(self.hot_stream.segments, self.hot_segments)
         self.assertEqual(self.neutral_stream.segments, self.mixed_segments)
@@ -96,7 +87,7 @@ class TestStream(unittest.TestCase):
             make_segment(0, 100, 100),
             make_segment(400, 100, 0),
             make_segment(300, 0, 0),
-            make_segment(0, 0, -20)
+            make_segment(0, 0, -20),
         ]
 
         stream = Stream(test_segments)
@@ -104,24 +95,14 @@ class TestStream(unittest.TestCase):
         self.assertEqual(stream.segments, test_segments)
         self.assertEqual(
             stream.neutral_segments,
-            [
-                make_segment(0, 100, 100),
-                make_segment(0, 0, -20)
-            ]
+            [make_segment(0, 100, 100), make_segment(0, 0, -20)],
         )
         self.assertEqual(
             stream.cold_segments,
-            [
-                make_segment(-320, 20, 100),
-                make_segment(-400, 100, 100)
-            ]
+            [make_segment(-320, 20, 100), make_segment(-400, 100, 100)],
         )
         self.assertEqual(
-            stream.hot_segments,
-            [
-                make_segment(400, 100, 0),
-                make_segment(300, 0, 0)
-            ]
+            stream.hot_segments, [make_segment(400, 100, 0), make_segment(300, 0, 0)]
         )
 
     def test_make_stream(self):
@@ -134,14 +115,16 @@ class TestStream(unittest.TestCase):
         self.assertEqual(from_init.segments, from_make.segments)
 
     def test_make_segmented_stream(self):
-        from_init = Stream([
-            make_segment(-320, 20, 100, 5),
-            make_segment(-400, 100, 100),
-            make_segment(0, 100, 100, 10),
-            make_segment(400, 100, 0),
-            make_segment(300, 0, 0),
-            make_segment(0, 0, -20)
-        ])
+        from_init = Stream(
+            [
+                make_segment(-320, 20, 100, 5),
+                make_segment(-400, 100, 100),
+                make_segment(0, 100, 100, 10),
+                make_segment(400, 100, 0),
+                make_segment(300, 0, 0),
+                make_segment(0, 0, -20),
+            ]
+        )
 
         from_make = make_segmented_stream(
             [-320, 20, 100, 5],
@@ -149,7 +132,7 @@ class TestStream(unittest.TestCase):
             [0, 100, 100, 10],
             [400, 100, 0],
             [300, 0, 0],
-            [0, 0, -20]
+            [0, 0, -20],
         )
 
         self.assertEqual(from_init.segments, from_make.segments)

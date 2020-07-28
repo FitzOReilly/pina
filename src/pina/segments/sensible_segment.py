@@ -1,5 +1,5 @@
-from pina.segments.base_segment import BaseSegment
 from pina.enums import HeatType
+from pina.segments.base_segment import BaseSegment
 
 
 class SensibleSegment(BaseSegment):
@@ -8,16 +8,9 @@ class SensibleSegment(BaseSegment):
     """
 
     def __init__(
-        self,
-        heat_capacity_flow_rate,
-        supply_temp,
-        target_temp,
-        temp_shift=None
+        self, heat_capacity_flow_rate, supply_temp, target_temp, temp_shift=None
     ):
-        super().__init__(
-            supply_temp=supply_temp,
-            temp_shift=temp_shift
-        )
+        super().__init__(supply_temp=supply_temp, temp_shift=temp_shift)
         self._target_temp = target_temp
         self._heat_capacity_flow_rate = heat_capacity_flow_rate
 
@@ -31,10 +24,7 @@ class SensibleSegment(BaseSegment):
 
     @property
     def heat_flow(self):
-        return (
-            self._heat_capacity_flow_rate
-            * (self._supply_temp - self._target_temp)
-        )
+        return self._heat_capacity_flow_rate * (self._supply_temp - self._target_temp)
 
     @property
     def target_temp(self):
@@ -42,26 +32,22 @@ class SensibleSegment(BaseSegment):
 
     @classmethod
     def new(cls, heat_flow, supply_temp, target_temp, temp_shift=None):
-        if (supply_temp == target_temp):
+        if supply_temp == target_temp:
             raise ValueError(
-                "Temperatures are equal: supply_temp = {}, target_temp = {}"
-                .format(supply_temp, target_temp)
+                "Temperatures are equal: supply_temp = {}, target_temp = {}".format(
+                    supply_temp, target_temp
+                )
             )
 
         heat_capacity_flow_rate = heat_flow / (supply_temp - target_temp)
-        return cls(
-            heat_capacity_flow_rate,
-            supply_temp,
-            target_temp,
-            temp_shift
-        )
+        return cls(heat_capacity_flow_rate, supply_temp, target_temp, temp_shift)
 
     def clone(self):
         return SensibleSegment(
             heat_capacity_flow_rate=self.heat_capacity_flow_rate,
             supply_temp=self.supply_temp,
             target_temp=self.target_temp,
-            temp_shift=self.temp_shift
+            temp_shift=self.temp_shift,
         )
 
     def shift(self, default_temp_shift=None):
@@ -81,26 +67,26 @@ class SensibleSegment(BaseSegment):
             self.heat_capacity_flow_rate,
             self.supply_temp + shift_by,
             self.target_temp + shift_by,
-            0
+            0,
         )
 
     def with_low_supply_temp(self):
         if self.supply_temp > self.target_temp:
             return SensibleSegment(
-                - self.heat_capacity_flow_rate,
+                -self.heat_capacity_flow_rate,
                 self.target_temp,
                 self.supply_temp,
-                self.temp_shift
+                self.temp_shift,
             )
         else:
             return self
 
     def with_inverted_heat_flow(self):
         return SensibleSegment(
-            - self.heat_capacity_flow_rate,
+            -self.heat_capacity_flow_rate,
             self.supply_temp,
             self.target_temp,
-            self.temp_shift
+            self.temp_shift,
         )
 
     def split(self, temperatures):
@@ -114,18 +100,19 @@ class SensibleSegment(BaseSegment):
     def add(self, other, temp_shift=None):
         if self.heat_type != other.heat_type:
             raise ValueError(
-                "Heat type mismatch: {} != {}"
-                .format(self.heat_type, other.heat_type)
+                "Heat type mismatch: {} != {}".format(self.heat_type, other.heat_type)
             )
         elif self.min_temp != other.min_temp:
             raise ValueError(
-                "Minimum temperature mismatch: {} != {}"
-                .format(self.min_temp, other.min_temp)
+                "Minimum temperature mismatch: {} != {}".format(
+                    self.min_temp, other.min_temp
+                )
             )
         elif self.max_temp != other.max_temp:
             raise ValueError(
-                "Maximum temperature mismatch: {} != {}"
-                .format(self.max_temp, other.max_temp)
+                "Maximum temperature mismatch: {} != {}".format(
+                    self.max_temp, other.max_temp
+                )
             )
 
         if self.supply_temp == other.supply_temp:
@@ -138,22 +125,18 @@ class SensibleSegment(BaseSegment):
             )
 
         return SensibleSegment(
-            heat_capacity_flow_rate,
-            self.supply_temp,
-            self.target_temp,
-            temp_shift
+            heat_capacity_flow_rate, self.supply_temp, self.target_temp, temp_shift
         )
 
     def link(self, other, temp_shift=None):
         if self.heat_type != other.heat_type:
             raise ValueError(
-                "Heat type mismatch: {} != {}"
-                .format(self.heat_type, other.heat_type))
+                "Heat type mismatch: {} != {}".format(self.heat_type, other.heat_type)
+            )
         elif self.heat_capacity_flow_rate != other.heat_capacity_flow_rate:
             raise ValueError(
                 "Heat capacity flowrate mismatch: {} != {}".format(
-                    self.heat_capacity_flow_rate,
-                    other.heat_capacity_flow_rate
+                    self.heat_capacity_flow_rate, other.heat_capacity_flow_rate
                 )
             )
 
@@ -169,19 +152,17 @@ class SensibleSegment(BaseSegment):
 
         if temp_match:
             return SensibleSegment(
-                self.heat_capacity_flow_rate,
-                supply_temp,
-                target_temp,
-                temp_shift
+                self.heat_capacity_flow_rate, supply_temp, target_temp, temp_shift
             )
         else:
             raise ValueError(
                 "No matching supply and target temperatures found:\n"
                 "\tself.supply_temp: {}, self.target_temp: {}\n"
-                "\tother.supply_temp: {}, other.target_temp: {}\n"
-                .format(
-                    self.supply_temp, self.target_temp,
-                    other.supply_temp, other.target_temp
+                "\tother.supply_temp: {}, other.target_temp: {}\n".format(
+                    self.supply_temp,
+                    self.target_temp,
+                    other.supply_temp,
+                    other.target_temp,
                 )
             )
 
@@ -206,7 +187,7 @@ class SensibleSegment(BaseSegment):
                     self.heat_capacity_flow_rate,
                     low_temp,
                     current_temp,
-                    self.temp_shift
+                    self.temp_shift,
                 )
             )
 
@@ -215,10 +196,7 @@ class SensibleSegment(BaseSegment):
         if low_temp < high_temp:
             subsegments.append(
                 SensibleSegment(
-                    self.heat_capacity_flow_rate,
-                    low_temp,
-                    high_temp,
-                    self.temp_shift
+                    self.heat_capacity_flow_rate, low_temp, high_temp, self.temp_shift
                 )
             )
 
@@ -245,7 +223,7 @@ class SensibleSegment(BaseSegment):
                     self.heat_capacity_flow_rate,
                     high_temp,
                     current_temp,
-                    self.temp_shift
+                    self.temp_shift,
                 )
             )
 
@@ -254,10 +232,7 @@ class SensibleSegment(BaseSegment):
         if high_temp > low_temp:
             subsegments.append(
                 SensibleSegment(
-                    self.heat_capacity_flow_rate,
-                    high_temp,
-                    low_temp,
-                    self.temp_shift
+                    self.heat_capacity_flow_rate, high_temp, low_temp, self.temp_shift
                 )
             )
 
@@ -275,5 +250,5 @@ class SensibleSegment(BaseSegment):
             self._heat_capacity_flow_rate,
             self._supply_temp,
             self._target_temp,
-            self._temp_shift
+            self._temp_shift,
         )

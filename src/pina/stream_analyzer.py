@@ -57,8 +57,7 @@ class StreamAnalyzer(object):
 
     @property
     def cold_composite_curve(self):
-        return self._cold_cascade.cumulative_heat_flow(
-            self.cold_utility_target)
+        return self._cold_cascade.cumulative_heat_flow(self.cold_utility_target)
 
     @property
     def hot_composite_curve(self):
@@ -66,8 +65,7 @@ class StreamAnalyzer(object):
 
     @property
     def shifted_cold_composite_curve(self):
-        return self._shifted_cold_cascade.cumulative_heat_flow(
-            self.cold_utility_target)
+        return self._shifted_cold_cascade.cumulative_heat_flow(self.cold_utility_target)
 
     @property
     def shifted_hot_composite_curve(self):
@@ -75,8 +73,7 @@ class StreamAnalyzer(object):
 
     @property
     def grand_composite_curve(self):
-        return self._grand_cascade.cumulative_heat_flow(
-            self.cold_utility_target)
+        return self._grand_cascade.cumulative_heat_flow(self.cold_utility_target)
 
     def add(self, streams):
         """

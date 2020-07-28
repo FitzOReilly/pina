@@ -1,8 +1,7 @@
 from matplotlib import pyplot as plt
 
-from pina.stream import make_stream, make_segmented_stream
+from pina.stream import make_segmented_stream, make_stream
 from pina.stream_analyzer import StreamAnalyzer
-
 
 # Some customizations to make the plots pretty
 HCC_STYLE = {
@@ -45,7 +44,7 @@ def describe(stream_analyzer):
         "Hot utility target:",
         "Cold utility target:",
         "Heat recovery target:",
-        "Pinch temperature(s):"
+        "Pinch temperature(s):",
     ]
     values = [
         stream_analyzer.heating_demand,
@@ -53,12 +52,11 @@ def describe(stream_analyzer):
         stream_analyzer.hot_utility_target,
         stream_analyzer.cold_utility_target,
         stream_analyzer.heat_recovery_target,
-        stream_analyzer.pinch_temps
+        stream_analyzer.pinch_temps,
     ]
     max_width = max(len(n) for n in names)
     return "".join(
-        "{:{width}} {}\n".format(n, v, width=max_width)
-        for n, v in zip(names, values)
+        "{:{width}} {}\n".format(n, v, width=max_width) for n, v in zip(names, values)
     )
 
 
@@ -107,7 +105,7 @@ def four_stream():
         make_stream(-230, 20, 135),
         make_stream(330, 170, 60),
         make_stream(-240, 80, 140),
-        make_stream(180, 150, 30)
+        make_stream(180, 150, 30),
     ]
 
     analyzer = StreamAnalyzer(default_temp_shift, streams)
@@ -125,11 +123,13 @@ def aromatics_plant():
     # A User Guide On Process Integration for the Efficient Use of Energy,
     # Second edition, Ian C. Kemp, page 330
     param_dict = dict(PLOT_PARAMS)
-    param_dict.update({
-        "title": "Aromatics plant",
-        "hcc_ccc_xlabel": "Heat flow [ttc/h]",
-        "gcc_xlabel": "Net heat flow [ttc/h]"
-    })
+    param_dict.update(
+        {
+            "title": "Aromatics plant",
+            "hcc_ccc_xlabel": "Heat flow [ttc/h]",
+            "gcc_xlabel": "Net heat flow [ttc/h]",
+        }
+    )
 
     min_temp_diff = 10
     default_temp_shift = min_temp_diff / 2
@@ -140,16 +140,16 @@ def aromatics_plant():
         make_segmented_stream([-13.9, 102, 229], [-8.3, 229, 327]),
         make_segmented_stream([13.9, 327, 174], [9, 174, 92], [4.2, 92, 50]),
         make_stream(-9, 35, 164),
-        make_segmented_stream(
-            [-7.2, 140, 176], [-25.2, 176, 367], [-16.4, 367, 500]),
+        make_segmented_stream([-7.2, 140, 176], [-25.2, 176, 367], [-16.4, 367, 500]),
         make_stream(25.2, 495, 307),
         make_segmented_stream(
-            [7.2, 220, 160], [3.3, 160, 144], [4.1, 144, 125], [11.6, 125, 59]),
+            [7.2, 220, 160], [3.3, 160, 144], [4.1, 144, 125], [11.6, 125, 59]
+        ),
         make_stream(-3.3, 80, 123),
         make_stream(-6.8, 59, 169),
         make_segmented_stream([6.8, 220, 130], [3.8, 130, 67]),
         make_stream(-4.1, 85, 125),
-        make_stream(-32.5, 480, 500)
+        make_stream(-32.5, 480, 500),
     ]
 
     analyzer = StreamAnalyzer(default_temp_shift, streams)
@@ -184,7 +184,7 @@ def evaporator_dryer_plant():
         make_stream(714, 43.3, 43.3),
         make_segmented_stream([-6.5, 48.8, 54.4], [-263.5, 54.4, 93.3]),
         make_stream(260, 43.3, 43.3),
-        make_stream(57, 43.3, 10)
+        make_stream(57, 43.3, 10),
     ]
 
     dryer_streams = [
@@ -220,17 +220,14 @@ def multiple_pinches():
     hot_1 = make_segmented_stream(
         [20, 140, 100],
         [90, 100, 100],  # A latent segment to model condensation
-        [30, 100, 60]
+        [30, 100, 60],
     )
     # The last argument is temp_shift=2.
     # The stream analyzer's default temp shift will be ignored for this stream.
     cold_2 = make_stream(-20, 5, 20, 2)
     hot_2 = make_stream(160, 60, 20)
 
-    analyzer = StreamAnalyzer(
-        default_temp_shift,
-        [cold_1, hot_1, cold_2, hot_2]
-    )
+    analyzer = StreamAnalyzer(default_temp_shift, [cold_1, hot_1, cold_2, hot_2])
 
     print(param_dict["title"])
     print(describe(analyzer))

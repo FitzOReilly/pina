@@ -35,7 +35,7 @@ class TestStreamAnalyzer(unittest.TestCase):
         cold_stream = make_stream(-180, 20, 200)
         hot_stream = make_stream(180, 150, 50)
         analyzer = StreamAnalyzer(default_temp_shift=10)
-        analyzer.add([cold_stream, hot_stream])
+        analyzer.add_streams(cold_stream, hot_stream)
 
         self.assertEqual(analyzer.cooling_demand, 180)
         self.assertEqual(analyzer.heating_demand, 180)
@@ -70,7 +70,7 @@ class TestStreamAnalyzer(unittest.TestCase):
         cold_stream = make_stream(-225, 20, 95)
         hot_stream = make_stream(267, 95, 6)
         analyzer = StreamAnalyzer(default_temp_shift=1)
-        analyzer.add([cold_stream, hot_stream])
+        analyzer.add_streams(cold_stream, hot_stream)
 
         self.assertEqual(analyzer.cooling_demand, 267)
         self.assertEqual(analyzer.heating_demand, 225)
@@ -86,7 +86,7 @@ class TestStreamAnalyzer(unittest.TestCase):
         )
         hot_stream = make_stream(260, 150, 20)
         analyzer = StreamAnalyzer(default_temp_shift=5)
-        analyzer.add([cold_stream, hot_stream])
+        analyzer.add_streams(cold_stream, hot_stream)
 
         self.assertEqual(analyzer.cooling_demand, 260)
         self.assertEqual(analyzer.heating_demand, 190)
@@ -99,7 +99,7 @@ class TestStreamAnalyzer(unittest.TestCase):
     def test_cold_stream_only(self):
         cold_stream = make_stream(-40, 100, 100)
         analyzer = StreamAnalyzer(default_temp_shift=5)
-        analyzer.add([cold_stream])
+        analyzer.add_streams(cold_stream)
 
         self.assertEqual(analyzer.cooling_demand, 0)
         self.assertEqual(analyzer.heating_demand, 40)
@@ -112,7 +112,7 @@ class TestStreamAnalyzer(unittest.TestCase):
     def test_hot_stream_only(self):
         hot_stream = make_stream(260, 150, 20)
         analyzer = StreamAnalyzer(default_temp_shift=5)
-        analyzer.add([hot_stream])
+        analyzer.add_streams(hot_stream)
 
         self.assertEqual(analyzer.cooling_demand, 260)
         self.assertEqual(analyzer.heating_demand, 0)
@@ -125,7 +125,7 @@ class TestStreamAnalyzer(unittest.TestCase):
     def test_individual_temp_shift(self):
         cold_stream = make_stream(-40, 100, 100, 10)
         analyzer = StreamAnalyzer(default_temp_shift=5)
-        analyzer.add([cold_stream])
+        analyzer.add_streams(cold_stream)
 
         self.assertEqual(analyzer.cooling_demand, 0)
         self.assertEqual(analyzer.heating_demand, 40)
@@ -139,8 +139,8 @@ class TestStreamAnalyzer(unittest.TestCase):
         cold_stream = make_stream(-40, 100, 100, 0)
         hot_stream = make_stream(40, 100, 100, 0)
         analyzer = StreamAnalyzer(default_temp_shift=5)
-        analyzer.add([cold_stream])
-        analyzer.add([hot_stream])
+        analyzer.add_streams(cold_stream)
+        analyzer.add_streams(hot_stream)
 
         self.assertEqual(analyzer.cooling_demand, 40)
         self.assertEqual(analyzer.heating_demand, 40)

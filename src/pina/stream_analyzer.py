@@ -8,7 +8,7 @@ class StreamAnalyzer(object):
     temperature(s).
     """
 
-    def __init__(self, default_temp_shift=None, streams=[]):
+    def __init__(self, default_temp_shift=None):
         self._default_temp_shift = default_temp_shift
         self._streams = []
         self._pinch_temps = []
@@ -20,8 +20,6 @@ class StreamAnalyzer(object):
         self._shifted_cold_cascade = HeatCascade()
         self._shifted_hot_cascade = HeatCascade()
         self._grand_cascade = HeatCascade()
-
-        self.add(streams)
 
     @property
     def cooling_demand(self):
@@ -75,9 +73,9 @@ class StreamAnalyzer(object):
     def grand_composite_curve(self):
         return self._grand_cascade.cumulative_heat_flow(self.cold_utility_target)
 
-    def add(self, streams):
+    def add_streams(self, *streams):
         """
-        Adds a list of streams to the stream group.
+        Adds the given streams to the stream group.
         """
         for s in streams:
             self._add_one(s)

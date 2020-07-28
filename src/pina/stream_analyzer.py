@@ -88,16 +88,16 @@ class StreamAnalyzer(object):
         self._streams.append(stream)
 
         for s in stream.cold_segments:
-            self._cold_cascade.add([s.with_absolute_heat_flow()])
+            self._cold_cascade.add_segments(s.with_absolute_heat_flow())
             shifted = s.shift(self.default_temp_shift)
-            self._shifted_cold_cascade.add([shifted.with_absolute_heat_flow()])
-            self._grand_cascade.add([shifted.with_inverted_heat_flow()])
+            self._shifted_cold_cascade.add_segments(shifted.with_absolute_heat_flow())
+            self._grand_cascade.add_segments(shifted.with_inverted_heat_flow())
 
         for s in stream.hot_segments:
-            self._hot_cascade.add([s.with_absolute_heat_flow()])
+            self._hot_cascade.add_segments(s.with_absolute_heat_flow())
             shifted = s.shift(self.default_temp_shift)
-            self._shifted_hot_cascade.add([shifted.with_absolute_heat_flow()])
-            self._grand_cascade.add([shifted.with_inverted_heat_flow()])
+            self._shifted_hot_cascade.add_segments(shifted.with_absolute_heat_flow())
+            self._grand_cascade.add_segments(shifted.with_inverted_heat_flow())
 
     def _compute_targets(self):
         heat_flows, temps = self._grand_cascade.cumulative_heat_flow()

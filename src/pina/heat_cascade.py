@@ -4,17 +4,15 @@ class HeatCascade(object):
     constant heat capacity flow rate.
     """
 
-    def __init__(self, segments=[]):
+    def __init__(self):
         # List of intervals (which are simply segments) in the cascade
         self._intervals = []
-
-        self.add(segments)
 
     @property
     def intervals(self):
         return self._intervals
 
-    def add(self, segments):
+    def add_segments(self, *segments):
         """
         Adds segments to the heat cascade, i.e. each segment's heat flow is
         added at the respective temperature range.

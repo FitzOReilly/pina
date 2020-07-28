@@ -1,12 +1,12 @@
 import unittest
 
+from pina.pinch_analyzer import PinchAnalyzer
 from pina.stream import make_segmented_stream, make_stream
-from pina.stream_analyzer import StreamAnalyzer
 
 
-class TestStreamAnalyzer(unittest.TestCase):
+class TestPinchAnalyzer(unittest.TestCase):
     """
-    Test class for StreamAnalyzer
+    Test class for PinchAnalyzer
     """
 
     def setUp(self):
@@ -16,7 +16,7 @@ class TestStreamAnalyzer(unittest.TestCase):
         pass
 
     def test_empty(self):
-        analyzer = StreamAnalyzer()
+        analyzer = PinchAnalyzer()
         self.assertEqual(analyzer.cooling_demand, 0)
         self.assertEqual(analyzer.heating_demand, 0)
         self.assertEqual(analyzer.cold_utility_target, 0)
@@ -34,7 +34,7 @@ class TestStreamAnalyzer(unittest.TestCase):
     def test_2_stream_example(self):
         cold_stream = make_stream(-180, 20, 200)
         hot_stream = make_stream(180, 150, 50)
-        analyzer = StreamAnalyzer(default_temp_shift=10)
+        analyzer = PinchAnalyzer(default_temp_shift=10)
         analyzer.add_streams(cold_stream, hot_stream)
 
         self.assertEqual(analyzer.cooling_demand, 180)
@@ -69,7 +69,7 @@ class TestStreamAnalyzer(unittest.TestCase):
     def test_extended_pinch(self):
         cold_stream = make_stream(-225, 20, 95)
         hot_stream = make_stream(267, 95, 6)
-        analyzer = StreamAnalyzer(default_temp_shift=1)
+        analyzer = PinchAnalyzer(default_temp_shift=1)
         analyzer.add_streams(cold_stream, hot_stream)
 
         self.assertEqual(analyzer.cooling_demand, 267)
@@ -85,7 +85,7 @@ class TestStreamAnalyzer(unittest.TestCase):
             [-50, 50, 100], [-40, 100, 100], [-100, 100, 200]
         )
         hot_stream = make_stream(260, 150, 20)
-        analyzer = StreamAnalyzer(default_temp_shift=5)
+        analyzer = PinchAnalyzer(default_temp_shift=5)
         analyzer.add_streams(cold_stream, hot_stream)
 
         self.assertEqual(analyzer.cooling_demand, 260)
@@ -98,7 +98,7 @@ class TestStreamAnalyzer(unittest.TestCase):
 
     def test_cold_stream_only(self):
         cold_stream = make_stream(-40, 100, 100)
-        analyzer = StreamAnalyzer(default_temp_shift=5)
+        analyzer = PinchAnalyzer(default_temp_shift=5)
         analyzer.add_streams(cold_stream)
 
         self.assertEqual(analyzer.cooling_demand, 0)
@@ -111,7 +111,7 @@ class TestStreamAnalyzer(unittest.TestCase):
 
     def test_hot_stream_only(self):
         hot_stream = make_stream(260, 150, 20)
-        analyzer = StreamAnalyzer(default_temp_shift=5)
+        analyzer = PinchAnalyzer(default_temp_shift=5)
         analyzer.add_streams(hot_stream)
 
         self.assertEqual(analyzer.cooling_demand, 260)
@@ -124,7 +124,7 @@ class TestStreamAnalyzer(unittest.TestCase):
 
     def test_individual_temp_shift(self):
         cold_stream = make_stream(-40, 100, 100, 10)
-        analyzer = StreamAnalyzer(default_temp_shift=5)
+        analyzer = PinchAnalyzer(default_temp_shift=5)
         analyzer.add_streams(cold_stream)
 
         self.assertEqual(analyzer.cooling_demand, 0)
@@ -138,7 +138,7 @@ class TestStreamAnalyzer(unittest.TestCase):
     def test_neutralizing_streams(self):
         cold_stream = make_stream(-40, 100, 100, 0)
         hot_stream = make_stream(40, 100, 100, 0)
-        analyzer = StreamAnalyzer(default_temp_shift=5)
+        analyzer = PinchAnalyzer(default_temp_shift=5)
         analyzer.add_streams(cold_stream)
         analyzer.add_streams(hot_stream)
 

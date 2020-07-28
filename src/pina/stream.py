@@ -3,7 +3,7 @@ class Stream(object):
     A fluid stream carrying heat and consisting of one or multiple segments.
     """
 
-    def __init__(self, segments):
+    def __init__(self, *segments):
         """
         `segments` must meet the following conditions:
         * It must not be an empty sequence.
@@ -12,7 +12,7 @@ class Stream(object):
         If one of those conditions is not met, a ValueError is raised.
         """
         Stream._check_segments(segments)
-        self._segments = tuple(segments)
+        self._segments = segments
 
     @property
     def heat_flow(self):
@@ -59,13 +59,16 @@ class Stream(object):
         if not segments:
             raise ValueError("`segments` empty")
 
-        for i in range(len(segments) - 1):
-            if segments[i].target_temp != segments[i + 1].supply_temp:
+        prev = None
+        for current in segments:
+            if prev is not None and current.supply_temp != prev.target_temp:
                 raise ValueError(
                     "Temperature gap between adjacent segments: {}, {}".format(
-                        segments[i], segments[i + 1]
+                        prev, current
                     )
                 )
+
+            prev = current
 
 
 def make_stream(heat_flow, supply_temp, target_temp, temp_shift=None):
@@ -75,7 +78,7 @@ def make_stream(heat_flow, supply_temp, target_temp, temp_shift=None):
     return make_segmented_stream([heat_flow, supply_temp, target_temp, temp_shift])
 
 
-def make_segmented_stream(*stream_segments):
+def make_segmented_stream(*segments):
     """
     Convenience function to create a segmented stream. Each argument represents
     one segment. It must have the following form:
@@ -83,4 +86,4 @@ def make_segmented_stream(*stream_segments):
     """
     from pina.segments import make_segment
 
-    return Stream([make_segment(*s) for s in stream_segments])
+    return Stream(*(make_segment(*s) for s in segments))

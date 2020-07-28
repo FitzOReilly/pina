@@ -1,7 +1,6 @@
 from matplotlib import pyplot as plt
 
-from pina.stream import make_segmented_stream, make_stream
-from pina.stream_analyzer import StreamAnalyzer
+from pina import PinchAnalyzer, make_segmented_stream, make_stream
 
 # Some customizations to make the plots pretty
 HCC_STYLE = {
@@ -34,7 +33,7 @@ PLOT_PARAMS = {
 }
 
 
-def describe(stream_analyzer):
+def describe(pinch_analyzer):
     """
     Returns a string with the energy targets and the pinch temperature(s).
     """
@@ -47,12 +46,12 @@ def describe(stream_analyzer):
         "Pinch temperature(s):",
     ]
     values = [
-        stream_analyzer.heating_demand,
-        stream_analyzer.cooling_demand,
-        stream_analyzer.hot_utility_target,
-        stream_analyzer.cold_utility_target,
-        stream_analyzer.heat_recovery_target,
-        stream_analyzer.pinch_temps,
+        pinch_analyzer.heating_demand,
+        pinch_analyzer.cooling_demand,
+        pinch_analyzer.hot_utility_target,
+        pinch_analyzer.cold_utility_target,
+        pinch_analyzer.heat_recovery_target,
+        pinch_analyzer.pinch_temps,
     ]
     max_width = max(len(n) for n in names)
     return "".join(
@@ -60,7 +59,7 @@ def describe(stream_analyzer):
     )
 
 
-def plot_results(stream_analyzer, param_dict):
+def plot_results(pinch_analyzer, param_dict):
     """
     Creates two plots: One of the hot and cold composite curves and one of the
     grand composite curve. Returns a tuple with the figure and axes objects.
@@ -68,14 +67,14 @@ def plot_results(stream_analyzer, param_dict):
     fig, ax = plt.subplots(1, 2, figsize=param_dict["figsize"])
     fig.suptitle(param_dict["title"], fontweight="bold")
 
-    ax[0].plot(*stream_analyzer.hot_composite_curve, **param_dict["hcc_style"])
-    ax[0].plot(*stream_analyzer.cold_composite_curve, **param_dict["ccc_style"])
+    ax[0].plot(*pinch_analyzer.hot_composite_curve, **param_dict["hcc_style"])
+    ax[0].plot(*pinch_analyzer.cold_composite_curve, **param_dict["ccc_style"])
     ax[0].legend()
     ax[0].set_title(param_dict["hcc_ccc_title"])
     ax[0].set_xlabel(param_dict["hcc_ccc_xlabel"])
     ax[0].set_ylabel(param_dict["hcc_ccc_ylabel"])
 
-    ax[1].plot(*stream_analyzer.grand_composite_curve, **param_dict["gcc_style"])
+    ax[1].plot(*pinch_analyzer.grand_composite_curve, **param_dict["gcc_style"])
     ax[1].legend()
     ax[1].set_title(param_dict["gcc_title"])
     ax[1].set_xlabel(param_dict["gcc_xlabel"])
@@ -108,7 +107,8 @@ def four_stream():
         make_stream(180, 150, 30),
     ]
 
-    analyzer = StreamAnalyzer(default_temp_shift, streams)
+    analyzer = PinchAnalyzer(default_temp_shift)
+    analyzer.add_streams(*streams)
 
     print(param_dict["title"])
     print(describe(analyzer))
@@ -152,7 +152,8 @@ def aromatics_plant():
         make_stream(-32.5, 480, 500),
     ]
 
-    analyzer = StreamAnalyzer(default_temp_shift, streams)
+    analyzer = PinchAnalyzer(default_temp_shift)
+    analyzer.add_streams(*streams)
 
     print(param_dict["title"])
     print(describe(analyzer))
@@ -194,12 +195,12 @@ def evaporator_dryer_plant():
         # Some optional streams
         # make_stream(149, 41, 13),
         # make_stream(140, 60, 13),
-        # make_stream(189, 55, 13)
+        # make_stream(189, 55, 13),
     ]
 
-    analyzer = StreamAnalyzer(default_temp_shift)
-    analyzer.add(evaporator_streams)
-    analyzer.add(dryer_streams)
+    analyzer = PinchAnalyzer(default_temp_shift)
+    analyzer.add_streams(*evaporator_streams)
+    analyzer.add_streams(*dryer_streams)
 
     print(param_dict["title"])
     print(describe(analyzer))
@@ -222,12 +223,81 @@ def multiple_pinches():
         [90, 100, 100],  # A latent segment to model condensation
         [30, 100, 60],
     )
-    # The last argument is temp_shift=2.
-    # The stream analyzer's default temp shift will be ignored for this stream.
-    cold_2 = make_stream(-20, 5, 20, 2)
+    # The PinchAnalyzer's default temp_shift will be ignored for this stream.
+    cold_2 = make_stream(-20, 5, 20, temp_shift=2)
     hot_2 = make_stream(160, 60, 20)
 
-    analyzer = StreamAnalyzer(default_temp_shift, [cold_1, hot_1, cold_2, hot_2])
+    analyzer = PinchAnalyzer(default_temp_shift)
+    analyzer.add_streams(cold_1, hot_1, cold_2, hot_2)
+
+    print(param_dict["title"])
+    print(describe(analyzer))
+
+    fig, ax = plot_results(analyzer, param_dict)
+    plt.show()
+
+
+def banana():
+    param_dict = dict(PLOT_PARAMS)
+    param_dict["title"] = "Banana"
+
+    min_temp_diff = 5
+    default_temp_shift = min_temp_diff / 2
+
+    cold = make_segmented_stream(
+        [-4, 10, 10],
+        [-4, 10, 10.25],
+        [-3, 10.25, 10.5],
+        [-4, 10.5, 11],
+        [-5, 11, 12],
+        [-10, 12, 15],
+        [-10, 15, 18],
+        [-5, 18, 20],
+        [-5, 20, 22],
+        [-4.5, 22, 24],
+        [-6, 24, 28],
+        [-5.5, 28, 34],
+        [-3, 34, 39],
+        [-4, 39, 48],
+        [-0.5, 48, 49.5],
+        [-0.5, 49.5, 52],
+        [-0.5, 52, 55],
+        [0, 55, 61],
+        [-0.5, 61, 65.5],
+        [-0.5, 65.5, 67],
+        [-2, 67, 70],
+        [-1, 70, 71],
+        [-1.5, 71, 72],
+    )
+
+    hot = make_segmented_stream(
+        [1, 74, 71],
+        [1, 71, 68.5],
+        [1, 68.5, 67],
+        [1, 67, 65.5],
+        [1, 65.5, 64.5],
+        [1, 64.5, 63.5],
+        [2.5, 63.5, 63],
+        [2.5, 63, 62],
+        [2.5, 62, 60],
+        [1.5, 60, 58.5],
+        [1, 58.5, 57],
+        [5, 57, 50],
+        [5, 50, 45],
+        [5, 45, 41],
+        [5, 41, 38],
+        [5, 38, 36],
+        [5, 36, 34],
+        [5, 34, 32],
+        [5, 32, 30],
+        [5, 30, 28],
+        [6, 28, 25],
+        [5, 25, 21],
+        [4, 21, 17],
+    )
+
+    analyzer = PinchAnalyzer(default_temp_shift)
+    analyzer.add_streams(cold, hot)
 
     print(param_dict["title"])
     print(describe(analyzer))
@@ -241,3 +311,4 @@ if __name__ == "__main__":
     aromatics_plant()
     evaporator_dryer_plant()
     multiple_pinches()
+    banana()

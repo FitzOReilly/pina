@@ -1,4 +1,4 @@
-class HeatCascade(object):
+class HeatCascade:
     """
     Heat cascade consisting of temperature intervals, each of which has a
     constant heat capacity flow rate.

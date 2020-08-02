@@ -1,4 +1,4 @@
-class Stream(object):
+class Stream:
     """
     A fluid stream carrying heat and consisting of one or multiple segments.
     """

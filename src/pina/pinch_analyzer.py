@@ -1,7 +1,7 @@
 from pina.heat_cascade import HeatCascade
 
 
-class PinchAnalyzer(object):
+class PinchAnalyzer:
     """
     This class performs pinch analysis calculations on a list of streams:
     heating and cooling requirements, heat cascades and the pinch

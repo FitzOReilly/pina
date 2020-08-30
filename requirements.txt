@@ -1,5 +1,7 @@
 black
+flake8
 isort
 matplotlib
+pre-commit
 tox
 -e .

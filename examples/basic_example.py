@@ -1,3 +1,5 @@
+from matplotlib import pyplot as plt
+
 from pina import PinchAnalyzer, make_stream
 
 # Arguments: heat flow, supply temperature, target temperature
@@ -28,8 +30,6 @@ print(
     )
 )
 
-
-from matplotlib import pyplot as plt
 
 fig, ax = plt.subplots(1, 2, figsize=(16, 7))
 

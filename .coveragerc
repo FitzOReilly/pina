@@ -1,0 +1,12 @@
+[paths]
+source =
+    src
+    .tox/**/site-packages
+
+[run]
+parallel = True
+source = pina
+
+[report]
+exclude_lines =
+    pass

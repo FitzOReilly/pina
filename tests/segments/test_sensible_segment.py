@@ -413,6 +413,10 @@ class TestSensibleSegment(unittest.TestCase):
             SensibleSegment(2, 100, 180).link(SensibleSegment(5, 180, 240))
         with self.assertRaises(ValueError):
             SensibleSegment(2, 100, 180).link(SensibleSegment(-2, 180, 220))
+        with self.assertRaises(ValueError):
+            SensibleSegment(2, 100, 180).link(SensibleSegment(2, 100, 180))
+        with self.assertRaises(ValueError):
+            SensibleSegment(2, 100, 180).link(SensibleSegment(2, 150, 220))
 
         self.assertEqual(
             self.neutral_segment.link(self.neutral_segment), SensibleSegment(2, 50, 50)
@@ -432,6 +436,14 @@ class TestSensibleSegment(unittest.TestCase):
         self.assertEqual(
             SensibleSegment(2, 100, 180).link(SensibleSegment(2, 180, 100)),
             SensibleSegment(2, 100, 100),
+        )
+        self.assertEqual(
+            SensibleSegment(2, 180, 220).link(SensibleSegment(2, 100, 180)),
+            SensibleSegment(2, 100, 220),
+        )
+        self.assertEqual(
+            SensibleSegment(2, 180, 140).link(SensibleSegment(2, 100, 180), 5),
+            SensibleSegment(2, 100, 140, 5),
         )
 
     def test_equality_comparison(self):

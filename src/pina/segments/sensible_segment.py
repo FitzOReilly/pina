@@ -1,3 +1,5 @@
+import logging
+
 from pina.enums import HeatType
 from pina.segments.base_segment import BaseSegment
 
@@ -40,7 +42,23 @@ class SensibleSegment(BaseSegment):
             )
 
         heat_capacity_flow_rate = heat_flow / (supply_temp - target_temp)
-        return cls(heat_capacity_flow_rate, supply_temp, target_temp, temp_shift)
+        new_seg = cls(heat_capacity_flow_rate, supply_temp, target_temp, temp_shift)
+
+        if heat_capacity_flow_rate < 0:
+            logging.getLogger(__name__).warning(
+                "Creating infeasible segment with negative heat capacity flow rate: {0}\n"
+                "In {1}({2}, {3}, {4}, {5})\n"
+                "Did you mean {1}(-{2}, {3}, {4}, {5})?".format(
+                    new_seg,
+                    cls.new.__qualname__,
+                    heat_flow,
+                    supply_temp,
+                    target_temp,
+                    temp_shift,
+                )
+            )
+
+        return new_seg
 
     def clone(self):
         return SensibleSegment(

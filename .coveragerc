@@ -9,4 +9,4 @@ source = pina
 
 [report]
 exclude_lines =
-    pass
+    raise NotImplementedError

@@ -13,12 +13,12 @@ class BaseSegment(abc.ABC):
     @property
     @abc.abstractmethod
     def heat_type(self):
-        pass
+        raise NotImplementedError
 
     @property
     @abc.abstractmethod
     def heat_flow(self):
-        pass
+        raise NotImplementedError
 
     @property
     def supply_temp(self):
@@ -27,7 +27,7 @@ class BaseSegment(abc.ABC):
     @property
     @abc.abstractmethod
     def target_temp(self):
-        pass
+        raise NotImplementedError
 
     @property
     def temp_shift(self):
@@ -44,11 +44,11 @@ class BaseSegment(abc.ABC):
     @classmethod
     @abc.abstractmethod
     def new(cls, heat_flow, supply_temp, target_temp, temp_shift):
-        pass
+        raise NotImplementedError
 
     @abc.abstractmethod
     def clone(self):
-        pass
+        raise NotImplementedError
 
     @abc.abstractmethod
     def shift(self, default_temp_shift=None):
@@ -59,7 +59,7 @@ class BaseSegment(abc.ABC):
         instead. If it is also None, a ValueError is raised. The temp_shift of
         the returned segment is set to 0.
         """
-        pass
+        raise NotImplementedError
 
     @abc.abstractmethod
     def with_low_supply_temp(self):
@@ -69,7 +69,7 @@ class BaseSegment(abc.ABC):
         target temperatures may be swapped compared to self. The heat flow
         remains the same (its sign does not change).
         """
-        pass
+        raise NotImplementedError
 
     def with_absolute_heat_flow(self):
         """
@@ -87,7 +87,7 @@ class BaseSegment(abc.ABC):
         Returns the segment with inverted heat flow. The supply and target
         temperatures remain the same (they are not swapped).
         """
-        pass
+        raise NotImplementedError
 
     @abc.abstractmethod
     def split(self, temperatures):
@@ -97,7 +97,7 @@ class BaseSegment(abc.ABC):
         temperature range of the segment or temperatures is empty, the returned
         list contains the entire segment as the only element.
         """
-        pass
+        raise NotImplementedError
 
     @abc.abstractmethod
     def add(self, other, temp_shift):
@@ -106,7 +106,7 @@ class BaseSegment(abc.ABC):
         have equal minimum temperature and equal maximum temperature, otherwise
         returns a ValueError.
         """
-        pass
+        raise NotImplementedError
 
     @abc.abstractmethod
     def link(self, other, temp_shift):
@@ -117,7 +117,7 @@ class BaseSegment(abc.ABC):
         differing supply and target temperatures. Otherwise returns a
         ValueError.
         """
-        pass
+        raise NotImplementedError
 
     def __eq__(self, other):
         equal = self.heat_type == other.heat_type

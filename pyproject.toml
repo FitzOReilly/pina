@@ -1,0 +1,28 @@
+[build-system]
+requires = ["flit_core >=2,<4"]
+build-backend = "flit_core.buildapi"
+
+[tool.flit.metadata]
+module = "pina"
+author = "Patrick Heck"
+author-email = "fitz_oreilly@outlook.com"
+classifiers = ["License :: OSI Approved :: MIT License"]
+description-file = "README.md"
+requires-python = ">=3.6"
+
+[tool.flit.metadata.requires-extra]
+dev = [
+    "black",
+    "coverage",
+    "flake8",
+    "isort",
+    "pre-commit",
+    "tox",
+]
+
+[tool.isort]
+line_length = "88"
+multi_line_output = "3"
+include_trailing_comma = "True"
+force_grid_wrap = "0"
+use_parentheses = "True"

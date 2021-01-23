@@ -6,11 +6,10 @@
 [![Imports: isort](https://img.shields.io/badge/%20imports-isort-%231674b1?style=flat&labelColor=ef8336)](https://timothycrosley.github.io/isort/)
 
 ## Installation
-To install this package, clone the repository and then run
+To install this package, run
 ```
-python -m pip install .
+python -m pip install git+https://github.com/FitzOReilly/pina.git#egg=pina
 ```
-(in the folder that contains the `setup.py` file).
 
 ## Basic example
 This is a basic example using the four stream problem from
@@ -44,7 +43,9 @@ analyzer = PinchAnalyzer(temp_shift)
 analyzer.add_streams(cold_1, hot_1, cold_2, hot_2)
 ```
 
-The `PinchAnalyzer` class calculates the energy targets, the pinch temperature(s) and the coordinates of the composite curves. The following properties can be requested from it:
+The `PinchAnalyzer` class calculates the energy targets, the pinch
+temperature(s) and the coordinates of the composite curves. The following
+properties can be requested from it:
 * `heating_demand`
 * `cooling_demand`
 * `hot_utility_target`
@@ -87,7 +88,10 @@ Pinch temperature(s): [85.0]
 ```
 
 ### Plotting
-This package does not include any plotting functionality, so we need a data visualization library for this. Here is an example that uses `matplotlib` to create a figure with two subplots: the hot and cold composite curves on the left and the grand composite curve on the right:
+This package deliberately does not include any plotting functions, but using it
+together with plotting libraries is simple. Here is an example that uses
+`matplotlib` to create a figure with two subplots: the hot and cold composite
+curves on the left and the grand composite curve on the right:
 ```python
 from matplotlib import pyplot as plt
 
@@ -114,12 +118,16 @@ ax[1].set_ylim(minmax_ylims)
 
 plt.show()
 ```
-The output looks like this:
+Output:
 ![Four stream example](examples/plots/four_stream.svg)
 
 ## More examples
-More examples can be found in the [examples](examples) folder. They show some additional features:
+More examples can be found in the [examples](examples) folder. They show some
+additional features:
 
 * Streams carrying latent heat (e.g. evaporation and condensation)
 * Streams consisting of multiple segments
 * Streams with individual temperature shifts
+
+## Anything else?
+Nope, that's all. Enjoy :-)

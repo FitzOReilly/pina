@@ -135,6 +135,33 @@ class TestStream(unittest.TestCase):
 
         self.assertEqual(from_init.segments, from_make.segments)
 
+    def test_equality_comparison(self):
+        single_seg_stream = make_stream(-320, 20, 100, 5)
+        multi_seg_stream = make_segmented_stream([-320, 20, 100, 5], [-400, 100, 100])
+
+        self.assertEqual(single_seg_stream, make_stream(-320, 20, 100, 5))
+        self.assertNotEqual(single_seg_stream, make_stream(-300, 20, 100, 5))
+        self.assertNotEqual(single_seg_stream, make_stream(-320, 10, 100, 5))
+        self.assertNotEqual(single_seg_stream, make_stream(-320, 20, 90, 5))
+        self.assertNotEqual(single_seg_stream, make_stream(-320, 20, 100, 10))
+        self.assertNotEqual(single_seg_stream, make_stream(-320, 20, 100, None))
+
+        self.assertEqual(
+            multi_seg_stream,
+            make_segmented_stream([-320, 20, 100, 5], [-400, 100, 100]),
+        )
+        self.assertNotEqual(single_seg_stream, multi_seg_stream)
+
+    def test_repr(self):
+        exec("from pina.segments.latent_segment import LatentSegment")
+        exec("from pina.segments.sensible_segment import SensibleSegment")
+
+        single_seg_stream = make_stream(-320, 20, 100, 5)
+        self.assertEqual(eval(repr(single_seg_stream)), single_seg_stream)
+
+        multi_seg_stream = make_segmented_stream([-320, 20, 100, 5], [-400, 100, 100])
+        self.assertEqual(eval(repr(multi_seg_stream)), multi_seg_stream)
+
 
 if __name__ == "__main__":
     unittest.main()

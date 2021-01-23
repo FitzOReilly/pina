@@ -70,6 +70,12 @@ class Stream:
 
             prev = current
 
+    def __eq__(self, other):
+        return self.segments == other.segments
+
+    def __repr__(self):
+        return "{}{}".format(type(self).__qualname__, self._segments)
+
 
 def make_stream(heat_flow, supply_temp, target_temp, temp_shift=None):
     """

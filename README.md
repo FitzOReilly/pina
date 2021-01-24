@@ -8,7 +8,7 @@
 ## Installation
 To install this package, run
 ```
-python -m pip install git+https://github.com/FitzOReilly/pina.git#egg=pina
+python -m pip install pina
 ```
 
 ## Basic example

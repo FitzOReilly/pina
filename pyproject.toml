@@ -6,6 +6,7 @@ build-backend = "flit_core.buildapi"
 module = "pina"
 author = "Patrick Heck"
 author-email = "fitz_oreilly@outlook.com"
+home-page = "https://github.com/FitzOReilly/pina"
 classifiers = ["License :: OSI Approved :: MIT License"]
 description-file = "README.md"
 requires-python = ">=3.6"

@@ -1,7 +1,7 @@
 # pina
 
 ![Tests](https://github.com/FitzOReilly/pina/workflows/Tests/badge.svg)
-[![codecov](https://codecov.io/gh/FitzOReilly/pina/branch/master/graph/badge.svg)](https://codecov.io/gh/FitzOReilly/pina)
+[![codecov](https://codecov.io/gh/FitzOReilly/pina/branch/main/graph/badge.svg?token=N80XE65F7N)](https://codecov.io/gh/FitzOReilly/pina)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![Imports: isort](https://img.shields.io/badge/%20imports-isort-%231674b1?style=flat&labelColor=ef8336)](https://timothycrosley.github.io/isort/)
 

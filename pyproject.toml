@@ -1,29 +1,35 @@
 [build-system]
-requires = ["flit_core >=2,<4"]
+requires = ["flit_core >=3.2,<4"]
 build-backend = "flit_core.buildapi"
 
-[tool.flit.metadata]
-module = "pina"
-author = "Patrick Heck"
-author-email = "fitz_oreilly@outlook.com"
-home-page = "https://github.com/FitzOReilly/pina"
-classifiers = ["License :: OSI Approved :: MIT License"]
-description-file = "README.md"
-requires-python = ">=3.6"
 
-[tool.flit.metadata.requires-extra]
+[project]
+name = "pina"
+authors = [{ name = "Patrick Heck", email = "fitz_oreilly@outlook.com" }]
+license = { file = "LICENSE" }
+classifiers = ["License :: OSI Approved :: MIT License"]
+dynamic = ["version", "description"]
+readme = "README.md"
+requires-python = ">=3.6"
+keywords = ["pinch-analysis", "heat-integration"]
+
+[project.urls]
+Home = "https://github.com/FitzOReilly/pina"
+
+[project.optional-dependencies]
 dev = [
-    "black",
-    "coverage",
-    "flake8",
-    "isort",
-    "pre-commit",
-    "tox",
+    "black >=23.3.0",
+    "coverage >=7.2.7",
+    "flake8 >=6.0.0",
+    "isort >=5.12.0",
+    "pre-commit >=3.3.3",
+    "tox >=4.6.4",
 ]
 
+
 [tool.isort]
-line_length = "88"
-multi_line_output = "3"
-include_trailing_comma = "True"
-force_grid_wrap = "0"
-use_parentheses = "True"
+line_length = 88
+multi_line_output = 3
+include_trailing_comma = true
+force_grid_wrap = 0
+use_parentheses = true

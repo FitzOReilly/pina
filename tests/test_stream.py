@@ -1,6 +1,8 @@
 import unittest
 
 from pina.segments import make_segment
+from pina.segments.latent_segment import LatentSegment
+from pina.segments.sensible_segment import SensibleSegment
 from pina.stream import Stream, make_segmented_stream, make_stream
 
 
@@ -153,13 +155,20 @@ class TestStream(unittest.TestCase):
         self.assertNotEqual(single_seg_stream, multi_seg_stream)
 
     def test_repr(self):
-        exec("from pina.segments.latent_segment import LatentSegment")
-        exec("from pina.segments.sensible_segment import SensibleSegment")
-
         single_seg_stream = make_stream(-320, 20, 100, 5)
+        self.assertEqual(
+            Stream(
+                SensibleSegment(4.0, 20, 100, 5),
+            ),
+            single_seg_stream,
+        )
         self.assertEqual(eval(repr(single_seg_stream)), single_seg_stream)
 
         multi_seg_stream = make_segmented_stream([-320, 20, 100, 5], [-400, 100, 100])
+        self.assertEqual(
+            Stream(SensibleSegment(4.0, 20, 100, 5), LatentSegment(-400, 100, None)),
+            multi_seg_stream,
+        )
         self.assertEqual(eval(repr(multi_seg_stream)), multi_seg_stream)
 
 
